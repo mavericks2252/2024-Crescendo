@@ -4,9 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -16,11 +14,11 @@ import frc.robot.Constants.PortConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  TalonFX shooterMotorMaster;
+  CANSparkMax shooterMotorMaster;
   public Shooter() {
 
-      shooterMotorMaster = new TalonFX(14);
-      shooterMotorMaster.setNeutralMode(NeutralModeValue.Brake);
+      shooterMotorMaster = new CANSparkMax(PortConstants.kShooterMotorMasterPort, MotorType.kBrushless);
+      shooterMotorMaster.setIdleMode(IdleMode.kCoast);
 
 
 
