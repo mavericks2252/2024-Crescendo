@@ -25,6 +25,7 @@ import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
@@ -52,6 +53,7 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
+  public final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
 
 
 
