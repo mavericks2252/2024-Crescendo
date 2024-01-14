@@ -17,11 +17,12 @@ public final class Constants {
   
   public static final class PortConstants {
 
-    public static final int kShooterMotorMasterPort = 15;
+    
     public static final int kIntakeMotorMasterPort = 14;
     public static final int kPneumaticForward = 1;
     public static final int kPneumaticReverse = 0;
-  
+    public static final int kShooterMotorSlavePort = 6;
+    public static final int kShooterMotorMasterPort = 5;
   }
   
   public static final class IntakeConstants {

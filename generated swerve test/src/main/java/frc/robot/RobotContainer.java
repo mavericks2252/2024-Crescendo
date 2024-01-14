@@ -8,6 +8,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +18,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeNote;
@@ -52,6 +52,11 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
+
+
+
+
+
 
 
 
@@ -95,21 +100,28 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.5));
-    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.25));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.80));
+    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.80));
 
   }
 
   public RobotContainer() {
     configureBindings();
+
+
+    //named commands
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, 0.25));
+
+
+
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   public Command getAutonomousCommand() {
 
+    return autoChooser.getSelected();
 
-
-    return Commands.print("No autonomous command configured");
+    //return Commands.print("No autonomous command configured");
   }
 }
