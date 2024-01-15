@@ -25,8 +25,8 @@ import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
   
@@ -53,8 +53,8 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-  public final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
-
+  public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  
 
 
 
@@ -102,8 +102,8 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.80));
-    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.80));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.40));
+    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.40));
 
   }
 

@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
-public class LimelightSubsystem extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase {
   /** Creates a new LimelightSubsystem. */
   double tx = 0;
   double ty = 0;
   double ta = 0;
-  public LimelightSubsystem() {}
+  public VisionSubsystem() {}
   
   @Override
   public void periodic() {
@@ -21,10 +21,11 @@ public class LimelightSubsystem extends SubsystemBase {
     
     tx = LimelightHelpers.getTX("limelight");
     SmartDashboard.putNumber("tx", tx);
-    ty = LimelightHelpers.getTX("limelight");
+    ty = LimelightHelpers.getTY("limelight");
     SmartDashboard.putNumber("ty", ty);
     ta = LimelightHelpers.getTA("limelight");
     SmartDashboard.putNumber("ta", ta);
+    LimelightHelpers.setLEDMode_ForceOn("limelight");
     
   }
 }
