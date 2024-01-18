@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.FieldConstants;
 
 public class VisionSubsystem extends SubsystemBase {
   /** Creates a new LimelightSubsystem. */
@@ -26,7 +27,42 @@ public class VisionSubsystem extends SubsystemBase {
     ta = LimelightHelpers.getTA("limelight");
     SmartDashboard.putNumber("ta", ta);
     LimelightHelpers.setLEDMode_ForceOff("limelight");
-    
+    SmartDashboard.putNumber("Bot X Position", getBotXPosition());
+    SmartDashboard.putNumber("Bot Y Position", getBotYPosition());
+    SmartDashboard.putNumber("Bot Rotation", getBotRotation());
+    SmartDashboard.putNumber("Distance to Speaker", getSpeakerDistance());
     
   }
+//Bot X Position In Inches
+  public double getBotXPosition() {
+
+double xMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getX();
+return xMeters * 3.2808 * 12;
+
+  }
+//Bot Y Position In Inches
+  public double getBotYPosition() {
+double yMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getY();
+return yMeters * 3.2808 * 12;
+
+
+  }
+//Bot Rotation In Degrees
+  public double getBotRotation() {
+
+    return LimelightHelpers.getBotPose2d_wpiBlue("limelight").getRotation().getDegrees();
+
+  }
+
+  public double getSpeakerDistance() {
+
+    double botX = getBotXPosition();
+    double botY = getBotYPosition();
+    double adjacentSide = botY - FieldConstants.kBlueSpeakerYPos;
+    return Math.sqrt((botX*botX)+(adjacentSide*adjacentSide));
+
+
+  }
+
+ 
 }

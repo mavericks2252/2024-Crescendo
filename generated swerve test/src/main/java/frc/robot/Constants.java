@@ -76,4 +76,11 @@ public final class Constants {
     
   }
 
+  public final class FieldConstants {
+  
+    public static final double kBlueSpeakerXPos = 0;
+    public static final double kBlueSpeakerYPos = 218.42;
+    
+  }
+
 }
