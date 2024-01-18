@@ -20,7 +20,7 @@ public class Shooter extends SubsystemBase {
 
       shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
       shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
-      shooterMotorMaster.setInverted(true);
+      shooterMotorMaster.setInverted(false);
       
       shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
       shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
