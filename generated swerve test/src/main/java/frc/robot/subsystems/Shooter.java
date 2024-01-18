@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,7 +14,10 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   TalonFX shooterMotorMaster;
   TalonFX shooterMotorSlave;
+  double topMotorSpeed;
+  double bottomMotorSpeed;
   
+
   public Shooter() {
 
       shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
@@ -23,7 +25,8 @@ public class Shooter extends SubsystemBase {
       shooterMotorMaster.setInverted(false);
       
       shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
-      shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
+      //shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
+      
 
 
 
@@ -36,12 +39,14 @@ public class Shooter extends SubsystemBase {
 
   // sets shooter motor to percent speed
 public void setPercentOutput(double speed){
-  shooterMotorMaster.set(speed);
+  shooterMotorMaster.set(topMotorSpeed);
+  shooterMotorSlave.set(bottomMotorSpeed);
 }
 
   // stops shooter motor
 public  void stopShooter(){
   shooterMotorMaster.stopMotor();
+  shooterMotorSlave.stopMotor();
 }
 
 }
