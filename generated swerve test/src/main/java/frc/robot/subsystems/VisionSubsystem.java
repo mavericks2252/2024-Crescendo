@@ -25,7 +25,7 @@ public class VisionSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ty", ty);
     ta = LimelightHelpers.getTA("limelight");
     SmartDashboard.putNumber("ta", ta);
-    LimelightHelpers.setLEDMode_ForceOn("limelight");
+    LimelightHelpers.setLEDMode_ForceOff("limelight");
     
   }
 }
