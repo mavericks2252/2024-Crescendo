@@ -12,7 +12,7 @@ public class ShootNote extends Command {
   Shooter shooter;
   double topMotorSpeed;
   double bottomMotorSpeed;
-  public ShootNote(double bottomMotorSpeed, double topMotorSpeed, Shooter shooter) {
+  public ShootNote(Shooter shooter, double topMotorSpeed, double bottomMotorSpeed) {
     this.shooter = shooter;
     this.topMotorSpeed = topMotorSpeed;
     this.bottomMotorSpeed = bottomMotorSpeed;
@@ -28,8 +28,7 @@ public class ShootNote extends Command {
   @Override
   public void execute() {
 
-    shooter.setPercentOutput(bottomMotorSpeed);
-    shooter.setPercentOutput(topMotorSpeed);
+    shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
 
   }
 

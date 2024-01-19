@@ -102,7 +102,7 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.8));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.85, 0.75));
     m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.40));
 
   }

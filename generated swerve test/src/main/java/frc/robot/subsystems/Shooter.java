@@ -22,9 +22,10 @@ public class Shooter extends SubsystemBase {
 
       shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
       shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
-      shooterMotorMaster.setInverted(false);
+      shooterMotorMaster.setInverted(true);
       
       shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
+      shooterMotorSlave.setInverted(true);
       //shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
       
 
@@ -38,7 +39,7 @@ public class Shooter extends SubsystemBase {
   }
 
   // sets shooter motor to percent speed
-public void setPercentOutput(double speed){
+public void setPercentOutput(double topMotorSpeed, double bottomMotorSpeed){
   shooterMotorMaster.set(topMotorSpeed);
   shooterMotorSlave.set(bottomMotorSpeed);
 }

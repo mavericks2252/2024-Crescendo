@@ -14,6 +14,7 @@ public class VisionSubsystem extends SubsystemBase {
   double tx = 0;
   double ty = 0;
   double ta = 0;
+  boolean tv = false;
   public VisionSubsystem() {}
   
   @Override
@@ -26,11 +27,19 @@ public class VisionSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ty", ty);
     ta = LimelightHelpers.getTA("limelight");
     SmartDashboard.putNumber("ta", ta);
+    tv = LimelightHelpers.getTV("limelight");
+    SmartDashboard.putBoolean("tv", tv);
     LimelightHelpers.setLEDMode_ForceOff("limelight");
-    SmartDashboard.putNumber("Bot X Position", getBotXPosition());
-    SmartDashboard.putNumber("Bot Y Position", getBotYPosition());
-    SmartDashboard.putNumber("Bot Rotation", getBotRotation());
-    SmartDashboard.putNumber("Distance to Speaker", getSpeakerDistance());
+
+    //if limelight has a target, it prints these numbers
+    if(tv){
+      SmartDashboard.putNumber("Bot X Position", getBotXPosition());
+      SmartDashboard.putNumber("Bot Y Position", getBotYPosition());
+      SmartDashboard.putNumber("Bot Rotation", getBotRotation());
+      SmartDashboard.putNumber("Distance to Speaker", getSpeakerDistance());
+      SmartDashboard.putNumber("bot target angle", getSpeakerAngle());
+    }
+    
     
   }
 //Bot X Position In Inches
@@ -58,9 +67,21 @@ return yMeters * 3.2808 * 12;
 
     double botX = getBotXPosition();
     double botY = getBotYPosition();
-    double adjacentSide = botY - FieldConstants.kBlueSpeakerYPos;
-    return Math.sqrt((botX*botX)+(adjacentSide*adjacentSide));
+    double oppositetSide = botY - FieldConstants.kBlueSpeakerYPos;
+    return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
 
+  }
+
+  public double getSpeakerAngle() {
+
+
+    double botX = getBotXPosition();
+    double boty = getBotYPosition();
+    double oppositetSide = boty - FieldConstants.kBlueSpeakerYPos;
+    double adjacentSide = botX - FieldConstants.kBlueSpeakerXPos;
+    double turnangle =  Math.toDegrees(Math.tanh(oppositetSide/adjacentSide));
+    SmartDashboard.putNumber("turn angle", turnangle);
+    return 180 + turnangle;
 
   }
 
