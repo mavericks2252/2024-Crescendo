@@ -12,10 +12,12 @@ public class ShootNote extends Command {
   Shooter shooter;
   double topMotorSpeed;
   double bottomMotorSpeed;
-  public ShootNote(Shooter shooter, double topMotorSpeed, double bottomMotorSpeed) {
+  double feedMotorSpeed;
+  public ShootNote(Shooter shooter, double topMotorSpeed, double bottomMotorSpeed, double feedMotorSpeed) {
     this.shooter = shooter;
     this.topMotorSpeed = topMotorSpeed;
     this.bottomMotorSpeed = bottomMotorSpeed;
+    this.feedMotorSpeed = feedMotorSpeed;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }
@@ -29,8 +31,9 @@ public class ShootNote extends Command {
   public void execute() {
 
     shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
-
+    shooter.feedMotorOutput(feedMotorSpeed);
   }
+
 
   // Called once the command ends or is interrupted.
   @Override

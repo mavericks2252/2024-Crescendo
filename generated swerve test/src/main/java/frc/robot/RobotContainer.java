@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
@@ -39,7 +40,7 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(MaxSpeed * 0.15).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -89,6 +90,16 @@ public class RobotContainer {
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    
+    
+    
+        joystick.x().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-(visionSubsystem.getSteeringPercentage()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ));
+
+
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -102,8 +113,8 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.85, 0.75));
-    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, 0.40));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.85, 0.75, 0.5));
+    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
 
   }
 
@@ -112,7 +123,7 @@ public class RobotContainer {
 
 
     //named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, 0.25));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
 
 
 

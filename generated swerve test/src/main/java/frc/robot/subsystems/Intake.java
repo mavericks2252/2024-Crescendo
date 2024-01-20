@@ -12,26 +12,34 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PortConstants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
   TalonFX intakeMotorMaster;
+  TalonFX intakeMotorSlave;
   DigitalInput beamBreakSensor;
   DoubleSolenoid intakeSolenoid;
+  double motorMasterSpeed;
+  double motorSlaveSpeed;
  
  
   public Intake() {
 
     intakeMotorMaster = new TalonFX(PortConstants.kIntakeMotorMasterPort);
     intakeMotorMaster.setNeutralMode(NeutralModeValue.Brake);
+    
+    
+    intakeMotorSlave = new TalonFX(PortConstants.kIntakeMotorSlavePort);
+    intakeMotorSlave.setNeutralMode(NeutralModeValue.Brake);
+    
+    
     intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, PortConstants.kPneumaticForward, PortConstants.kPneumaticReverse);
+    
+    
     beamBreakSensor = new DigitalInput(IntakeConstants.kBeamBreak);
-
   }
 
 
@@ -43,8 +51,9 @@ public class Intake extends SubsystemBase {
 
 
   // sets intake motor to a percent speed
-public void setPercentOutput(double speed){
-  intakeMotorMaster.set(speed);
+public void setPercentOutput(double motorMasterSpeed, double motorSlaveSpeed){
+  intakeMotorMaster.set(motorMasterSpeed);
+  intakeMotorSlave.set(motorSlaveSpeed);
 }
 
   // stops intake motor
@@ -58,10 +67,6 @@ public boolean getBeamBreak(){
   
 }
 
-public void manualControl(){
-
-  setPercentOutput(RobotContainer.m_operatorController.getRawAxis(OIConstants.kDriverYAxis));
-}
 
  //opens intake
 public void deployIntake(){

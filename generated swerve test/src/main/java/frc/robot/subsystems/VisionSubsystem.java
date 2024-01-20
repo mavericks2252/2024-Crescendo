@@ -15,7 +15,11 @@ public class VisionSubsystem extends SubsystemBase {
   double ty = 0;
   double ta = 0;
   boolean tv = false;
-  public VisionSubsystem() {}
+  public VisionSubsystem() {
+    
+    LimelightHelpers.setLEDMode_ForceOff("limelight");
+  
+  }
   
   @Override
   public void periodic() {
@@ -29,7 +33,7 @@ public class VisionSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ta", ta);
     tv = LimelightHelpers.getTV("limelight");
     SmartDashboard.putBoolean("tv", tv);
-    LimelightHelpers.setLEDMode_ForceOff("limelight");
+    SmartDashboard.putNumber("steering percentage", getSteeringPercentage());
 
     //if limelight has a target, it prints these numbers
     if(tv){
@@ -37,7 +41,10 @@ public class VisionSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Bot Y Position", getBotYPosition());
       SmartDashboard.putNumber("Bot Rotation", getBotRotation());
       SmartDashboard.putNumber("Distance to Speaker", getSpeakerDistance());
-      SmartDashboard.putNumber("bot target angle", getSpeakerAngle());
+      SmartDashboard.putNumber("speaker turn angle", getSpeakerTurnAngle());
+      SmartDashboard.putNumber("bot target angle", getBotTargetAngle());
+      SmartDashboard.putNumber("Bot turn error", getSpeakerError());
+      
     }
     
     
@@ -72,18 +79,50 @@ return yMeters * 3.2808 * 12;
 
   }
 
-  public double getSpeakerAngle() {
+  public double getSpeakerTurnAngle() {
 
 
     double botX = getBotXPosition();
     double boty = getBotYPosition();
     double oppositetSide = boty - FieldConstants.kBlueSpeakerYPos;
     double adjacentSide = botX - FieldConstants.kBlueSpeakerXPos;
-    double turnangle =  Math.toDegrees(Math.tanh(oppositetSide/adjacentSide));
-    SmartDashboard.putNumber("turn angle", turnangle);
-    return 180 + turnangle;
+    return - Math.toDegrees(Math.tanh(oppositetSide/adjacentSide));
+    
 
   }
 
+  public double getBotTargetAngle() {
+    return Math.copySign(180, getSpeakerTurnAngle()) - getSpeakerTurnAngle();
+  }
+
+  public double getSpeakerError() {
+
+    double error = 0;
+    if(getBotRotation()>0 && getBotTargetAngle()<0){
+      error = -(180 - getBotRotation())  +  (-180 - getBotTargetAngle());
+    
+    }
+    else if(getBotRotation()<0 && getBotTargetAngle()>0){
+      error = (180 - getBotTargetAngle()) + (180 - Math.abs(getBotRotation()));
+
+    }
+    else{
+      error = getBotRotation() - getBotTargetAngle();
+    }
+    
+    return error;
+  }
+
+
+  public double getSteeringPercentage() {
+
+    double steeringPercentage = getSpeakerError()/50;
+    steeringPercentage = (tv) ? steeringPercentage : 0;
+    steeringPercentage = (steeringPercentage>0.5) ? 0.5 : steeringPercentage;
+    steeringPercentage = (steeringPercentage<-0.5) ? -0.5 : steeringPercentage;
+    
+
+    return steeringPercentage;
+  }
  
 }
