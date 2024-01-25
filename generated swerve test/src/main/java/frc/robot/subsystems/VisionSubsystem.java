@@ -117,6 +117,7 @@ return yMeters * 3.2808 * 12;
   public double getSteeringPercentage() {
 
     double steeringPercentage = getSpeakerError()/50;
+    //
     steeringPercentage = (tv) ? steeringPercentage : 0;
     steeringPercentage = (steeringPercentage>0.5) ? 0.5 : steeringPercentage;
     steeringPercentage = (steeringPercentage<-0.5) ? -0.5 : steeringPercentage;

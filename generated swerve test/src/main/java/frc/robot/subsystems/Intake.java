@@ -4,8 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -18,8 +19,8 @@ import frc.robot.Constants.PortConstants;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
-  TalonFX intakeMotorMaster;
-  TalonFX intakeMotorSlave;
+  CANSparkMax intakeMotorMaster;
+  CANSparkMax intakeMotorSlave;
   DigitalInput beamBreakSensor;
   DoubleSolenoid intakeSolenoid;
   double motorMasterSpeed;
@@ -28,12 +29,15 @@ public class Intake extends SubsystemBase {
  
   public Intake() {
 
-    intakeMotorMaster = new TalonFX(PortConstants.kIntakeMotorMasterPort);
-    intakeMotorMaster.setNeutralMode(NeutralModeValue.Brake);
+    intakeMotorMaster = new CANSparkMax(PortConstants.kIntakeMotorMasterPort, MotorType.kBrushless);
+    intakeMotorMaster.setIdleMode(IdleMode.kBrake);
+    intakeMotorMaster.setInverted(false);
     
-    
-    intakeMotorSlave = new TalonFX(PortConstants.kIntakeMotorSlavePort);
-    intakeMotorSlave.setNeutralMode(NeutralModeValue.Brake);
+    intakeMotorSlave = new CANSparkMax(PortConstants.kIntakeMotorSlavePort, MotorType.kBrushless);
+    intakeMotorSlave.setIdleMode(IdleMode.kBrake);
+    intakeMotorSlave.setInverted(false);
+
+    intakeMotorSlave.follow(intakeMotorMaster);
     
     
     intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, PortConstants.kPneumaticForward, PortConstants.kPneumaticReverse);

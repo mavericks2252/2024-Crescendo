@@ -113,7 +113,7 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 0.85, 0.75, 0.5));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, 4500, 1, 4500, 0.75, 0.85));
     m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
 
   }
@@ -124,6 +124,7 @@ public class RobotContainer {
 
     //named commands
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 5000, 1, 4800, 0.75, 0.85));
 
 
 

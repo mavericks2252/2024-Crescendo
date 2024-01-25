@@ -25,6 +25,7 @@ public final class Constants {
     public static final int kShooterMotorMasterPort = 17;
     public static final int kIntakeMotorSlavePort = 16;
     public static final int kFeedMotorPort = 19;
+    public static final int kFeedMotorSlavePort = 20;
   }
   
   public static final class IntakeConstants {

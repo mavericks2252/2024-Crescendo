@@ -10,14 +10,18 @@ import frc.robot.subsystems.Shooter;
 public class ShootNote extends Command {
   /** Creates a new ShootNote. */
   Shooter shooter;
+  double feedMotorSpeed;
+  double topMotorRpm;
+  double bottomMotorRpm;
   double topMotorSpeed;
   double bottomMotorSpeed;
-  double feedMotorSpeed;
-  public ShootNote(Shooter shooter, double topMotorSpeed, double bottomMotorSpeed, double feedMotorSpeed) {
+  public ShootNote(Shooter shooter, double bottomMotorRpm, double feedMotorSpeed, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed) {
     this.shooter = shooter;
+    this.feedMotorSpeed = feedMotorSpeed;
+    this.topMotorRpm = topMotorRpm;
+    this.bottomMotorRpm = bottomMotorRpm;
     this.topMotorSpeed = topMotorSpeed;
     this.bottomMotorSpeed = bottomMotorSpeed;
-    this.feedMotorSpeed = feedMotorSpeed;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }
@@ -30,7 +34,8 @@ public class ShootNote extends Command {
   @Override
   public void execute() {
 
-    shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
+    //shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
+    shooter.setShooterVelocity(topMotorRpm, bottomMotorRpm);
     shooter.feedMotorOutput(feedMotorSpeed);
   }
 
@@ -40,6 +45,7 @@ public class ShootNote extends Command {
   public void end(boolean interrupted) {
 
     shooter.stopShooter();
+    shooter.stopFeedMotor();
 
   }
 
