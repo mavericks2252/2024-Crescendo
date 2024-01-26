@@ -28,6 +28,11 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+
+    
+       
+    
+
     public final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); //creates a swerve request called auto request
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
@@ -91,5 +96,4 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
    
-
 }

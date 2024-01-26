@@ -24,6 +24,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -37,7 +38,7 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.15).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -55,6 +56,7 @@ public class RobotContainer {
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
   public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionSubsystem);
   
 
 
@@ -88,7 +90,7 @@ public class RobotContainer {
         ));
     
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
+    /*joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
     
     
@@ -97,6 +99,18 @@ public class RobotContainer {
                                                                                            // negative Y (forward)
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-(visionSubsystem.getSteeringPercentage()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ));*/
+
+        joystick.b().whileTrue(drivetrain
+        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    
+    
+    
+        joystick.x().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(
+              autoAimSubsystem.autoAimRateOutput()) // Drive counterclockwise with negative X (left)
         ));
 
 

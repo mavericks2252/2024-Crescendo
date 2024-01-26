@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems;
 
+
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
@@ -15,6 +20,8 @@ public class VisionSubsystem extends SubsystemBase {
   double ty = 0;
   double ta = 0;
   boolean tv = false;
+  Pose2d visionBotPose;
+  
   public VisionSubsystem() {
     
     LimelightHelpers.setLEDMode_ForceOff("limelight");
@@ -44,6 +51,8 @@ public class VisionSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("speaker turn angle", getSpeakerTurnAngle());
       SmartDashboard.putNumber("bot target angle", getBotTargetAngle());
       SmartDashboard.putNumber("Bot turn error", getSpeakerError());
+      SmartDashboard.putNumber("New Target angle test", getSpeakerTargetRotation2d(FieldConstants.kBlueSpeaker).getRotation().getDegrees());
+      
       
     }
     
@@ -75,7 +84,8 @@ return yMeters * 3.2808 * 12;
     double botX = getBotXPosition();
     double botY = getBotYPosition();
     double oppositetSide = botY - FieldConstants.kBlueSpeakerYPos;
-    return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
+    return Math.hypot(botX, oppositetSide);
+    //return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
 
   }
 
@@ -125,5 +135,15 @@ return yMeters * 3.2808 * 12;
 
     return steeringPercentage;
   }
+
+  public Pose2d getSpeakerTargetRotation2d(Translation2d speakerPos){
+    double xPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getX();
+    double yPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getY();
+    return new Pose2d(xPosMeters, yPosMeters, (new Rotation2d(speakerPos.getX() - xPosMeters, speakerPos.getY() - yPosMeters)));
+    
+
+  }
+
+  
  
 }
