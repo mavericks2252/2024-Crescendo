@@ -16,7 +16,7 @@ import frc.robot.generated.TunerConstants;
 
 
 public class AutoAimSubsystem extends SubsystemBase {
-  TrapezoidProfile.Constraints aim_PIDConstraints;
+  TrapezoidProfile.Constraints aim_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate, TunerConstants.kMaxAngularAcceleration);
   
 
   ProfiledPIDController autoAimPIDController;
@@ -25,14 +25,14 @@ public class AutoAimSubsystem extends SubsystemBase {
   /** Creates a new AutoAimSubsystem. */
   public AutoAimSubsystem(VisionSubsystem vision) {
     this.vision = vision;
-    aim_PIDConstraints = 
-      new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate, TunerConstants.kMaxAngularAcceleration);
+    
       
-    autoAimPIDController= new ProfiledPIDController(4, 0, 0, aim_PIDConstraints,.01);
+      
+    autoAimPIDController= new ProfiledPIDController(4, 0.25, 0, aim_PIDConstraints,.01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
     
-    //autoAimPIDController.setTolerance(.01);
-    autoAimPIDController.setIZone(.122);
+    //autoAimPIDController.setTolerance(3);
+    autoAimPIDController.setIZone(.4);
   }
   @Override
   public void periodic() {

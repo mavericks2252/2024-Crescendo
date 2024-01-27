@@ -33,8 +33,8 @@ public final class Constants {
   public static final class IntakeConstants {
 
     public static final int kBeamBreak = 0;
-    public static final double kIntakeMasterSpeed = 0.4;
-    public static final double kIntakeSlaveSpeed = 0.4;
+    public static final double kIntakeMasterSpeed = 1;
+    public static final double kIntakeSlaveSpeed = 1;
 
   }
     

@@ -40,7 +40,7 @@ public class TunerConstants {
     public static final double kSpeedAt12VoltsMps = 4.4;
 
     public static final double kMaxDrivetrainSpeed = 6; // 6 meters per second desired top speed
-    public static final double kMaxAngularRate = 1; // 3/4 of a rotation per second max angular velocity
+    public static final double kMaxAngularRate = 1.5; // 3/4 of a rotation per second max angular velocity
     public static final double kMaxAcceleration = 3; //meters per second squared
     public static final double kMaxAngularAcceleration = 4; // radions per second squared
 
