@@ -9,8 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.generated.TunerConstants;
 
 
@@ -42,11 +40,10 @@ public class AutoAimSubsystem extends SubsystemBase {
   }
 
   public double autoAimRateOutput(){
-    Pose2d currentPos = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+    Pose2d currentPos = vision.getRobotPoseVision();
     Pose2d targetPos = vision.getSpeakerTargetRotation2d();
   
-    return LimelightHelpers.getTV("limelight") ? 
-              autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians()) : 0;
+    return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
 
    }
 

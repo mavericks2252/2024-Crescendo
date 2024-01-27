@@ -71,11 +71,15 @@ public class VisionSubsystem extends SubsystemBase {
     
   }
 
+  public Pose2d currentPose2d(){
+    return drivetrain.getState().Pose;
+  }
+
 
   // calculate rotation to speaker
   public Pose2d getSpeakerTargetRotation2d(){
-    double xRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getX();
-    double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getY();
+    double xRobotPosMeters = currentPose2d().getX();
+    double yRobotPosMeters = currentPose2d().getY();
     Translation2d speakerPos;
 
     if (driverStationAlliance()){
@@ -123,6 +127,7 @@ public class VisionSubsystem extends SubsystemBase {
     else{
       SmartDashboard.putBoolean("vision pose added", false);
     }
+    
 
   }
 

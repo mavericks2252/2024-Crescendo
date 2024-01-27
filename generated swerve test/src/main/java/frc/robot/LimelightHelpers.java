@@ -375,6 +375,10 @@ public class LimelightHelpers {
      */
     static boolean profileJSON = false;
 
+    public static Object currentPose2d;
+
+    public static Object autoAimPIDController;
+
     static final String sanitizeName(String name) {
         if (name == "" || name == null) {
             return "limelight";
