@@ -53,6 +53,8 @@ public class VisionSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("tv", tv);
     
     SmartDashboard.putBoolean("Aliance Color", driverStationAlliance());
+    SmartDashboard.putNumber("latency", getTotalLatency());
+    SmartDashboard.putNumber("FPGA time", Timer.getFPGATimestamp());
 
     //if limelight has a target, it prints these numbers
     if(tv){
@@ -63,7 +65,7 @@ public class VisionSubsystem extends SubsystemBase {
     
 
     addVisionRobotPose();
-    Pose2d currentRobotPos = drivetrain.getState().Pose;
+    Pose2d currentRobotPos = drivetrain.getState().Pose; //sets currentRobotPos to the position of the robot
     SmartDashboard.putString("Robto OdometryPose", currentRobotPos.toString());
     mField2d.setRobotPose(currentRobotPos); 
      
@@ -71,24 +73,24 @@ public class VisionSubsystem extends SubsystemBase {
     
   }
 
-  public Pose2d currentPose2d(){
-    return drivetrain.getState().Pose;
+  public Pose2d getCurrentPose2d(){
+    return drivetrain.getState().Pose; // sets the method getCurrentPose2d to the value of the current pose
   }
 
 
   // calculate rotation to speaker
   public Pose2d getSpeakerTargetRotation2d(){
-    double xRobotPosMeters = currentPose2d().getX();
-    double yRobotPosMeters = currentPose2d().getY();
-    Translation2d speakerPos;
+    double xRobotPosMeters = getCurrentPose2d().getX(); //gets the x pose of the bot
+    double yRobotPosMeters = getCurrentPose2d().getY(); //gets the y pose of the bot
+    Translation2d speakerPos; //gets the position of the speaker
 
     if (driverStationAlliance()){
-      speakerPos = FieldConstants.kRedSpeaker;
+      speakerPos = FieldConstants.kRedSpeaker; //sets the location of the speaker for the red side
 
     }
 
     else {
-      speakerPos = FieldConstants.kBlueSpeaker;
+      speakerPos = FieldConstants.kBlueSpeaker; //sets the location of the speaker for the blue side
 
     }
     
@@ -96,7 +98,7 @@ public class VisionSubsystem extends SubsystemBase {
     //double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getY();  // get the ypose of the robot
 
     // return a pose 2d of robot location and target angle of speaker
-    return new Pose2d(xRobotPosMeters, yRobotPosMeters, (new Rotation2d(speakerPos.getX() - xRobotPosMeters, speakerPos.getY() - yRobotPosMeters)));
+    return new Pose2d(xRobotPosMeters, yRobotPosMeters, (new Rotation2d(speakerPos.getX() - xRobotPosMeters, speakerPos.getY() - yRobotPosMeters))); //finds the pose of the robot using the location and angle of the speaker
     
 
   }
@@ -104,16 +106,16 @@ public class VisionSubsystem extends SubsystemBase {
   // get the robotPose from Vision based on alliance color
   public Pose2d getRobotPoseVision () {
     
-    return LimelightHelpers.getBotPose2d_wpiBlue(limelight);
+    return LimelightHelpers.getBotPose2d_wpiBlue(limelight); //gets the pose of the bot using the limelight
    
   }
 
   // get the total latency of target from Limelight
-  public double getTotalLatency (){
+  public double getTotalLatency (){ //returns total latency in seconds
     double tl = LimelightHelpers.getLatency_Pipeline(limelight);
     double cl = LimelightHelpers.getLatency_Capture(limelight);
     SmartDashboard.putNumber("total Latencey",  tl + cl);
-    return tl + cl;
+    return (tl + cl)/1000; 
   }
 
   //add a vision measurement to the drivetrain odemetry to update it
@@ -121,7 +123,7 @@ public class VisionSubsystem extends SubsystemBase {
   public void addVisionRobotPose(){
 
     if (tv && ta > .4){
-      drivetrain.addVisionMeasurement(getRobotPoseVision(), Timer.getFPGATimestamp() - getTotalLatency());
+      drivetrain.addVisionMeasurement(getRobotPoseVision(), Timer.getFPGATimestamp() - getTotalLatency()); //corrects the odometry pose and takes in the latency offset
       SmartDashboard.putBoolean("vision pose added", true);
     }
     else{
@@ -134,7 +136,7 @@ public class VisionSubsystem extends SubsystemBase {
   public void seedRobotPoseFromVision(){
 
     if(tv) {
-    drivetrain.seedFieldRelative(getRobotPoseVision());
+    drivetrain.seedFieldRelative(getRobotPoseVision()); //seeds the robot when it sees a tag
     }
 
   }

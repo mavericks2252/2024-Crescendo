@@ -33,10 +33,10 @@ public class Shooter extends SubsystemBase {
 
       shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
       shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
-      shooterMotorMaster.setInverted(false);
+      shooterMotorMaster.setInverted(true);
  
       shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
-      shooterMotorSlave.setInverted(false);
+      shooterMotorSlave.setInverted(true);
       shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
 
       feedMotor = new CANSparkMax(PortConstants.kFeedMotorPort, MotorType.kBrushless);
@@ -104,8 +104,8 @@ public void stopFeedMotor(){
 
 public void setShooterVelocity(double topMotorRpm, double bottomMotorRpm){
 
-  shooterMotorMaster.setControl(shooterTV.withVelocity(bottomMotorRpm/60));
-  shooterMotorSlave.setControl(shooterTV.withVelocity(-topMotorRpm/60));
+  shooterMotorMaster.setControl(shooterTV.withVelocity(-bottomMotorRpm/60));
+  shooterMotorSlave.setControl(shooterTV.withVelocity(topMotorRpm/60));
 
 }
 

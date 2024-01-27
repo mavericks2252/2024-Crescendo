@@ -40,7 +40,7 @@ public class AutoAimSubsystem extends SubsystemBase {
   }
 
   public double autoAimRateOutput(){
-    Pose2d currentPos = vision.getRobotPoseVision();
+    Pose2d currentPos = vision.getCurrentPose2d();
     Pose2d targetPos = vision.getSpeakerTargetRotation2d();
   
     return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
