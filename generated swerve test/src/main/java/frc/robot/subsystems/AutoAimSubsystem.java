@@ -43,7 +43,7 @@ public class AutoAimSubsystem extends SubsystemBase {
 
   public double autoAimRateOutput(){
     Pose2d currentPos = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
-    Pose2d targetPos = vision.getSpeakerTargetRotation2d(FieldConstants.kBlueSpeaker);
+    Pose2d targetPos = vision.getSpeakerTargetRotation2d();
   
     return LimelightHelpers.getTV("limelight") ? 
               autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians()) : 0;

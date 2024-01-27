@@ -40,13 +40,13 @@ public class Shooter extends SubsystemBase {
       shooterMotorSlave.setControl(new Follower(PortConstants.kShooterMotorMasterPort, true));
 
       feedMotor = new CANSparkMax(PortConstants.kFeedMotorPort, MotorType.kBrushless);
-      feedMotor.setInverted(false);
+      feedMotor.setInverted(true);
       feedMotor.setIdleMode(IdleMode.kCoast);
 
       feedMotorSlave = new CANSparkMax(PortConstants.kFeedMotorSlavePort, MotorType.kBrushless);
-      //feedMotorSlave.follow(feedMotor);
+      feedMotorSlave.follow(feedMotor);
       feedMotorSlave.setIdleMode(IdleMode.kCoast);
-      feedMotorSlave.setInverted(false);
+      feedMotorSlave.setInverted(true);
       
       
      
@@ -104,8 +104,8 @@ public void stopFeedMotor(){
 
 public void setShooterVelocity(double topMotorRpm, double bottomMotorRpm){
 
-  shooterMotorMaster.setControl(shooterTV.withVelocity(-bottomMotorRpm/60));
-  shooterMotorSlave.setControl(shooterTV.withVelocity(topMotorRpm/60));
+  shooterMotorMaster.setControl(shooterTV.withVelocity(bottomMotorRpm/60));
+  shooterMotorSlave.setControl(shooterTV.withVelocity(-topMotorRpm/60));
 
 }
 

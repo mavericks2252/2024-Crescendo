@@ -5,10 +5,11 @@
 package frc.robot.subsystems;
 
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,11 +52,11 @@ public class VisionSubsystem extends SubsystemBase {
     tv = LimelightHelpers.getTV(limelight);
     SmartDashboard.putBoolean("tv", tv);
     
-    
+    SmartDashboard.putBoolean("Aliance Color", driverStationAlliance());
 
     //if limelight has a target, it prints these numbers
     if(tv){
-      SmartDashboard.putNumber("New Target angle test", getSpeakerTargetRotation2d(FieldConstants.kBlueSpeaker).getRotation().getDegrees());
+      SmartDashboard.putNumber("New Target angle test", getSpeakerTargetRotation2d().getRotation().getDegrees());
       SmartDashboard.putString("bot Pose", LimelightHelpers.getBotPose2d_wpiBlue(limelight).toString());
       }
     
@@ -69,7 +70,98 @@ public class VisionSubsystem extends SubsystemBase {
      
     
   }
-//Bot X Position In Inches
+
+
+  // calculate rotation to speaker
+  public Pose2d getSpeakerTargetRotation2d(){
+    double xRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getX();
+    double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue("limelight").getY();
+    Translation2d speakerPos;
+
+    if (driverStationAlliance()){
+      speakerPos = FieldConstants.kRedSpeaker;
+
+    }
+
+    else {
+      speakerPos = FieldConstants.kBlueSpeaker;
+
+    }
+    
+    //double xRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getX(); //get xpose of the robot
+    //double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getY();  // get the ypose of the robot
+
+    // return a pose 2d of robot location and target angle of speaker
+    return new Pose2d(xRobotPosMeters, yRobotPosMeters, (new Rotation2d(speakerPos.getX() - xRobotPosMeters, speakerPos.getY() - yRobotPosMeters)));
+    
+
+  }
+
+  // get the robotPose from Vision based on alliance color
+  public Pose2d getRobotPoseVision () {
+    
+    return LimelightHelpers.getBotPose2d_wpiBlue(limelight);
+   
+  }
+
+  // get the total latency of target from Limelight
+  public double getTotalLatency (){
+    double tl = LimelightHelpers.getLatency_Pipeline(limelight);
+    double cl = LimelightHelpers.getLatency_Capture(limelight);
+    SmartDashboard.putNumber("total Latencey",  tl + cl);
+    return tl + cl;
+  }
+
+  //add a vision measurement to the drivetrain odemetry to update it
+  //if the target is present and large enough on screen
+  public void addVisionRobotPose(){
+
+    if (tv && ta > .4){
+      drivetrain.addVisionMeasurement(getRobotPoseVision(), Timer.getFPGATimestamp() - getTotalLatency());
+      SmartDashboard.putBoolean("vision pose added", true);
+    }
+    else{
+      SmartDashboard.putBoolean("vision pose added", false);
+    }
+
+  }
+
+  public void seedRobotPoseFromVision(){
+
+    if(tv) {
+    drivetrain.seedFieldRelative(getRobotPoseVision());
+    }
+
+  }
+
+  public boolean driverStationAlliance(){
+    var alliance = DriverStation.getAlliance(); //creates a variable called alliance
+    if (alliance.isPresent()) { //checks if alliance variable has been set to anything
+      return alliance.get() == DriverStation.Alliance.Red; //checks if the alliance color is red
+    }
+    return false; //returns false if color is not red or if no color
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+  //Bot X Position In Inches
   public double getBotXPosition() {
 
     double xMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getX();
@@ -145,53 +237,6 @@ public class VisionSubsystem extends SubsystemBase {
     
 
     return steeringPercentage;
-  }
-
-  // calculate rotation to speaker
-  public Pose2d getSpeakerTargetRotation2d(Translation2d speakerPos){
-    double xPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getX(); //get xpose of the robot
-    double yPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getY();  // get the ypose of the robot
-
-    // return a pose 2d of robot location and target angle of speaker
-    return new Pose2d(xPosMeters, yPosMeters, (new Rotation2d(speakerPos.getX() - xPosMeters, speakerPos.getY() - yPosMeters)));
-    
-
-  }
-
-  // get the robotPose from Vision based on alliance color
-  public Pose2d getRobotPoseVision () {
-    
-    return LimelightHelpers.getBotPose2d_wpiBlue(limelight);
-   
-  }
-
-  // get the total latency of target from Limelight
-  public double getTotalLatency (){
-    double tl = LimelightHelpers.getLatency_Pipeline(limelight);
-    double cl = LimelightHelpers.getLatency_Capture(limelight);
-    SmartDashboard.putNumber("total Latencey",  tl + cl);
-    return tl + cl;
-  }
-
-  //add a vision measurement to the drivetrain odemetry to update it
-  //if the target is present and large enough on screen
-  public void addVisionRobotPose(){
-
-    if (tv && ta > .4){
-      drivetrain.addVisionMeasurement(getRobotPoseVision(), getTotalLatency());
-      SmartDashboard.putBoolean("vision pose added", true);
-    }
-    else{
-      SmartDashboard.putBoolean("vision pose added", false);
-    }
-
-  }
-
-  public void seedRobotPoseFromVision(){
-
-    if(tv) {
-    drivetrain.seedFieldRelative(getRobotPoseVision());
-    }
-
-  }
+  } */
 }
+

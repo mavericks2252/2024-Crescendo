@@ -90,6 +90,10 @@ public final class Constants {
     public static final double kBlueSpeakerXPosMeters = 0;
     public static final double kBlueSpeakerYPosMeters = 5.547;
     public static final Translation2d kBlueSpeaker = new Translation2d(kBlueSpeakerXPosMeters, kBlueSpeakerYPosMeters);
+
+    public static final double kRedSpeakerXPosMeters = 15.64;
+    public static final double kRedSpeakerYPosMeters = 5.547;
+    public static final Translation2d kRedSpeaker = new Translation2d(kRedSpeakerXPosMeters, kRedSpeakerYPosMeters);
     
   }
 
