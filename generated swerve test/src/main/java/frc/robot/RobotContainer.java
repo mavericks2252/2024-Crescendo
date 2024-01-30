@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
@@ -138,8 +140,12 @@ public class RobotContainer {
 
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, 5100, 1, 5100, 0.75, 0.85));
-    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85,1, 4250));
+    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed));
+    m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
+    m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
+
+    
   }
 
   public RobotContainer() {
@@ -149,11 +155,11 @@ public class RobotContainer {
 
 
     //named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kIntakeSlaveSpeed));
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 1, 4000, 0.75, 0.85));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 4000, 0.75, 0.85, 1, 4250));
 
 
-
+    
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }

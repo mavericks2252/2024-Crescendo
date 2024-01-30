@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4106867853375344,
-      "y": 5.52
+      "x": 1.290505644074351,
+      "y": 6.915037974220092
     },
     "rotation": 180.0
   },
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "right start to right note"
+                  "pathName": "left start to centerline 1"
                 }
               }
             ]
@@ -37,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "right note to middle"
+                  "pathName": "centerline 2"
                 }
               }
             ]
@@ -56,7 +56,45 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle note to left note"
+                  "pathName": "centerline 3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "centerline 4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "centerline 5"
                 }
               }
             ]

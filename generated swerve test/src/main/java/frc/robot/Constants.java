@@ -21,21 +21,25 @@ public final class Constants {
 
     
     public static final int kIntakeMotorMasterPort = 15;
-    public static final int kPneumaticForward = 1;
-    public static final int kPneumaticReverse = 0;
     public static final int kShooterMotorSlavePort = 18;
     public static final int kShooterMotorMasterPort = 17;
     public static final int kIntakeMotorSlavePort = 16;
-    public static final int kFeedMotorPort = 19;
-    public static final int kFeedMotorSlavePort = 20;
+    public static final int kAcceleratorWheelPort = 20;
+    public static final int kFeedMotorPort = 21;
+    public static final int kacceleratorWheelSlavePort = 19;
   }
   
   public static final class IntakeConstants {
 
     public static final int kBeamBreak = 0;
     public static final double kIntakeMasterSpeed = 1;
-    public static final double kIntakeSlaveSpeed = 1;
 
+  }
+
+  public static final class ShooterConstants{
+    public static final int kShooterMotorMasterSpeed = 4250;
+    public static final int kShooterMotorSlaveSpeed = 4250;
+    public static final int kacceleratorWheelSpeed = 1;
   }
     
   

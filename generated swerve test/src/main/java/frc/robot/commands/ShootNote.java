@@ -5,23 +5,27 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 
 public class ShootNote extends Command {
   /** Creates a new ShootNote. */
   Shooter shooter;
-  double feedMotorSpeed;
   double topMotorRpm;
   double bottomMotorRpm;
   double topMotorSpeed;
   double bottomMotorSpeed;
-  public ShootNote(Shooter shooter, double bottomMotorRpm, double feedMotorSpeed, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed) {
+  double feedMotorSpeed;
+  double targetRPM;
+  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed, double feedMotorSpeed, double targetRPM) {
     this.shooter = shooter;
-    this.feedMotorSpeed = feedMotorSpeed;
+    //this.acceleratorWheelSpeed = acceleratorWheelSpeed;
     this.topMotorRpm = topMotorRpm;
     this.bottomMotorRpm = bottomMotorRpm;
     this.topMotorSpeed = topMotorSpeed;
     this.bottomMotorSpeed = bottomMotorSpeed;
+    this.feedMotorSpeed = feedMotorSpeed;
+    this.targetRPM = targetRPM;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }
@@ -33,9 +37,14 @@ public class ShootNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 100){
+      shooter.acceleratorWheelOutput(ShooterConstants.kacceleratorWheelSpeed);
+    }
 
     //shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
-    shooter.setShooterVelocity(topMotorRpm, bottomMotorRpm);
+    shooter.setShooterVelocity(targetRPM);
+    //shooter.acceleratorWheelOutput(acceleratorWheelSpeed);
     shooter.feedMotorOutput(feedMotorSpeed);
   }
 
@@ -44,8 +53,10 @@ public class ShootNote extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    shooter.stopShooter();
+    //shooter.stopShooter();
+      shooter.setShooterVelocity(1500);
     shooter.stopFeedMotor();
+    shooter.stopAcceleratorWheel();
 
   }
 

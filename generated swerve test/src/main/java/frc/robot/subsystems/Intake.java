@@ -9,9 +9,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PortConstants;
@@ -20,11 +17,8 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
   CANSparkMax intakeMotorMaster;
-  CANSparkMax intakeMotorSlave;
   DigitalInput beamBreakSensor;
-  DoubleSolenoid intakeSolenoid;
   double motorMasterSpeed;
-  double motorSlaveSpeed;
  
  
   public Intake() {
@@ -33,14 +27,11 @@ public class Intake extends SubsystemBase {
     intakeMotorMaster.setIdleMode(IdleMode.kBrake);
     intakeMotorMaster.setInverted(false);
     
-    intakeMotorSlave = new CANSparkMax(PortConstants.kIntakeMotorSlavePort, MotorType.kBrushless);
+    /*intakeMotorSlave = new CANSparkMax(PortConstants.kIntakeMotorSlavePort, MotorType.kBrushless);
     intakeMotorSlave.setIdleMode(IdleMode.kBrake);
-    intakeMotorSlave.setInverted(false);
+    intakeMotorSlave.setInverted(false);*/
 
-    intakeMotorSlave.follow(intakeMotorMaster);
     
-    
-    intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, PortConstants.kPneumaticForward, PortConstants.kPneumaticReverse);
     
     
     beamBreakSensor = new DigitalInput(IntakeConstants.kBeamBreak);
@@ -55,9 +46,8 @@ public class Intake extends SubsystemBase {
 
 
   // sets intake motor to a percent speed
-public void setPercentOutput(double motorMasterSpeed, double motorSlaveSpeed){
+public void setPercentOutput(double motorMasterSpeed){
   intakeMotorMaster.set(motorMasterSpeed);
-  intakeMotorSlave.set(motorSlaveSpeed);
 }
 
   // stops intake motor
@@ -72,18 +62,4 @@ public boolean getBeamBreak(){
 }
 
 
- //opens intake
-public void deployIntake(){
-
-  intakeSolenoid.set(Value.kForward);
-
-}
-//closes intake
-public void retractIntake(){
-
-  intakeSolenoid.set(Value.kReverse);
-
-
-}
- 
 }

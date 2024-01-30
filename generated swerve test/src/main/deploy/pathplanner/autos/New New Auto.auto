@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4106867853375344,
-      "y": 5.52
+      "x": 1.0686327678961662,
+      "y": 6.887303864697819
     },
     "rotation": 180.0
   },
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "right start to right note"
+                  "pathName": "Auto start left"
                 }
               }
             ]
@@ -37,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "right note to middle"
+                  "pathName": "left note to center note"
                 }
               }
             ]
@@ -56,10 +56,35 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle note to left note"
+                  "pathName": "center note to right note"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "centerline note 5"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerline to shot right"
           }
         },
         {
