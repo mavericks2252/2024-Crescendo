@@ -6,15 +6,22 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class IntakeNote extends Command {
   /** Creates a new IntakeNote. */
+  Shooter shooter;
   Intake intake;
   double speed;
   double motorMasterSpeed;
-  public IntakeNote(Intake intake, double motorMasterSpeed) {
+  double acceleratorWheelSpeed;
+  
+  public IntakeNote(Intake intake, double motorMasterSpeed, double acceleratorWheelSpeed, Shooter shooter) {
     this.intake = intake;
     this.motorMasterSpeed = motorMasterSpeed;
+    this.shooter = shooter;
+   this.acceleratorWheelSpeed = acceleratorWheelSpeed;
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
   }
@@ -31,6 +38,7 @@ public class IntakeNote extends Command {
   public void execute() {
 
     intake.setPercentOutput(motorMasterSpeed);
+    shooter.acceleratorWheelOutput(acceleratorWheelSpeed);
 
   }
 
@@ -39,15 +47,15 @@ public class IntakeNote extends Command {
   public void end(boolean interrupted) {
 
     intake.stopIntake();
-
+    shooter.stopAcceleratorWheel();
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   // return intake.getBeamBreak();
-   return false;
+   return intake.getBeamBreak();
+   
     
   }
 }

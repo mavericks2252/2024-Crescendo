@@ -56,6 +56,11 @@ public class VisionSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("latency", getTotalLatency());
     SmartDashboard.putNumber("FPGA time", Timer.getFPGATimestamp());
 
+    SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
+    SmartDashboard.putNumber("Target Angle", getTargetAngle());
+    
+    
+
     //if limelight has a target, it prints these numbers
     if(tv){
       SmartDashboard.putNumber("New Target angle test", getSpeakerTargetRotation2d().getRotation().getDegrees());
@@ -103,6 +108,8 @@ public class VisionSubsystem extends SubsystemBase {
 
   }
 
+  
+
   // get the robotPose from Vision based on alliance color
   public Pose2d getRobotPoseVision () {
     
@@ -147,6 +154,25 @@ public class VisionSubsystem extends SubsystemBase {
       return alliance.get() == DriverStation.Alliance.Red; //checks if the alliance color is red
     }
     return false; //returns false if color is not red or if no color
+  }
+
+  public double getSpeakerDistance() {
+
+    double botX = drivetrain.getState().Pose.getX();
+    double botY = drivetrain.getState().Pose.getY();
+    double oppositetSide = botY - FieldConstants.kBlueSpeakerYPosMeters;
+    
+    
+    
+    //return Math.atan2(oppositetSide, botX);
+    return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
+
+  }
+  public double getTargetAngle() {
+    double speakerToPivot = FieldConstants.kPivotToSpeaker;
+    
+   
+    return Math.toDegrees( Math.atan2(speakerToPivot, getSpeakerDistance()));
   }
 
 

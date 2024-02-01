@@ -27,6 +27,7 @@ public final class Constants {
     public static final int kAcceleratorWheelPort = 20;
     public static final int kFeedMotorPort = 21;
     public static final int kacceleratorWheelSlavePort = 19;
+    public static final int kShooterAngleMotorPort = 21;
   }
   
   public static final class IntakeConstants {
@@ -98,6 +99,11 @@ public final class Constants {
     public static final double kRedSpeakerXPosMeters = 15.64;
     public static final double kRedSpeakerYPosMeters = 5.547;
     public static final Translation2d kRedSpeaker = new Translation2d(kRedSpeakerXPosMeters, kRedSpeakerYPosMeters);
+
+    public static final double kSpeakerHeight = 1.981;
+    public static final double kHeightToPivot = 0.482;
+
+    public static final double kPivotToSpeaker = kSpeakerHeight - kHeightToPivot;
     
   }
 

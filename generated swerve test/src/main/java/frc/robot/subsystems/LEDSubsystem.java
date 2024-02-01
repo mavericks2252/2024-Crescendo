@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BlinkinConstants;
 
 public class LEDSubsystem extends SubsystemBase {
-
+  
   Spark blinkin;
 
   /** Creates a new LEDSubsystem. */

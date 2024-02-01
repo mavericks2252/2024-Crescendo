@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PortConstants;
@@ -42,6 +43,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("beambreak boolean", getBeamBreak());
   }
 
 
@@ -57,9 +59,12 @@ public void stopIntake(){
 
 
 public boolean getBeamBreak(){
-  return !beamBreakSensor.get();
-  
+  //return beamBreakSensor.get();
+  if(beamBreakSensor.get()){
+    return false;
+  } 
+  else return true;
+
+
 }
-
-
 }
