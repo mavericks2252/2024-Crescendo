@@ -15,9 +15,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
@@ -26,14 +23,12 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   TalonFX shooterMotorMaster;
   TalonFX shooterMotorSlave;
-  TalonFX shooterAngleMotor;
   double targetRPM = 4250;
   CANSparkMax acceleratorWheel;
   CANSparkMax feedMotor;
   CANSparkMax acceleratorWheelSlave;
-  DutyCycleEncoder throughBoreEncoder;
-  ProfiledPIDController autoAnglePIDController;
-  VisionSubsystem vision;
+
+  
 
 
   private final VelocityTorqueCurrentFOC shooterTV = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
@@ -43,12 +38,7 @@ public class Shooter extends SubsystemBase {
             shooterConfig.Slot1.kP = 9.5;
             shooterConfig.Slot1.kI = 0.6;
             shooterConfig.Slot1.kD = 0.00005;
-
-      TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
-            shooterAngleConfig.Slot2.kP = 0;
-            shooterAngleConfig.Slot2.kI = 0;
-            shooterAngleConfig.Slot2.kD = 0;
-
+      
       shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
       shooterMotorMaster.getConfigurator().apply(shooterConfig);
       shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
@@ -66,16 +56,7 @@ public class Shooter extends SubsystemBase {
       acceleratorWheelSlave = new CANSparkMax(PortConstants.kacceleratorWheelSlavePort, MotorType.kBrushless);
       acceleratorWheelSlave.follow(acceleratorWheel);
 
-      throughBoreEncoder = new DutyCycleEncoder(new DigitalInput(2));
 
-      shooterAngleMotor = new TalonFX(PortConstants.kShooterAngleMotorPort);
-      //shooterAngleMotor.getConfigurator().apply(shooterAngleConfig);
-      shooterAngleMotor.setInverted(false);
-      shooterAngleMotor.setNeutralMode(NeutralModeValue.Coast);
-
-      autoAnglePIDController = new ProfiledPIDController(0, 0, 0, null, 0.1);
-      autoAnglePIDController.enableContinuousInput(0, 360);
-      //autoAnglePIDController.setIZone(0);
 
 
       shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
@@ -91,8 +72,6 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Velocity", getShooterVelocity());
     //SmartDashboard.putString("Shooter return type", getShooterReturnType());
-    SmartDashboard.putNumber("ThroughBore Encoder", getThroughBoreEncoder());
-    SmartDashboard.putNumber("poition Offset", throughBoreEncoder.getPositionOffset());
   }
 
   // sets shooter motor to percent speed
@@ -121,9 +100,7 @@ public void stopAcceleratorWheel(){
   acceleratorWheelSlave.stopMotor();
 }
 
-public double getThroughBoreEncoder(){
-  return throughBoreEncoder.getAbsolutePosition() * 360;
-}
+
 
   
 public void stopFeedMotor(){
@@ -141,20 +118,7 @@ public Double getShooterVelocity(){
   return shooterVelocity*60;
 }
 
-public double autoAngleOutput(){
-  double currentPos = getThroughBoreEncoder();
-  double targetPos = 0;
 
-  return autoAnglePIDController.calculate(currentPos, targetPos);
-}
-
-public void setShooterAngleMotor(){
-  shooterAngleMotor.set(0);
-}
-/*public String getShooterReturnType(){
-  String shooterReturnType = shooterMotorMaster.getVelocity().getUnits();
-  return shooterReturnType;
-}*/
 
 
 

@@ -164,15 +164,15 @@ public class VisionSubsystem extends SubsystemBase {
     
     
     
-    //return Math.atan2(oppositetSide, botX);
-    return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
+    return Math.hypot(oppositetSide, botX);
+    //return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
 
   }
   public double getTargetAngle() {
     double speakerToPivot = FieldConstants.kPivotToSpeaker;
     
    
-    return Math.toDegrees( Math.atan2(speakerToPivot, getSpeakerDistance()));
+    return Math.toDegrees(Math.atan2(speakerToPivot, getSpeakerDistance()));
   }
 
 

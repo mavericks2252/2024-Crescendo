@@ -31,6 +31,7 @@ import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
@@ -65,6 +66,7 @@ public class RobotContainer {
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
   public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain, logger);
   public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionSubsystem);
+  public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionSubsystem);
 
   
   
