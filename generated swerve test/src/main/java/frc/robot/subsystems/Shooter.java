@@ -27,6 +27,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax acceleratorWheel;
   CANSparkMax feedMotor;
   CANSparkMax acceleratorWheelSlave;
+  CANSparkMax amplifierWheel;
 
   
 
@@ -55,6 +56,10 @@ public class Shooter extends SubsystemBase {
 
       acceleratorWheelSlave = new CANSparkMax(PortConstants.kacceleratorWheelSlavePort, MotorType.kBrushless);
       acceleratorWheelSlave.follow(acceleratorWheel);
+
+      amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
+      amplifierWheel.setInverted(false);
+      amplifierWheel.setIdleMode(IdleMode.kCoast);
 
 
 
@@ -88,6 +93,10 @@ public void acceleratorWheelOutput(double acceleratorWheelSpeed){
 public void feedMotorOutput(double feedMotorSpeed){
   feedMotor.set(feedMotorSpeed);
 }
+public void ampScore(double feedMotorSpeed){
+  feedMotor.set(-feedMotorSpeed);
+  amplifierWheel.set(feedMotorSpeed);
+}
 
   // stops shooter motor
 public  void stopShooter(){
@@ -115,8 +124,10 @@ public void setShooterVelocity(double targetRPM){
 
 public Double getShooterVelocity(){
   double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
-  return shooterVelocity*60;
-}
+  return shooterVelocity;
+}  
+
+
 
 
 

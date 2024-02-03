@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -95,5 +96,21 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return m_kinematics.toChassisSpeeds(getState().ModuleStates); //gets the current speed
     }
 
+    public static double getExponential(double input){
+
+        if (Math.abs(input) < DriveTrainConstants.kDeadBand) {
+            return 0;
+        }
+
+        double sign = Math.signum(input);
+        double v = Math.abs(input);
+        
+        double a = DriveTrainConstants.kWeight * Math.pow(v, DriveTrainConstants.kExponent) + (1 - DriveTrainConstants.kWeight) * v;
+        double b = DriveTrainConstants.kWeight * Math.pow(DriveTrainConstants.kDeadBand, DriveTrainConstants.kExponent) + (1 - DriveTrainConstants.kWeight) * DriveTrainConstants.kDeadBand;
+        v = (a - 1 * b) / (1 - b);
+
+        v *= sign;
+        return v;
+    }
    
 }

@@ -4,19 +4,20 @@
 
 package frc.robot.subsystems;
 
+
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BlinkinConstants;
 
 public class LEDSubsystem extends SubsystemBase {
-  
+  boolean speakerMode = true;
   Spark blinkin;
-
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() {
 
     blinkin = new Spark(0);
-
+    SmartDashboard.putBoolean("SpeakerMode", speakerMode);
   }
 
   @Override
@@ -24,7 +25,6 @@ public class LEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     setLEDColor(BlinkinConstants.kFire);
-
   }
 
     public void setLEDColor(double color){
@@ -32,5 +32,20 @@ public class LEDSubsystem extends SubsystemBase {
       blinkin.set(color);
 
     }
+
+   
+
+    public void setSpeakerMode(){
+      
+      if(speakerMode){
+        blinkin.set(BlinkinConstants.kBlue);
+        speakerMode = false;
+      }
+      else{
+        blinkin.set(BlinkinConstants.kRed);
+        speakerMode = true;
+      }
+    }
+
 
 }
