@@ -39,20 +39,13 @@ public class TunerConstants {
     // This needs to be tuned to your individual robot
     public static final double kSpeedAt12VoltsMps = 9.46;
 
-    public static final double kMaxDrivetrainSpeed = 6; // 6 meters per second desired top speed
-    public static final double kMaxAngularRate = 1.5; // 3/4 of a rotation per second max angular velocity
-    public static final double kMaxAcceleration = 3; //meters per second squared
-    public static final double kMaxAngularAcceleration = 4; // radions per second squared
-
-
-
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5714285714285716;
 
     private static final double kDriveGearRatio = 6.746031746031747;
     private static final double kSteerGearRatio = 21.428571428571427;
-    private static final double kWheelRadiusInches = 1.99;
+    private static final double kWheelRadiusInches = 4;
 
     private static final boolean kSteerMotorReversed = true;
     private static final boolean kInvertLeftSide = false;

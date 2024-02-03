@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
@@ -28,6 +29,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax feedMotor;
   CANSparkMax acceleratorWheelSlave;
   CANSparkMax amplifierWheel;
+  DigitalInput beamBreakSensor;
 
   
 
@@ -61,6 +63,7 @@ public class Shooter extends SubsystemBase {
       amplifierWheel.setInverted(false);
       amplifierWheel.setIdleMode(IdleMode.kCoast);
 
+      beamBreakSensor = new DigitalInput(PortConstants.kShooterBeamBreakPort);
 
 
 
@@ -76,6 +79,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Velocity", getShooterVelocity());
+    SmartDashboard.putBoolean("Shooter Beam Break", getBeambreak());
     //SmartDashboard.putString("Shooter return type", getShooterReturnType());
   }
 
@@ -126,6 +130,13 @@ public Double getShooterVelocity(){
   double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
   return shooterVelocity;
 }  
+
+public boolean getBeambreak(){
+  if(beamBreakSensor.get()){
+    return false;
+  }
+  else return true;
+}
 
 
 

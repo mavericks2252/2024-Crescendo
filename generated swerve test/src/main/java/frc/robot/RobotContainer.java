@@ -151,7 +151,7 @@ public class RobotContainer {
     m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, shooter));
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
-    m_operatorController.leftBumper().toggleOnTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
+    m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
 
     
     

@@ -58,6 +58,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
     SmartDashboard.putNumber("Target Angle", getTargetAngle());
+
+    SmartDashboard.putNumber("Amp Distance", getAmpDistance());
     
     
 
@@ -173,6 +175,14 @@ public class VisionSubsystem extends SubsystemBase {
     
    
     return Math.toDegrees(Math.atan2(speakerToPivot, getSpeakerDistance()));
+  }
+
+  public double getAmpDistance() {
+    double botX = drivetrain.getState().Pose.getX();
+    double botY = drivetrain.getState().Pose.getY();
+    double oppositetSide = botY - FieldConstants.kBlueAmpYPosMeters;
+
+    return Math.hypot(oppositetSide, botX);
   }
 
 

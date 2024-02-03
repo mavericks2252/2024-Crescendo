@@ -11,19 +11,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BlinkinConstants;
 
 public class LEDSubsystem extends SubsystemBase {
-  boolean speakerMode = true;
+  public boolean speakerMode = true;
   Spark blinkin;
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem() {
 
     blinkin = new Spark(0);
-    SmartDashboard.putBoolean("SpeakerMode", speakerMode);
+ 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+   SmartDashboard.putBoolean("SpeakerMode", speakerMode);
     setLEDColor(BlinkinConstants.kFire);
   }
 
@@ -33,8 +33,10 @@ public class LEDSubsystem extends SubsystemBase {
 
     }
 
-   
 
+    
+      //Speaker mode = true is speaker mode
+      //Speaker mode = false is amp mode
     public void setSpeakerMode(){
       
       if(speakerMode){
