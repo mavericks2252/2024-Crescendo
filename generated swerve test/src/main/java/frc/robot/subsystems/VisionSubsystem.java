@@ -131,7 +131,7 @@ public class VisionSubsystem extends SubsystemBase {
   //if the target is present and large enough on screen
   public void addVisionRobotPose(){
 
-    if (tv && ta > .4){
+    if (tv && ta > 2){
       drivetrain.addVisionMeasurement(getRobotPoseVision(), Timer.getFPGATimestamp() - getTotalLatency()); //corrects the odometry pose and takes in the latency offset
       SmartDashboard.putBoolean("vision pose added", true);
     }

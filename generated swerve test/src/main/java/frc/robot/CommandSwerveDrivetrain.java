@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -8,16 +9,24 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -70,24 +79,32 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    //Configure auto builder
-    private void configPathPlanner(){
+    public HolonomicPathFollowerConfig getHolonomicPathFollowerConfig(){
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
             //finds the radius by taking the larger of the locations
-        }
+           } 
+
+            return new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0), //constants for the translation controller
+                                                    new PIDConstants(10, 0, 0), //constants for the rotation controller
+                                                    TunerConstants.kSpeedAt12VoltsMps, //sets the max speed 
+                                                    driveBaseRadius,
+                                                    new ReplanningConfig());
+        
+    }
+
+
+    //Configure auto builder
+    private void configPathPlanner(){
+        
 
         AutoBuilder.configureHolonomic(
                 ()->this.getState().Pose, //gives the current robot location
                 this::seedFieldRelative,  //takes the location and makes it the pose
-                this::getCurrentChassisSpeeds, 
-                (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), //makes a command that applies the chassis speed
-                 new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0), //constants for the translation controller
-                                                    new PIDConstants(10, 0, 0), //constants for the rotation controller
-                                                    TunerConstants.kSpeedAt12VoltsMps, //sets the max speed 
-                                                    driveBaseRadius,
-                                                    new ReplanningConfig()),
+                this::getCurrentChassisSpeeds,  //makes a command that applies the chassis speed
+                (speeds)->this.setControl(autoRequest.withSpeeds(speeds)),
+                getHolonomicPathFollowerConfig(),
                  ()->false, //determines the red or blue team
                  this);
     }
@@ -112,5 +129,53 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         v *= sign;
         return v;
     }
+
+    public  PathPlannerPath getAmpPath(){
+        var alliance = DriverStation.getAlliance();
+        Pose2d ampPos;
+        Pose2d infrontAmpPos;
+        
+        if(alliance.get() == DriverStation.Alliance.Blue){
+            infrontAmpPos = FieldConstants.kInfrontBluePos;
+            ampPos = FieldConstants.kBlueAmpScorePose;
+        }
+        else {
+            infrontAmpPos = FieldConstants.kInfrontRedPos;
+            ampPos = FieldConstants.kRedAmp;
+        }
+        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+            getState().Pose,
+            infrontAmpPos,
+            ampPos
+            
+        );
+
+        return new PathPlannerPath(
+            bezierPoints,
+            DriveTrainConstants.kPathConstraints,
+            new GoalEndState(0.0, Rotation2d.fromDegrees(90))
+            );
+
+
+        
+    }
+
+    public Command followPathCommand(PathPlannerPath path){
+        
+        return new FollowPathHolonomic(
+            path, 
+            ()-> this.getState().Pose, //supplies the robot pose
+            this::getCurrentChassisSpeeds, //supplies the current chassis speed
+            (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), //will drive robot using given chassis speeds
+            getHolonomicPathFollowerConfig(), //
+            ()->false, //flips path for opposite side
+            this //requiering this drivetrain
+            );
+
+
+
+    }
+
+
    
 }

@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -107,19 +112,34 @@ public final class Constants {
 
     public static final double kPivotToSpeaker = kSpeakerHeight - kHeightToPivot;
 
+    public static final double kRobotOffsetMeters = .5;
     public static final double kBlueAmpXPosMeters = 1.841;
-    public static final double kBlueAmpYPosMeters = 8.204;
-    public static final Translation2d kBlueAmp = new Translation2d(kBlueAmpXPosMeters, kBlueAmpYPosMeters);
+    public static final double kBlueAmpYPosMeters = 8.204; //8.204
+    public static final Pose2d kBlueAmp = new Pose2d(kBlueAmpXPosMeters, kBlueAmpYPosMeters, Rotation2d.fromDegrees(90));
+    public static final Pose2d kBlueAmpScorePose = new Pose2d(kBlueAmpXPosMeters, 
+                                                              kBlueAmpYPosMeters - kRobotOffsetMeters,
+                                                              Rotation2d.fromDegrees(90));
+    public static final double kInfrontBlueAmpYPos = kBlueAmpYPosMeters - 0.5 - kRobotOffsetMeters;
+    public static final Pose2d kInfrontBluePos = new Pose2d(kBlueAmpXPosMeters, kInfrontBlueAmpYPos, new Rotation2d(90));
 
     public static final double kRedAmpXPosMeters = 14.7;
     public static final double kRedAmpYPosMeters = 8.204;
-    public static final Translation2d kRedAmp = new Translation2d(kRedAmpXPosMeters, kRedAmpYPosMeters);
+    public static final Pose2d kRedAmp = new Pose2d(kRedAmpXPosMeters, kRedAmpYPosMeters,Rotation2d.fromDegrees(90));
+    public static final double kInfrontRedAmpYPos = kRedAmpYPosMeters - .5;
+    public static final Pose2d kInfrontRedPos = new Pose2d(kRedAmpXPosMeters, kInfrontRedAmpYPos, new Rotation2d(90));
   }
 
   public final class DriveTrainConstants {
     public static final double kExponent = 2;
     public static final double kWeight = 0.75;
     public static final double kDeadBand = 0.1;
+
+    public static final PathConstraints kPathConstraints = new PathConstraints(
+      2, //max Velocity 3
+      2, //max Acceleration 3
+      720, //max angular velocity 720
+      540); //max angular acceleration 540
+
   }
 
 

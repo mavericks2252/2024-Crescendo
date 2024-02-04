@@ -145,6 +145,8 @@ public class RobotContainer {
 
     m_driver_controler.start().onTrue(new InstantCommand(() -> visionSubsystem.seedRobotPoseFromVision()));
 
+    m_driver_controler.rightBumper().onTrue(drivetrain.followPathCommand(drivetrain.getAmpPath()));
+
 
     //Operator Buttons
     m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85,1, 4250));

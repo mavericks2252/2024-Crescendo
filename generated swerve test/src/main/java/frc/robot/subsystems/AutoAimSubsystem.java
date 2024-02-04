@@ -26,11 +26,11 @@ public class AutoAimSubsystem extends SubsystemBase {
     
       
       
-    autoAimPIDController= new ProfiledPIDController(4, 0.25, 0, aim_PIDConstraints,.01);
+    autoAimPIDController= new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints,.01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
     
     //autoAimPIDController.setTolerance(3);
-    autoAimPIDController.setIZone(.4);
+    autoAimPIDController.setIZone(.5);
   }
   @Override
   public void periodic() {
