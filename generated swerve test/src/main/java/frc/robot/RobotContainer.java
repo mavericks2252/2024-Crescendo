@@ -14,8 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,12 +31,13 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
+import frc.robot.subsystems.VisionPhotonSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
   
   //Swerve Stuff
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
+  private double MaxSpeed = 3; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -45,7 +45,7 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.15).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -64,9 +64,10 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-  public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain, logger);
+  public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
   public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionSubsystem);
   public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionSubsystem);
+  public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
 
   
   
@@ -86,7 +87,7 @@ public class RobotContainer {
 
 
 
-  public Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
+  
 
 
 

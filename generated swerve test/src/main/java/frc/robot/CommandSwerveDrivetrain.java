@@ -144,7 +144,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             ampPos = FieldConstants.kRedAmp;
         }
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-            getState().Pose,
+            //getState().Pose,
             infrontAmpPos,
             ampPos
             

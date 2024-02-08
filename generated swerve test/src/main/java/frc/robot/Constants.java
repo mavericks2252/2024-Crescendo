@@ -6,9 +6,14 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 
 /**
@@ -140,6 +145,16 @@ public final class Constants {
       720, //max angular velocity 720
       540); //max angular acceleration 540
 
+  }
+
+  public final class VisionConstants {
+    public static final String kCameraName = "Camera_Module_v1";
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+    
+    public static final Transform3d kRobotToCam = new Transform3d(
+      new Translation3d(0, 0, 0), 
+      new Rotation3d(0, 23, 0)
+      );
   }
 
 

@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.LimelightHelpers;
-import frc.robot.Telemetry;
 import frc.robot.Constants.FieldConstants;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -26,12 +25,11 @@ public class VisionSubsystem extends SubsystemBase {
   boolean tv = false;
   CommandSwerveDrivetrain drivetrain;
   Field2d mField2d;
-  Telemetry telemetry;
   String limelight = "limelight";
   
-  public VisionSubsystem(CommandSwerveDrivetrain drivetrain, Telemetry telemetry) {
+  public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
 
-    this.telemetry = telemetry;
+    
     this.drivetrain = drivetrain;
     mField2d = new Field2d();
     LimelightHelpers.setLEDMode_ForceOff(limelight);
@@ -71,10 +69,10 @@ public class VisionSubsystem extends SubsystemBase {
     
     
 
-    addVisionRobotPose();
+    /**addVisionRobotPose();
     Pose2d currentRobotPos = drivetrain.getState().Pose; //sets currentRobotPos to the position of the robot
     SmartDashboard.putString("Robto OdometryPose", currentRobotPos.toString());
-    mField2d.setRobotPose(currentRobotPos); 
+    mField2d.setRobotPose(currentRobotPos); **/
      
      
     
@@ -131,7 +129,7 @@ public class VisionSubsystem extends SubsystemBase {
   //if the target is present and large enough on screen
   public void addVisionRobotPose(){
 
-    if (tv && ta > 2){
+    if (tv && ta >.75){
       drivetrain.addVisionMeasurement(getRobotPoseVision(), Timer.getFPGATimestamp() - getTotalLatency()); //corrects the odometry pose and takes in the latency offset
       SmartDashboard.putBoolean("vision pose added", true);
     }
