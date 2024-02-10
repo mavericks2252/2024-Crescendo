@@ -79,7 +79,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public Pose2d getCurrentPose2d(){
-    return drivetrain.getState().Pose; // sets the method getCurrentPose2d to the value of the current pose
+    return drivetrain.getState().Pose; //sets the method getCurrentPose2d to the value of the current pose
   }
 
 
@@ -100,7 +100,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
     
     //double xRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getX(); //get xpose of the robot
-    //double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getY();  // get the ypose of the robot
+    //double yRobotPosMeters = LimelightHelpers.getBotPose2d_wpiBlue(limelight).getY();  //get the ypose of the robot
 
     // return a pose 2d of robot location and target angle of speaker
     return new Pose2d(xRobotPosMeters, yRobotPosMeters, (new Rotation2d(speakerPos.getX() - xRobotPosMeters, speakerPos.getY() - yRobotPosMeters))); //finds the pose of the robot using the location and angle of the speaker

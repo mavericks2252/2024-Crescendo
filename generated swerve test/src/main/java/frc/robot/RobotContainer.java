@@ -151,11 +151,12 @@ public class RobotContainer {
 
     //Operator Buttons
     m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85,1, 4250));
-    m_operatorController.a().toggleOnTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, shooter));
+    m_operatorController.a().whileTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, shooter));
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
 
+    
     
     
   }

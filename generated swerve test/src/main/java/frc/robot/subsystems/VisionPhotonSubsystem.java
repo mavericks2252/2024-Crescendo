@@ -44,8 +44,6 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     var visionEst = getEstimatedGlobePose();
 
-    SmartDashboard.putString("photon vision pose", camera.getLatestResult().toString());
-
     visionEst.ifPresent(
           est -> {
             //var estPose = est.estimatedPose.toPose2d();
@@ -57,8 +55,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
               est.timestampSeconds);
 
               SmartDashboard.putString("photon pose", est.estimatedPose.toPose2d().toString());
-              SmartDashboard.putNumber("time stamp", est.timestampSeconds);
-          });
+             });
        
 
 
