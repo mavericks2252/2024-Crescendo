@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
@@ -32,25 +35,26 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
   
   //Swerve Stuff
-  private double MaxSpeed = 3; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public static double MaxSpeed = 2.25; // 6 meters per second desired top speed
+  public static double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
-  final CommandXboxController m_driver_controler = new CommandXboxController(0); // My m_driver_controler
+  public static final CommandXboxController m_driver_controler = new CommandXboxController(0); // My m_driver_controler
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+ public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  
 
 
   private final SwerveRequest.FieldCentric autoAimDrive = new SwerveRequest.FieldCentric()
@@ -64,10 +68,11 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-  public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
-  public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionSubsystem);
-  public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionSubsystem);
-  public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
+  //public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
+  public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);  
+  public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionPhotonSubsystem);
+  public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionPhotonSubsystem);
+
 
   
   
@@ -108,28 +113,29 @@ public class RobotContainer {
         ));
     
     m_driver_controler.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    /*m_driver_controler.b().whileTrue(drivetrain
+    m_driver_controler.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-m_driver_controler.getLeftY(), -m_driver_controler.getLeftX()))));
     
-    
-    
-        m_driver_controler.x().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with
+    m_driver_controler.x().whileTrue(drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-(visionSubsystem.getSteeringPercentage()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));*/
+        .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(
+          autoAimSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise with negative X (left)
+        ));
 
-        m_driver_controler.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-m_driver_controler.getLeftY(), -m_driver_controler.getLeftX()))));
-    
-    
-    
-        m_driver_controler.x().whileTrue(drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with
+
+       m_driver_controler.rightBumper().whileTrue(new ParallelCommandGroup( drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(
-              autoAimSubsystem.autoAimRateOutput()) // Drive counterclockwise with negative X (left)
-        ));
+              autoAimSubsystem.noteAutoAimRateOutput())), 
+              
+              new IntakeNote(intake, 
+              IntakeConstants.kIntakeMasterSpeed, 
+              MaxSpeed, 
+              IntakeConstants.kCenteringWheelSpeed, 
+              shooter))
+        );
 
 
 
@@ -144,14 +150,14 @@ public class RobotContainer {
 
     //Driver Buttons
 
-    m_driver_controler.start().onTrue(new InstantCommand(() -> visionSubsystem.seedRobotPoseFromVision()));
+    m_driver_controler.start().onTrue(new InstantCommand(() -> visionPhotonSubsystem.seedRobotPoseFromVision()));
 
-    m_driver_controler.rightBumper().onTrue(drivetrain.followPathCommand(drivetrain.getAmpPath()));
-
+    m_driver_controler.y().onTrue(  drivetrain.ampPathCommand());
+    
 
     //Operator Buttons
     m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85,1, 4250));
-    m_operatorController.a().whileTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, shooter));
+    m_operatorController.a().whileTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, IntakeConstants.kCenteringWheelSpeed, shooter));
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
@@ -169,7 +175,7 @@ public class RobotContainer {
 
 
     //named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 1, shooter));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 1, IntakeConstants.kCenteringWheelSpeed, shooter));
     NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 4000, 0.75, 0.85, 1, 4250));
 
 

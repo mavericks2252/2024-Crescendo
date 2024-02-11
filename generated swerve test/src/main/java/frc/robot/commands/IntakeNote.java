@@ -15,12 +15,14 @@ public class IntakeNote extends Command {
   double speed;
   double motorMasterSpeed;
   double acceleratorWheelSpeed;
+  double centeringMotorSpeed;
   
-  public IntakeNote(Intake intake, double motorMasterSpeed, double acceleratorWheelSpeed, Shooter shooter) {
+  public IntakeNote(Intake intake, double motorMasterSpeed, double acceleratorWheelSpeed, double centeringMotorSpeed, Shooter shooter) {
     this.intake = intake;
     this.motorMasterSpeed = motorMasterSpeed;
     this.shooter = shooter;
    this.acceleratorWheelSpeed = acceleratorWheelSpeed;
+   this.centeringMotorSpeed = centeringMotorSpeed;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
@@ -37,7 +39,7 @@ public class IntakeNote extends Command {
   @Override
   public void execute() {
 
-    intake.setPercentOutput(motorMasterSpeed);
+    intake.setPercentOutput(motorMasterSpeed, centeringMotorSpeed);
     shooter.acceleratorWheelOutput(acceleratorWheelSpeed);
 
   }

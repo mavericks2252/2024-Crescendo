@@ -41,12 +41,14 @@ public final class Constants {
     public static final int kShooterAngleMotorPort = 22;
     public static final int kAmplifierWheelPort = 23;
     public static final int kShooterBeamBreakPort = 24;
+    public static final int kCenteringWheelPort = 25;
   }
   
   public static final class IntakeConstants {
 
     public static final int kBeamBreak = 0;
     public static final double kIntakeMasterSpeed = 1;
+    public static final double kCenteringWheelSpeed = 1;
 
   }
 
@@ -151,10 +153,13 @@ public final class Constants {
   public final class VisionConstants {
     public static final String kCameraName = "Camera_Module_v1";
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+
+    public static final int kApriltagePipeline = 0;
+    public static final int kNotePipeline = 1;
     
     public static final Transform3d kRobotToCam = new Transform3d(
       new Translation3d(0, 0, 0.27), 
-      new Rotation3d(0, Units.degreesToRadians(-23), 0)
+      new Rotation3d(0, Units.degreesToRadians(-22), 0)
       );
   }
 

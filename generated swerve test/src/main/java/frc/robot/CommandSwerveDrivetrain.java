@@ -37,6 +37,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+    Pose2d ampPos = new Pose2d(0, 0, new Rotation2d(0));
+    Pose2d infrontAmpPos = new Pose2d(0, 0, new Rotation2d(0));
+
+   
 
 
     
@@ -130,19 +134,28 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return v;
     }
 
-    public  PathPlannerPath getAmpPath(){
-        var alliance = DriverStation.getAlliance();
-        Pose2d ampPos;
-        Pose2d infrontAmpPos;
+   
+
         
-        if(alliance.get() == DriverStation.Alliance.Blue){
-            infrontAmpPos = FieldConstants.kInfrontBluePos;
-            ampPos = FieldConstants.kBlueAmpScorePose;
+    
+
+    public Command ampPathCommand(){
+
+
+        var alliance = DriverStation.getAlliance();        
+        
+        if (alliance.isPresent()) {
+            
+            if(alliance.get() == DriverStation.Alliance.Blue){
+                infrontAmpPos = FieldConstants.kInfrontBluePos;
+                ampPos = FieldConstants.kBlueAmpScorePose;
+            }
+            else {
+                infrontAmpPos = FieldConstants.kInfrontRedPos;
+                ampPos = FieldConstants.kRedAmp;
+            } 
         }
-        else {
-            infrontAmpPos = FieldConstants.kInfrontRedPos;
-            ampPos = FieldConstants.kRedAmp;
-        }
+
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
             //getState().Pose,
             infrontAmpPos,
@@ -150,20 +163,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             
         );
 
-        return new PathPlannerPath(
+        PathPlannerPath newpath = new PathPlannerPath(
             bezierPoints,
             DriveTrainConstants.kPathConstraints,
             new GoalEndState(0.0, Rotation2d.fromDegrees(90))
             );
-
-
-        
-    }
-
-    public Command followPathCommand(PathPlannerPath path){
         
         return new FollowPathHolonomic(
-            path, 
+            newpath, 
             ()-> this.getState().Pose, //supplies the robot pose
             this::getCurrentChassisSpeeds, //supplies the current chassis speed
             (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), //will drive robot using given chassis speeds

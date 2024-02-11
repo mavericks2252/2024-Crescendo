@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase {
   
   CANSparkMax intakeMotorMaster;
   DigitalInput beamBreakSensor;
-  double motorMasterSpeed;
+  CANSparkMax centeringWheelMotor;
  
  
   public Intake() {
@@ -27,8 +27,12 @@ public class Intake extends SubsystemBase {
     intakeMotorMaster = new CANSparkMax(PortConstants.kIntakeMotorMasterPort, MotorType.kBrushless);
     intakeMotorMaster.setIdleMode(IdleMode.kBrake);
     intakeMotorMaster.setInverted(true);
-    intakeMotorMaster.setSmartCurrentLimit(30);
+    intakeMotorMaster.setSmartCurrentLimit(40);
   
+    centeringWheelMotor = new CANSparkMax(PortConstants.kCenteringWheelPort, MotorType.kBrushless);
+    centeringWheelMotor.restoreFactoryDefaults();
+    centeringWheelMotor.setIdleMode(IdleMode.kBrake);
+    centeringWheelMotor.setInverted(false);
     
     
     
@@ -45,14 +49,19 @@ public class Intake extends SubsystemBase {
 
 
   // sets intake motor to a percent speed
-public void setPercentOutput(double motorMasterSpeed){
+public void setPercentOutput(double motorMasterSpeed, double centeringMotorSpeed){
   intakeMotorMaster.set(motorMasterSpeed);
+  centeringWheelMotor.set(centeringMotorSpeed);
 }
+
 
   // stops intake motor
 public void stopIntake(){
   intakeMotorMaster.stopMotor();
+  centeringWheelMotor.stopMotor();
 }
+
+
 
 
 public boolean getBeamBreak(){
@@ -64,4 +73,7 @@ public boolean getBeamBreak(){
 
 
 }
+
+
+
 }

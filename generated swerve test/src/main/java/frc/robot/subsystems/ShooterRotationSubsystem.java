@@ -21,13 +21,15 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   DutyCycleEncoder throughBoreEncoder;
   ProfiledPIDController autoAnglePIDController;
   TalonFX shooterAngleMotor;
-  VisionSubsystem vision;
+  //VisionSubsystem vision;
+  VisionPhotonSubsystem photon;
 
   TrapezoidProfile.Constraints angle_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate, TunerConstants.kMaxAngularAcceleration);
 
   /** Creates a new ShooterRotationSubsystem. */
-  public ShooterRotationSubsystem(VisionSubsystem vision) {
-    this.vision = vision;
+  public ShooterRotationSubsystem(VisionPhotonSubsystem photon) {
+    //this.vision = vision;
+    this.photon = photon;
     TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
             shooterAngleConfig.Slot2.kP = 0;
             shooterAngleConfig.Slot2.kI = 0;
@@ -68,7 +70,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
   public double getAutoAngleOutput(){
     double currentPos = getThroughBoreEncoder();
-    double targetPos = vision.getTargetAngle();
+    double targetPos = photon.getTargetAngle();
   
     return autoAnglePIDController.calculate(currentPos, targetPos);
   }
