@@ -49,13 +49,14 @@ public final class Constants {
     public static final int kBeamBreak = 0;
     public static final double kIntakeMasterSpeed = 1;
     public static final double kCenteringWheelSpeed = 1;
-
+    public static final double kAcceleratorWheelSpeed = 0.2625;
   }
 
   public static final class ShooterConstants{
     public static final int kShooterMotorMasterSpeed = 4250;
     public static final int kShooterMotorSlaveSpeed = 4250;
     public static final int kacceleratorWheelSpeed = 1;
+    public static final double kIntakeSpeed = 1;
   }
     
   

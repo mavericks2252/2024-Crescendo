@@ -24,9 +24,8 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   TalonFX shooterMotorMaster;
   TalonFX shooterMotorSlave;
-  double targetRPM = 4250;
+  double targetRPM;
   CANSparkMax acceleratorWheel;
-  CANSparkMax feedMotor;
   CANSparkMax acceleratorWheelSlave;
   CANSparkMax amplifierWheel;
   DigitalInput beamBreakSensor;
@@ -56,8 +55,7 @@ public class Shooter extends SubsystemBase {
       acceleratorWheel.setInverted(true);
       acceleratorWheel.setIdleMode(IdleMode.kCoast);
 
-      acceleratorWheelSlave = new CANSparkMax(PortConstants.kacceleratorWheelSlavePort, MotorType.kBrushless);
-      acceleratorWheelSlave.follow(acceleratorWheel);
+      
 
       amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
       amplifierWheel.setInverted(false);
@@ -80,44 +78,21 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Velocity", getShooterVelocity());
     SmartDashboard.putBoolean("Shooter Beam Break", getBeambreak());
-    //SmartDashboard.putString("Shooter return type", getShooterReturnType());
-  }
 
-  // sets shooter motor to percent speed
-/*public void setPercentOutput(double topMotorSpeed, double bottomMotorSpeed){
-  shooterMotorMaster.set(topMotorSpeed);
-  shooterMotorSlave.set(bottomMotorSpeed);
-}*/
+  }
 
 
 public void acceleratorWheelOutput(double acceleratorWheelSpeed){
   acceleratorWheel.set(acceleratorWheelSpeed);
-  acceleratorWheelSlave.set(acceleratorWheelSpeed);
 }
-public void feedMotorOutput(double feedMotorSpeed){
-  feedMotor.set(feedMotorSpeed);
-}
-public void ampScore(double feedMotorSpeed){
-  feedMotor.set(-feedMotorSpeed);
-  amplifierWheel.set(feedMotorSpeed);
+public void ampScore(double acceleratorWheelSpeed){
+  acceleratorWheel.set(-acceleratorWheelSpeed);
+  amplifierWheel.set(acceleratorWheelSpeed);
 }
 
-  // stops shooter motor
-public  void stopShooter(){
-  shooterMotorMaster.stopMotor();
-  shooterMotorSlave.stopMotor();
-}
-
-public void stopAcceleratorWheel(){
-  acceleratorWheel.stopMotor();
-  acceleratorWheelSlave.stopMotor();
-}
-
-
-
-  
-public void stopFeedMotor(){
-  feedMotor.stopMotor();
+public void intakeNote (double intakeSpeed) {
+  acceleratorWheel.set(intakeSpeed);
+  amplifierWheel.set(intakeSpeed);  
 }
 
 public void setShooterVelocity(double targetRPM){
@@ -130,6 +105,25 @@ public Double getShooterVelocity(){
   double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
   return shooterVelocity;
 }  
+
+
+
+  // stops shooter motor
+public  void stopShooter(){
+  shooterMotorMaster.stopMotor();
+  shooterMotorSlave.stopMotor();
+}
+
+public void stopAcceleratorWheel(){
+  acceleratorWheel.stopMotor();
+  
+}
+  
+public void stopAmplifierWheel(){
+  amplifierWheel.stopMotor();
+}
+
+
 
 public boolean getBeambreak(){
   if(beamBreakSensor.get()){

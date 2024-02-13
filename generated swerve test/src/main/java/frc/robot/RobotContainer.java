@@ -12,11 +12,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,7 +68,7 @@ public class RobotContainer {
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
   //public final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
   public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);  
-  public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionPhotonSubsystem);
+  public final AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem(visionPhotonSubsystem, ledSubsystem);
   public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionPhotonSubsystem);
 
 
@@ -124,18 +122,18 @@ public class RobotContainer {
         ));
 
 
-       m_driver_controler.rightBumper().whileTrue(new ParallelCommandGroup( drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(
-              autoAimSubsystem.noteAutoAimRateOutput())), 
-              
-              new IntakeNote(intake, 
-              IntakeConstants.kIntakeMasterSpeed, 
-              MaxSpeed, 
-              IntakeConstants.kCenteringWheelSpeed, 
-              shooter))
-        );
+    m_driver_controler.a().whileTrue(new ParallelCommandGroup( 
+      
+     drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(
+          autoAimSubsystem.noteAutoAimRateOutput())), 
+          
+          new IntakeNote(intake, 
+          shooterRotationSubsystem,
+          IntakeConstants.kIntakeMasterSpeed, 
+          shooter))
+    );
 
 
 
@@ -156,8 +154,8 @@ public class RobotContainer {
     
 
     //Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85,1, 4250));
-    m_operatorController.a().whileTrue(new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 0.2625, IntakeConstants.kCenteringWheelSpeed, shooter));
+    m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85, 4250));
+    m_driver_controler.rightBumper().whileTrue(new IntakeNote(intake, shooterRotationSubsystem, IntakeConstants.kIntakeMasterSpeed, shooter));
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
@@ -175,8 +173,8 @@ public class RobotContainer {
 
 
     //named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, IntakeConstants.kIntakeMasterSpeed, 1, IntakeConstants.kCenteringWheelSpeed, shooter));
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 4000, 0.75, 0.85, 1, 4250));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, IntakeConstants.kIntakeMasterSpeed, shooter));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 4000, 0.75, 0.85, 4250));
 
 
     

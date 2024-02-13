@@ -15,16 +15,14 @@ public class ShootNote extends Command {
   double bottomMotorRpm;
   double topMotorSpeed;
   double bottomMotorSpeed;
-  double feedMotorSpeed;
   double targetRPM;
-  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed, double feedMotorSpeed, double targetRPM) {
+  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed, double targetRPM) {
     this.shooter = shooter;
     //this.acceleratorWheelSpeed = acceleratorWheelSpeed;
     this.topMotorRpm = topMotorRpm;
     this.bottomMotorRpm = bottomMotorRpm;
     this.topMotorSpeed = topMotorSpeed;
     this.bottomMotorSpeed = bottomMotorSpeed;
-    this.feedMotorSpeed = feedMotorSpeed;
     this.targetRPM = targetRPM;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
@@ -45,7 +43,6 @@ public class ShootNote extends Command {
     //shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
     shooter.setShooterVelocity(targetRPM);
     //shooter.acceleratorWheelOutput(acceleratorWheelSpeed);
-    shooter.feedMotorOutput(feedMotorSpeed);
   }
 
 
@@ -55,7 +52,6 @@ public class ShootNote extends Command {
 
     //shooter.stopShooter();
       shooter.setShooterVelocity(1500);
-    shooter.stopFeedMotor();
     shooter.stopAcceleratorWheel();
 
   }
