@@ -10,7 +10,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
@@ -63,7 +62,7 @@ private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentr
   public void execute() {
 
     if(photon.camera.getLatestResult().hasTargets()){
-      intake.setPercentOutput(IntakeConstants.kIntakeMasterSpeed, IntakeConstants.kCenteringWheelSpeed);
+      intake.setIntakeSpeed();
       
       
       drivetrain.applyRequest(() -> autoNote.withVelocityX(1).withRotationalRate(autoAimSubsystem.noteAutoAimRateOutput()));

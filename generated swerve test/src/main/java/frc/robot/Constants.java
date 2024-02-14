@@ -31,23 +31,28 @@ public final class Constants {
   public static final class PortConstants {
 
     
-    public static final int kIntakeMotorMasterPort = 15;
+    public static final int kIntakeMotorPort = 15;
     public static final int kShooterMotorSlavePort = 18;
     public static final int kShooterMotorMasterPort = 17;
-    public static final int kIntakeMotorSlavePort = 16;
     public static final int kAcceleratorWheelPort = 20;
     public static final int kFeedMotorPort = 21;
     public static final int kacceleratorWheelSlavePort = 19;
     public static final int kShooterAngleMotorPort = 22;
     public static final int kAmplifierWheelPort = 23;
-    public static final int kShooterBeamBreakPort = 24;
     public static final int kCenteringWheelPort = 25;
+
+
+    public static final int kShotBeamBreak = 1;
+    public static final int kAmpBeamBreak = 2;
+    public static final int kMiddleBackBeamBreak = 3;
+    public static final int kMiddleFrontBeamBreak = 4;
+    public static final int kThroughBoreEncoder = 5;
   }
   
   public static final class IntakeConstants {
 
     public static final int kBeamBreak = 0;
-    public static final double kIntakeMasterSpeed = 1;
+    public static final double kIntakeSpeed = 1;
     public static final double kCenteringWheelSpeed = 1;
     public static final double kAcceleratorWheelSpeed = 0.2625;
   }
@@ -57,6 +62,11 @@ public final class Constants {
     public static final int kShooterMotorSlaveSpeed = 4250;
     public static final int kacceleratorWheelSpeed = 1;
     public static final double kIntakeSpeed = 1;
+    public static final double kIntakeAngle = 0;
+    public static final double kAmpAngle = 0;
+    public static final double kShooterGearBoxRatio = 337.6592593;
+    public static final int kForwardSoftLimit = 5;
+    public static final int kReverseSoftLimit = 320;
   }
     
   

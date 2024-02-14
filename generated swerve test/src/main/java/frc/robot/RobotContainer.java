@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.IntakeNote;
@@ -131,7 +130,6 @@ public class RobotContainer {
           
           new IntakeNote(intake, 
           shooterRotationSubsystem,
-          IntakeConstants.kIntakeMasterSpeed, 
           shooter))
     );
 
@@ -155,7 +153,7 @@ public class RobotContainer {
 
     //Operator Buttons
     m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed, ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85, 4250));
-    m_driver_controler.rightBumper().whileTrue(new IntakeNote(intake, shooterRotationSubsystem, IntakeConstants.kIntakeMasterSpeed, shooter));
+    m_driver_controler.rightBumper().whileTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
@@ -173,7 +171,7 @@ public class RobotContainer {
 
 
     //named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, IntakeConstants.kIntakeMasterSpeed, shooter));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, shooter));
     NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, 4000, 4000, 0.75, 0.85, 4250));
 
 

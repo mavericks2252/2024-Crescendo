@@ -36,13 +36,13 @@ public class ShootNote extends Command {
   @Override
   public void execute() {
     
-    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 100){
+    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 200){
       shooter.acceleratorWheelOutput(ShooterConstants.kacceleratorWheelSpeed);
     }
 
     //shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
     shooter.setShooterVelocity(targetRPM);
-    //shooter.acceleratorWheelOutput(acceleratorWheelSpeed);
+    shooter.acceleratorWheelOutput(1);
   }
 
 
@@ -50,8 +50,8 @@ public class ShootNote extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    //shooter.stopShooter();
-      shooter.setShooterVelocity(1500);
+    shooter.stopShooter();
+    //  shooter.setShooterVelocity(1500);
     shooter.stopAcceleratorWheel();
 
   }

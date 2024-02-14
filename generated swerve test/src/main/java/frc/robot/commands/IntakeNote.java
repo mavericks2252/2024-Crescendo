@@ -16,14 +16,10 @@ public class IntakeNote extends Command {
   Intake intake;
   ShooterRotationSubsystem shooterRotationSubsystem;
   double speed;
-  double motorMasterSpeed;
-  double acceleratorWheelSpeed;
-  double centeringMotorSpeed;
   
-  public IntakeNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, double motorMasterSpeed, Shooter shooter) {
+  public IntakeNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter) {
     this.intake = intake;
     this.shooterRotationSubsystem = shooterRotationSubsystem;    
-    this.motorMasterSpeed = motorMasterSpeed;
     this.shooter = shooter;
 
     
@@ -35,17 +31,24 @@ public class IntakeNote extends Command {
   @Override
   public void initialize() {
 
+   // shooterRotationSubsystem.setShooterIntakeAngle();
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    /*if(shooterRotationSubsystem.getThroughBoreEncoder() - ShooterConstants.kIntakeAngle < 1 && shooter.getMiddleBackBeambreak()){
+    intake.setIntakeSpeed();
+    shooter.intakeNote();
+    }
 
-    intake.setPercentOutput(motorMasterSpeed, centeringMotorSpeed);
-    shooter.intakeNote(ShooterConstants.kIntakeSpeed);
-    
-
+    else{
+      intake.stopIntake();
+      shooter.stopAmplifierWheel();
+    }*/
+    intake.setIntakeSpeed();
+    shooter.intakeNote();
   }
 
   // Called once the command ends or is interrupted.
@@ -61,9 +64,9 @@ public class IntakeNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   //return intake.getBeamBreak();
-   return false;
-   
+   //return intake.getBeamBreak()
+return shooter.getMiddleFrontBeambreak();
+  
     
   }
 }

@@ -17,17 +17,17 @@ import frc.robot.Constants.PortConstants;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   
-  CANSparkMax intakeMotorMaster;
+  CANSparkMax intakeMotor;
   DigitalInput beamBreakSensor;
   CANSparkMax centeringWheelMotor;
  
  
   public Intake() {
 
-    intakeMotorMaster = new CANSparkMax(PortConstants.kIntakeMotorMasterPort, MotorType.kBrushless);
-    intakeMotorMaster.setIdleMode(IdleMode.kBrake);
-    intakeMotorMaster.setInverted(true);
-    intakeMotorMaster.setSmartCurrentLimit(40);
+    intakeMotor = new CANSparkMax(PortConstants.kIntakeMotorPort, MotorType.kBrushless);
+    intakeMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor.setInverted(true);
+    intakeMotor.setSmartCurrentLimit(40);
   
     centeringWheelMotor = new CANSparkMax(PortConstants.kCenteringWheelPort, MotorType.kBrushless);
     centeringWheelMotor.restoreFactoryDefaults();
@@ -49,15 +49,15 @@ public class Intake extends SubsystemBase {
 
 
   // sets intake motor to a percent speed
-public void setPercentOutput(double motorMasterSpeed, double centeringMotorSpeed){
-  intakeMotorMaster.set(motorMasterSpeed);
-  centeringWheelMotor.set(centeringMotorSpeed);
+public void setIntakeSpeed(){
+  intakeMotor.set(IntakeConstants.kIntakeSpeed);
+  centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
 }
 
 
   // stops intake motor
 public void stopIntake(){
-  intakeMotorMaster.stopMotor();
+  intakeMotor.stopMotor();
   centeringWheelMotor.stopMotor();
 }
 
