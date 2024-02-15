@@ -11,38 +11,30 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.subsystems.AutoAimSubsystem;
+//import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
 public class AutoNoteIntake extends Command {
   /** Creates a new NoteAim. */
-VisionPhotonSubsystem photon;
-Intake intake;
-CommandSwerveDrivetrain drivetrain;
-AutoAimSubsystem autoAimSubsystem;
+  VisionPhotonSubsystem photon;
+  Intake intake;
+  CommandSwerveDrivetrain drivetrain;
+  // AutoAimSubsystem autoAimSubsystem;
 
-
-private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentric()
+  private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-      
-
-
-
-  public AutoNoteIntake(VisionPhotonSubsystem photon, 
-                        Intake intake, 
-                        CommandSwerveDrivetrain drivetrain, 
-                        AutoAimSubsystem autoAimSubsystem) {
+  public AutoNoteIntake(VisionPhotonSubsystem photon,
+      Intake intake,
+      CommandSwerveDrivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.photon = photon;
     this.intake = intake;
     this.drivetrain = drivetrain;
-    this.autoAimSubsystem = autoAimSubsystem;
-    
-    addRequirements(intake);
-  
-    
+    // this.autoAimSubsystem = autoAimSubsystem;
+
+    addRequirements(intake, drivetrain);
 
   }
 
@@ -50,10 +42,7 @@ private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentr
   @Override
   public void initialize() {
 
-      photon.setPhotonPipeline(VisionConstants.kNotePipeline);
-
-      
-
+    photon.setPhotonPipeline(VisionConstants.kNotePipeline);
 
   }
 
@@ -61,22 +50,32 @@ private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentr
   @Override
   public void execute() {
 
-    if(photon.camera.getLatestResult().hasTargets()){
+    if (photon.camera.getLatestResult().hasTargets()) {
       intake.setIntakeSpeed();
-      
-      
-      drivetrain.applyRequest(() -> autoNote.withVelocityX(1).withRotationalRate(autoAimSubsystem.noteAutoAimRateOutput()));
 
+      drivetrain.applyRequest(() -> autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
 
     }
 
-    else{
-      drivetrain.applyRequest(() -> RobotContainer.drive.withVelocityX(CommandSwerveDrivetrain.getExponential(-RobotContainer.m_driver_controler.getLeftY()* RobotContainer.MaxSpeed)) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(CommandSwerveDrivetrain.getExponential(-RobotContainer.m_driver_controler.getLeftX()* RobotContainer.MaxSpeed)) // Drive left with negative X (left)
-            .withRotationalRate(CommandSwerveDrivetrain.getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate)) // Drive counterclockwise with negative X (left)
-        );
-      
+    else {
+      drivetrain.applyRequest(() -> RobotContainer.drive
+          .withVelocityX(CommandSwerveDrivetrain
+              .getExponential(-RobotContainer.m_driver_controler.getLeftY() * RobotContainer.MaxSpeed)) // Drive forward
+                                                                                                        // with
+          // negative Y (forward)
+          .withVelocityY(CommandSwerveDrivetrain
+              .getExponential(-RobotContainer.m_driver_controler.getLeftX() * RobotContainer.MaxSpeed)) // Drive left
+                                                                                                        // with negative
+                                                                                                        // X (left)
+          .withRotationalRate(CommandSwerveDrivetrain
+              .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate)) // Drive
+                                                                                                               // counterclockwise
+                                                                                                               // with
+                                                                                                               // negative
+                                                                                                               // X
+                                                                                                               // (left)
+      );
+
       intake.stopIntake();
     }
 

@@ -62,11 +62,11 @@ public final class Constants {
     public static final int kShooterMotorSlaveSpeed = 4250;
     public static final int kacceleratorWheelSpeed = 1;
     public static final double kIntakeSpeed = 1;
-    public static final double kIntakeAngle = 0;
+    public static final double kIntakeAngle = 50;
     public static final double kAmpAngle = 0;
-    public static final double kShooterGearBoxRatio = 337.6592593;
-    public static final int kForwardSoftLimit = 5;
-    public static final int kReverseSoftLimit = 320;
+    public static final double kShooterGearBoxRatio = -337.6592593;
+    public static final int kForwardSoftLimit = 45;
+    public static final int kReverseSoftLimit = -30;
   }
     
   

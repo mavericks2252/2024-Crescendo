@@ -25,7 +25,7 @@ public class AutoAimSubsystem extends SubsystemBase {
   //VisionSubsystem vision;
   VisionPhotonSubsystem photon;
 
-  /** Creates a new AutoAimSubsystem. */
+  // Creates a new AutoAimSubsystem. 
   public AutoAimSubsystem(VisionPhotonSubsystem photon, LEDSubsystem ledSubsystem) {
     //this.vision = vision;
     this.photon = photon;

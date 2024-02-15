@@ -31,7 +31,7 @@ public class IntakeNote extends Command {
   @Override
   public void initialize() {
 
-   // shooterRotationSubsystem.setShooterIntakeAngle();
+   // 
 
   }
 
@@ -49,6 +49,7 @@ public class IntakeNote extends Command {
     }*/
     intake.setIntakeSpeed();
     shooter.intakeNote();
+    shooterRotationSubsystem.setShooterIntakeAngle();
   }
 
   // Called once the command ends or is interrupted.

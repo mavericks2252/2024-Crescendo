@@ -11,15 +11,20 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotContainer;
+import frc.robot.generated.TunerConstants;
 
 
 public class VisionPhotonSubsystem extends SubsystemBase {
@@ -28,6 +33,13 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     private final PhotonPoseEstimator photonPoseEstimator;
     double lastEstTimestamp = 0;
     CommandSwerveDrivetrain drivetrain;
+
+    TrapezoidProfile.Constraints aim_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate, TunerConstants.kMaxAngularAcceleration);
+  
+  
+  ProfiledPIDController autoAimPIDController;
+  ProfiledPIDController noteAimPidController;
+
 
   public VisionPhotonSubsystem(CommandSwerveDrivetrain drivetrain) {
 
@@ -42,6 +54,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
 
+    noteAimPidController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
+    noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
+    noteAimPidController.setTolerance(Units.degreesToRadians(1));
+    
+    
+    autoAimPIDController= new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints,.01);
+    autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    
+    //autoAimPIDController.setTolerance(3);
+    autoAimPIDController.setIZone(.5);
+
+
   }
 
   
@@ -49,6 +73,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
   
     var visionEst = getEstimatedGlobePose();
 
@@ -158,6 +184,35 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public void setPhotonPipeline(int pipeline){
     camera.setPipelineIndex(pipeline);
   }
+
+  public double speakerAutoAimRateOutput(){
+    Pose2d currentPos = getCurrentPose2d();
+    Pose2d targetPos = getSpeakerTargetRotation2d();
+  
+    return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
+
+   }
+
+   public double noteAutoAimRateOutput(){
+    //double currentRotation = photon.getCurrentPose2d().getRotation().getDegrees();
+    double angleToNote;
+    double turnRate;
+    var target = camera.getLatestResult();
+
+    if(target.hasTargets()){
+      angleToNote = target.getBestTarget().getYaw();
+      turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote));
+    }
+    else{
+      angleToNote = 0;
+      turnRate = CommandSwerveDrivetrain.getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate);
+    }
+    SmartDashboard.putNumber("angle to note", turnRate);
+    return turnRate;
+    
+    
+   }
+
 
  
 }
