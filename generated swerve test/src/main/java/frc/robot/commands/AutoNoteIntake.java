@@ -7,6 +7,7 @@ package frc.robot.commands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -20,6 +21,8 @@ public class AutoNoteIntake extends Command {
   VisionPhotonSubsystem photon;
   Intake intake;
   CommandSwerveDrivetrain drivetrain;
+  int loopsWithoutTarget;
+
   // AutoAimSubsystem autoAimSubsystem;
 
   private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentric()
@@ -41,7 +44,7 @@ public class AutoNoteIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    loopsWithoutTarget = 21;
     photon.setPhotonPipeline(VisionConstants.kNotePipeline);
 
   }
@@ -51,14 +54,24 @@ public class AutoNoteIntake extends Command {
   public void execute() {
 
     if (photon.camera.getLatestResult().hasTargets()) {
+      loopsWithoutTarget = 0;
+    } else {
+      loopsWithoutTarget++;
+    }
+
+    SmartDashboard.putNumber("loops without target", loopsWithoutTarget);
+
+    if (photon.camera.getLatestResult().hasTargets() || loopsWithoutTarget < 20) {
       intake.setIntakeSpeed();
 
-      drivetrain.applyRequest(() -> autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
+      // drivetrain.applyRequest(() ->
+      // autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
+      drivetrain.setControl(autoNote.withVelocityX(-3).withRotationalRate(photon.noteAutoAimRateOutput()));
 
     }
 
     else {
-      drivetrain.applyRequest(() -> RobotContainer.drive
+      drivetrain.setControl(RobotContainer.drive
           .withVelocityX(CommandSwerveDrivetrain
               .getExponential(-RobotContainer.m_driver_controler.getLeftY() * RobotContainer.MaxSpeed)) // Drive forward
                                                                                                         // with

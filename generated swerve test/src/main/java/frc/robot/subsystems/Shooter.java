@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -34,52 +32,41 @@ public class Shooter extends SubsystemBase {
   DigitalInput beamBreakMiddleFront;
   DigitalInput beamBreakMiddleBack;
 
-  
-
-
   private final VelocityTorqueCurrentFOC shooterTV = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
 
   public Shooter() {
-      TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-            shooterConfig.Slot1.kP = 9.5;
-            shooterConfig.Slot1.kI = 0.6;
-            shooterConfig.Slot1.kD = 0.00005;
-      
-      shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
-      shooterMotorMaster.getConfigurator().apply(shooterConfig);
-      shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
-      shooterMotorMaster.setInverted(false);
- 
-      shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
-      shooterMotorSlave.getConfigurator().apply(shooterConfig);
-      //shooterMotorSlave.setControl(new StrictFollower(PortConstants.kShooterMotorMasterPort));
-      shooterMotorSlave.setInverted(false);
+    TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+    shooterConfig.Slot1.kP = 9.5;
+    shooterConfig.Slot1.kI = 0.6;
+    shooterConfig.Slot1.kD = 0.00005;
 
-      
+    shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
+    shooterMotorMaster.getConfigurator().apply(shooterConfig);
+    shooterMotorMaster.setNeutralMode(NeutralModeValue.Coast);
+    shooterMotorMaster.setInverted(false);
 
-      acceleratorWheel = new CANSparkMax(PortConstants.kAcceleratorWheelPort, MotorType.kBrushless);
-      acceleratorWheel.setInverted(true);
-      acceleratorWheel.setIdleMode(IdleMode.kCoast);
+    shooterMotorSlave = new TalonFX(PortConstants.kShooterMotorSlavePort);
+    shooterMotorSlave.getConfigurator().apply(shooterConfig);
+    // shooterMotorSlave.setControl(new
+    // StrictFollower(PortConstants.kShooterMotorMasterPort));
+    shooterMotorSlave.setInverted(false);
 
-      
+    acceleratorWheel = new CANSparkMax(PortConstants.kAcceleratorWheelPort, MotorType.kBrushless);
+    acceleratorWheel.setInverted(true);
+    acceleratorWheel.setIdleMode(IdleMode.kCoast);
 
-      amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
-      amplifierWheel.setInverted(false);
-      amplifierWheel.setIdleMode(IdleMode.kCoast);
+    amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
+    amplifierWheel.setInverted(false);
+    amplifierWheel.setIdleMode(IdleMode.kCoast);
 
-      beamBreakShot = new DigitalInput(PortConstants.kShotBeamBreak);
-      beamBreakAmp = new DigitalInput(PortConstants.kAmpBeamBreak);
-      beamBreakMiddleBack = new DigitalInput(PortConstants.kMiddleBackBeamBreak);
-      beamBreakMiddleFront = new DigitalInput(PortConstants.kMiddleFrontBeamBreak);
+    beamBreakShot = new DigitalInput(PortConstants.kShotBeamBreak);
+    beamBreakAmp = new DigitalInput(PortConstants.kAmpBeamBreak);
+    beamBreakMiddleBack = new DigitalInput(PortConstants.kMiddleBackBeamBreak);
+    beamBreakMiddleFront = new DigitalInput(PortConstants.kMiddleFrontBeamBreak);
 
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
+    shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
 
-
-      shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-      shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
-
-
-      
-      
   }
 
   @Override
@@ -89,83 +76,72 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  public void acceleratorWheelOutput(double acceleratorWheelSpeed) {
+    acceleratorWheel.set(ShooterConstants.kacceleratorWheelSpeed);
+  }
 
-public void acceleratorWheelOutput(double acceleratorWheelSpeed){
-  acceleratorWheel.set(ShooterConstants.kacceleratorWheelSpeed);
-}
-public void ampScore(double acceleratorWheelSpeed){
-  acceleratorWheel.set(-acceleratorWheelSpeed);
-  amplifierWheel.set(acceleratorWheelSpeed);
-}
+  public void ampScore(double acceleratorWheelSpeed) {
+    acceleratorWheel.set(-acceleratorWheelSpeed);
+    amplifierWheel.set(acceleratorWheelSpeed);
+  }
 
-public void intakeNote () {
-  acceleratorWheel.set(ShooterConstants.kIntakeSpeed);
-  amplifierWheel.set(ShooterConstants.kIntakeSpeed);  
-}
+  public void intakeNote() {
+    acceleratorWheel.set(ShooterConstants.kIntakeSpeed);
+    amplifierWheel.set(ShooterConstants.kIntakeSpeed);
+  }
 
-public void setShooterVelocity(double targetRPM){
-  shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM/60));
-  shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM/60));
+  public void setShooterVelocity(double targetRPM) {
+    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60));
+    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60));
 
-}
+  }
 
-public Double getShooterVelocity(){
-  double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
-  return shooterVelocity;
-}  
-
-
+  public Double getShooterVelocity() {
+    double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
+    return shooterVelocity;
+  }
 
   // stops shooter motor
-public  void stopShooter(){
-  shooterMotorMaster.stopMotor();
-  shooterMotorSlave.stopMotor();
-}
-
-public void stopAcceleratorWheel(){
-  acceleratorWheel.stopMotor();
-  
-}
-  
-public void stopAmplifierWheel(){
-  amplifierWheel.stopMotor();
-}
-
-
-
-public boolean getShotBeambreak(){
-  if(beamBreakShot.get()){
-    return false;
+  public void stopShooter() {
+    shooterMotorMaster.stopMotor();
+    shooterMotorSlave.stopMotor();
   }
-  else return true;
-}
 
-public boolean getAmpBeambreak(){
-  if(beamBreakAmp.get()){
-    return false;
+  public void stopAcceleratorWheel() {
+    acceleratorWheel.stopMotor();
+
   }
-  else return true;
-}
 
-public boolean getMiddleBackBeambreak(){
-  if(beamBreakMiddleBack.get()){
-    return false;
+  public void stopAmplifierWheel() {
+    amplifierWheel.stopMotor();
   }
-  else return true;
-}
 
-public boolean getMiddleFrontBeambreak(){
-  if(beamBreakMiddleFront.get()){
-    return false;
+  public boolean getShotBeambreak() {
+    if (beamBreakShot.get()) {
+      return false;
+    } else
+      return true;
   }
-  else return true;
-}
 
+  public boolean getAmpBeambreak() {
+    if (beamBreakAmp.get()) {
+      return false;
+    } else
+      return true;
+  }
 
+  public boolean getMiddleBackBeambreak() {
+    if (beamBreakMiddleBack.get()) {
+      return false;
+    } else
+      return true;
+  }
 
-
-
-
-
+  public boolean getMiddleFrontBeambreak() {
+    if (beamBreakMiddleFront.get()) {
+      return false;
+    } else
+      return true;
+  }
 
 }

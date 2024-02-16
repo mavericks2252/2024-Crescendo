@@ -34,23 +34,20 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   public ShooterRotationSubsystem(VisionPhotonSubsystem photon) {
     // this.vision = vision;
     this.photon = photon;
-    /*
-     * TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
-     * shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
-     * shooterAngleConfig.Slot2.kP = 0.1;
-     * shooterAngleConfig.Slot2.kI = 0;
-     * shooterAngleConfig.Slot2.kD = 0;
-     * shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-     * shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-     * shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-     * degreesToMotorRevs(
-     * ShooterConstants.kForwardSoftLimit);
-     * shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-     * degreesToMotorRevs(
-     * ShooterConstants.kReverseSoftLimit);
-     * FeedbackConfigs fdb = shooterAngleConfig.Feedback;
-     * fdb.SensorToMechanismRatio = ShooterConstants.kShooterGearBoxRatio;
-     */
+
+    TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
+    shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
+    shooterAngleConfig.Slot2.kP = 18;
+    shooterAngleConfig.Slot2.kI = 0.5;
+    shooterAngleConfig.Slot2.kD = 0;
+    shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degreesToMotorRevs(
+        ShooterConstants.kForwardSoftLimit);
+    shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degreesToMotorRevs(
+        ShooterConstants.kReverseSoftLimit);
+    FeedbackConfigs fdb = shooterAngleConfig.Feedback;
+    fdb.SensorToMechanismRatio = ShooterConstants.kShooterGearBoxRatio;
 
     throughBoreEncoder = new DutyCycleEncoder(PortConstants.kThroughBoreEncoder);
 
@@ -59,7 +56,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     shooterAngleMotor.setInverted(false);
     shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    throughBoreEncoder.setPositionOffset(0.5635);
+    throughBoreEncoder.setPositionOffset(0.2301);
 
     autoAnglePIDController = new ProfiledPIDController(2, 0.25, 0, angle_PIDConstraints, 0.01);
     autoAnglePIDController.enableContinuousInput(0, 360);

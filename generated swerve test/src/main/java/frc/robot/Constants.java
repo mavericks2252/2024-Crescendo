@@ -16,21 +16,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
-
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  
-  
+
   public static final class PortConstants {
 
-    
     public static final int kIntakeMotorPort = 15;
     public static final int kShooterMotorSlavePort = 18;
     public static final int kShooterMotorMasterPort = 17;
@@ -41,14 +42,13 @@ public final class Constants {
     public static final int kAmplifierWheelPort = 23;
     public static final int kCenteringWheelPort = 25;
 
-
     public static final int kShotBeamBreak = 1;
     public static final int kAmpBeamBreak = 2;
     public static final int kMiddleBackBeamBreak = 3;
     public static final int kMiddleFrontBeamBreak = 4;
     public static final int kThroughBoreEncoder = 5;
   }
-  
+
   public static final class IntakeConstants {
 
     public static final int kBeamBreak = 0;
@@ -57,22 +57,17 @@ public final class Constants {
     public static final double kAcceleratorWheelSpeed = 0.2625;
   }
 
-  public static final class ShooterConstants{
+  public static final class ShooterConstants {
     public static final int kShooterMotorMasterSpeed = 4250;
     public static final int kShooterMotorSlaveSpeed = 4250;
     public static final int kacceleratorWheelSpeed = 1;
     public static final double kIntakeSpeed = 1;
     public static final double kIntakeAngle = 50;
     public static final double kAmpAngle = 0;
-    public static final double kShooterGearBoxRatio = -337.6592593;
-    public static final int kForwardSoftLimit = 45;
-    public static final int kReverseSoftLimit = -30;
+    public static final double kShooterGearBoxRatio = 337.6592593;
+    public static final int kForwardSoftLimit = 120;
+    public static final int kReverseSoftLimit = 45;
   }
-    
-  
-  
-    
-  
 
   public static final class OIConstants {
 
@@ -86,8 +81,7 @@ public final class Constants {
     public static final int kRTrigger = 3;
     public static final int kLTrigger = 2;
 
-
-    // Controller Buttons 
+    // Controller Buttons
     public static final int xButton = 3;
     public static final int aButton = 1;
     public static final int bButton = 2;
@@ -100,22 +94,20 @@ public final class Constants {
 
   public final class BlinkinConstants {
 
-      public static final double kRed = 0.61;
-      public static final double kWhite = 0.93;
-      public static final double kGold = 0.67;
-      public static final double kBlue = 0.87;
-      public static final double kGreen = 0.77;
-      public static final double kBlueHB = -0.23;
-      public static final double kBlueShot = -0.83;
-      public static final double kFire = -0.57;
-      public static final double kRaindow = -0.99;
-      
-  
-    
+    public static final double kRed = 0.61;
+    public static final double kWhite = 0.93;
+    public static final double kGold = 0.67;
+    public static final double kBlue = 0.87;
+    public static final double kGreen = 0.77;
+    public static final double kBlueHB = -0.23;
+    public static final double kBlueShot = -0.83;
+    public static final double kFire = -0.57;
+    public static final double kRaindow = -0.99;
+
   }
 
   public final class FieldConstants {
-  
+
     public static final double kBlueSpeakerXPos = 0;
     public static final double kBlueSpeakerYPos = 218.42;
     public static final double kBlueSpeakerXPosMeters = 0;
@@ -133,17 +125,19 @@ public final class Constants {
 
     public static final double kRobotOffsetMeters = .5;
     public static final double kBlueAmpXPosMeters = 1.841;
-    public static final double kBlueAmpYPosMeters = 8.204; //8.204
-    public static final Pose2d kBlueAmp = new Pose2d(kBlueAmpXPosMeters, kBlueAmpYPosMeters, Rotation2d.fromDegrees(90));
-    public static final Pose2d kBlueAmpScorePose = new Pose2d(kBlueAmpXPosMeters, 
-                                                              kBlueAmpYPosMeters - kRobotOffsetMeters,
-                                                              Rotation2d.fromDegrees(90));
+    public static final double kBlueAmpYPosMeters = 8.204; // 8.204
+    public static final Pose2d kBlueAmp = new Pose2d(kBlueAmpXPosMeters, kBlueAmpYPosMeters,
+        Rotation2d.fromDegrees(90));
+    public static final Pose2d kBlueAmpScorePose = new Pose2d(kBlueAmpXPosMeters,
+        kBlueAmpYPosMeters - kRobotOffsetMeters,
+        Rotation2d.fromDegrees(90));
     public static final double kInfrontBlueAmpYPos = kBlueAmpYPosMeters - 0.5 - kRobotOffsetMeters;
-    public static final Pose2d kInfrontBluePos = new Pose2d(kBlueAmpXPosMeters, kInfrontBlueAmpYPos, new Rotation2d(90));
+    public static final Pose2d kInfrontBluePos = new Pose2d(kBlueAmpXPosMeters, kInfrontBlueAmpYPos,
+        new Rotation2d(90));
 
     public static final double kRedAmpXPosMeters = 14.7;
     public static final double kRedAmpYPosMeters = 8.204;
-    public static final Pose2d kRedAmp = new Pose2d(kRedAmpXPosMeters, kRedAmpYPosMeters,Rotation2d.fromDegrees(90));
+    public static final Pose2d kRedAmp = new Pose2d(kRedAmpXPosMeters, kRedAmpYPosMeters, Rotation2d.fromDegrees(90));
     public static final double kInfrontRedAmpYPos = kRedAmpYPosMeters - .5;
     public static final Pose2d kInfrontRedPos = new Pose2d(kRedAmpXPosMeters, kInfrontRedAmpYPos, new Rotation2d(90));
   }
@@ -154,10 +148,10 @@ public final class Constants {
     public static final double kDeadBand = 0.1;
 
     public static final PathConstraints kPathConstraints = new PathConstraints(
-      2, //max Velocity 3
-      2, //max Acceleration 3
-      720, //max angular velocity 720
-      540); //max angular acceleration 540
+        2, // max Velocity 3
+        2, // max Acceleration 3
+        720, // max angular velocity 720
+        540); // max angular acceleration 540
 
   }
 
@@ -167,13 +161,10 @@ public final class Constants {
 
     public static final int kApriltagePipeline = 0;
     public static final int kNotePipeline = 1;
-    
+
     public static final Transform3d kRobotToCam = new Transform3d(
-      new Translation3d(0, 0, 0.27), 
-      new Rotation3d(0, Units.degreesToRadians(-22), 0)
-      );
+        new Translation3d(0, 0, 0.27),
+        new Rotation3d(0, Units.degreesToRadians(-22), 0));
   }
 
-
-     
 }

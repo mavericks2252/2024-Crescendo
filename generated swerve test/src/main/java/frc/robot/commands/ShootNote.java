@@ -16,9 +16,11 @@ public class ShootNote extends Command {
   double topMotorSpeed;
   double bottomMotorSpeed;
   double targetRPM;
-  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed, double topMotorSpeed, double targetRPM) {
+
+  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed,
+      double topMotorSpeed, double targetRPM) {
     this.shooter = shooter;
-    //this.acceleratorWheelSpeed = acceleratorWheelSpeed;
+    // this.acceleratorWheelSpeed = acceleratorWheelSpeed;
     this.topMotorRpm = topMotorRpm;
     this.bottomMotorRpm = bottomMotorRpm;
     this.topMotorSpeed = topMotorSpeed;
@@ -30,28 +32,28 @@ public class ShootNote extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 200){
+
+    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 200) {
       shooter.acceleratorWheelOutput(ShooterConstants.kacceleratorWheelSpeed);
     }
 
-    //shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
+    // shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
     shooter.setShooterVelocity(targetRPM);
     shooter.acceleratorWheelOutput(1);
   }
-
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
 
     shooter.stopShooter();
-    //  shooter.setShooterVelocity(1500);
+    // shooter.setShooterVelocity(1500);
     shooter.stopAcceleratorWheel();
 
   }

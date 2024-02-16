@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
@@ -107,21 +108,26 @@ public class RobotContainer {
                 visionPhotonSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise with negative X (left)
         ));
 
-    m_driver_controler.a().whileTrue(new ParallelCommandGroup(
-
-        drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive
-                                                                                                            // forward
-                                                                                                            // with
-                                                                                                            // negative
-                                                                                                            // Y
-                                                                                                            // (forward)
-            .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(
-                visionPhotonSubsystem.noteAutoAimRateOutput())),
-
-        new IntakeNote(intake,
-            shooterRotationSubsystem,
-            shooter)));
+    /*
+     * m_driver_controler.a().whileTrue(new ParallelCommandGroup(
+     * 
+     * drivetrain.applyRequest(() ->
+     * autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) //
+     * Drive
+     * // forward
+     * // with
+     * // negative
+     * // Y
+     * // (forward)
+     * .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with
+     * negative X (left)
+     * .withRotationalRate(
+     * visionPhotonSubsystem.noteAutoAimRateOutput())),
+     * 
+     * new IntakeNote(intake,
+     * shooterRotationSubsystem,
+     * shooter)));
+     */
 
     // reset the field-centric heading on left bumper press
     m_driver_controler.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -134,13 +140,14 @@ public class RobotContainer {
     // Driver Buttons
 
     m_driver_controler.start().onTrue(new InstantCommand(() -> visionPhotonSubsystem.seedRobotPoseFromVision()));
-
+    m_driver_controler.rightBumper().toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
+    m_driver_controler.a().whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain));
     m_driver_controler.y().onTrue(drivetrain.ampPathCommand());
 
     // Operator Buttons
     m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed,
         ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85, 4250));
-    m_driver_controler.rightBumper().toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
+
     m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
     m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
