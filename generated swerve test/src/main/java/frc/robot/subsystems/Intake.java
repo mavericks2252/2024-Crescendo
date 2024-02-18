@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -16,30 +18,24 @@ import frc.robot.Constants.PortConstants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  
-  CANSparkMax intakeMotor;
+
+  TalonFX intakeMotor;
   DigitalInput beamBreakSensor;
   CANSparkMax centeringWheelMotor;
- 
- 
+
   public Intake() {
 
-    intakeMotor = new CANSparkMax(PortConstants.kIntakeMotorPort, MotorType.kBrushless);
-    intakeMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor = new TalonFX(PortConstants.kIntakeMotorPort);
+    intakeMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setInverted(true);
-    intakeMotor.setSmartCurrentLimit(40);
-  
+
     centeringWheelMotor = new CANSparkMax(PortConstants.kCenteringWheelPort, MotorType.kBrushless);
     centeringWheelMotor.restoreFactoryDefaults();
     centeringWheelMotor.setIdleMode(IdleMode.kBrake);
     centeringWheelMotor.setInverted(false);
-    
-    
-    
+
     beamBreakSensor = new DigitalInput(IntakeConstants.kBeamBreak);
   }
-
-
 
   @Override
   public void periodic() {
@@ -47,33 +43,21 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("beambreak boolean", getBeamBreak());
   }
 
-
   // sets intake motor to a percent speed
-public void setIntakeSpeed(){
-  intakeMotor.set(IntakeConstants.kIntakeSpeed);
-  centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
-}
-
+  public void setIntakeSpeed() {
+    intakeMotor.set(IntakeConstants.kIntakeSpeed);
+    centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
+  }
 
   // stops intake motor
-public void stopIntake(){
-  intakeMotor.stopMotor();
-  centeringWheelMotor.stopMotor();
-}
+  public void stopIntake() {
+    intakeMotor.stopMotor();
+    centeringWheelMotor.stopMotor();
+  }
 
+  public boolean getBeamBreak() {
+    return !beamBreakSensor.get();
 
-
-
-public boolean getBeamBreak(){
-  //return beamBreakSensor.get();
-  if(beamBreakSensor.get()){
-    return false;
-  } 
-  else return true;
-
-
-}
-
-
+  }
 
 }

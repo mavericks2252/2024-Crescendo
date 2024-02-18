@@ -6,11 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,11 +21,14 @@ import frc.robot.generated.TunerConstants;
 
 public class ShooterRotationSubsystem extends SubsystemBase {
   static DutyCycleEncoder throughBoreEncoder;
-  ProfiledPIDController autoAnglePIDController;
   static TalonFX shooterAngleMotor;
+  private final PositionDutyCycle m_PositionDutyCycle = new PositionDutyCycle(0, 0, false, 0.03, 2, false, false,
+      false);
   // VisionSubsystem vision;
   VisionPhotonSubsystem photon;
   boolean speakerAngleTracking = false;
+  boolean intakeMode = false;
+  boolean ampMode = false;
 
   TrapezoidProfile.Constraints angle_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate,
       TunerConstants.kMaxAngularAcceleration);
@@ -37,8 +40,8 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
     TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
     shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
-    shooterAngleConfig.Slot2.kP = 18;
-    shooterAngleConfig.Slot2.kI = 0.5;
+    shooterAngleConfig.Slot2.kP = 30;
+    shooterAngleConfig.Slot2.kI = 0;
     shooterAngleConfig.Slot2.kD = 0;
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -50,74 +53,96 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     fdb.SensorToMechanismRatio = ShooterConstants.kShooterGearBoxRatio;
 
     throughBoreEncoder = new DutyCycleEncoder(PortConstants.kThroughBoreEncoder);
+    throughBoreEncoder.setPositionOffset(0.2301);
 
     shooterAngleMotor = new TalonFX(PortConstants.kShooterAngleMotorPort);
-    // shooterAngleMotor.getConfigurator().apply(shooterAngleConfig);
+    shooterAngleMotor.getConfigurator().apply(shooterAngleConfig);
     shooterAngleMotor.setInverted(false);
     shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    throughBoreEncoder.setPositionOffset(0.2301);
-
-    autoAnglePIDController = new ProfiledPIDController(2, 0.25, 0, angle_PIDConstraints, 0.01);
-    autoAnglePIDController.enableContinuousInput(0, 360);
-    // autoAnglePIDController.setIZone(0);
-
-    new Thread(() -> {
-      try {
-        Thread.sleep(2500);
-
-        setShooterAngleMotorPos();
-
-      } catch (Exception e) {
-
-      }
-    }).start();
+    // SmartDashboard.putNumber("test shooter angle", 90);
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("poition Offset", throughBoreEncoder.getPositionOffset());
-    SmartDashboard.putBoolean("is Speaker tracking", speakerTracking());
-
     SmartDashboard.putNumber("ThroughBore Encoder", getThroughBoreEncoder());
+    SmartDashboard.putNumber("ThroughBoreEncoderDegrees", motorRevsToDegrees(getThroughBoreEncoder()));
+    SmartDashboard.putNumber("Angle Motor Position", getAngleMotorPos());
+    SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
+    SmartDashboard.putNumber("Rotation position Error", getAngleMotorError());
 
-    SmartDashboard.putNumber("Motor Position Degrees", getAngleMotorPos());
+    if (speakerAngleTracking) {
 
-    /*
-     * if(speakerAngleTracking){
-     * shooterAngleMotor.set(getAutoAngleOutput(photon.getTargetAngle()));
-     * }
-     */
+      // setShooterAngle(SmartDashboard.getNumber("test shooter angle", 90));
+      setShooterAngle(photon.getTargetAngle());
+    }
+
+    else if (intakeMode) {
+
+      setShooterIntakeAngle();
+
+    }
+
+    else if (ampMode) {
+      setShooterAmpAngle();
+    }
+
   }
 
   public static double getThroughBoreEncoder() {
     return throughBoreEncoder.get();
   }
 
-  public double getAutoAngleOutput(double target) {
-    double currentPos = getThroughBoreEncoder();
-    double targetPos = degreesToMotorRevs(target);
-    SmartDashboard.putNumber("Angle Target", targetPos);
-    double output = autoAnglePIDController.calculate(currentPos, targetPos);
+  public double getAngleMotorError() {
+    return shooterAngleMotor.getClosedLoopError().refresh().getValueAsDouble();
+  }
 
-    SmartDashboard.putNumber("Auto Angle output", output);
-    return output;
+  public boolean isAngleOnTarget() {
+    double tolerance;
+    if (speakerTracking()) {
+      tolerance = degreesToMotorRevs(0.5);
+    } else {
+      tolerance = degreesToMotorRevs(2);
+    }
+
+    return getAngleMotorError() < tolerance;
   }
 
   public void setShooterIntakeAngle() {
-    speakerAngleTracking = false;
-    shooterAngleMotor.set(getAutoAngleOutput(ShooterConstants.kIntakeAngle));
+    double motorTarget = degreesToMotorRevs(ShooterConstants.kIntakeAngle);
+
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget));
   }
 
   public void setShooterAmpAngle() {
-    speakerAngleTracking = false;
-    shooterAngleMotor.set(getAutoAngleOutput(ShooterConstants.kAmpAngle));
+    double motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle);
+
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget));
+  }
+
+  public void setShooterAngle(double targetDegrees) {
+    double targetRevs = degreesToMotorRevs(targetDegrees);
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(targetRevs));
   }
 
   public void setSpeakerTracking() {
     speakerAngleTracking = true;
+    intakeMode = false;
+    ampMode = false;
+  }
+
+  public void setIntakeMode() {
+    intakeMode = true;
+    speakerAngleTracking = false;
+    ampMode = false;
+  }
+
+  public void setAmpMode() {
+    ampMode = true;
+    speakerAngleTracking = false;
+    intakeMode = false;
   }
 
   public boolean speakerTracking() {
@@ -136,8 +161,35 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     return degrees / 360;
   }
 
-  public static void setShooterAngleMotorPos() {
-    shooterAngleMotor.setPosition(getThroughBoreEncoder());
+  public static void setShooterAngleMotorSensorPos() {
+    int loops = 50;
+    double encoderReadings = 0;
+    for (int i = 0; i < loops; i++) {
+      encoderReadings += getThroughBoreEncoder();
+    }
+    double averageEncoderReadings = encoderReadings / loops;
+
+    SmartDashboard.putNumber("encoder Readings", averageEncoderReadings);
+    shooterAngleMotor.setPosition(averageEncoderReadings + 0.001214);
+
+  }
+
+  public void setRobotEnablePos() {
+
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos()));
   }
 
 }
+
+/*
+ * public double getAutoAngleOutput(double target) {
+ * double currentPos = getThroughBoreEncoder();
+ * double targetPos = degreesToMotorRevs(target);
+ * SmartDashboard.putNumber("Angle Target", targetPos);
+ * double output = autoAnglePIDController.calculate(currentPos, targetPos);
+ * 
+ * SmartDashboard.putNumber("Auto Angle output", output);
+ * return output;
+ * }
+ * 
+ */

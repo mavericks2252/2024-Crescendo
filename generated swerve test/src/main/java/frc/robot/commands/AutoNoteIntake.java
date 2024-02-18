@@ -14,6 +14,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.VisionConstants;
 //import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
 public class AutoNoteIntake extends Command {
@@ -21,6 +22,7 @@ public class AutoNoteIntake extends Command {
   VisionPhotonSubsystem photon;
   Intake intake;
   CommandSwerveDrivetrain drivetrain;
+  ShooterRotationSubsystem shooterRotationSubsystem;
   int loopsWithoutTarget;
 
   // AutoAimSubsystem autoAimSubsystem;
@@ -30,14 +32,16 @@ public class AutoNoteIntake extends Command {
 
   public AutoNoteIntake(VisionPhotonSubsystem photon,
       Intake intake,
-      CommandSwerveDrivetrain drivetrain) {
+      CommandSwerveDrivetrain drivetrain,
+      ShooterRotationSubsystem shooterRotationSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.photon = photon;
     this.intake = intake;
     this.drivetrain = drivetrain;
+    this.shooterRotationSubsystem = shooterRotationSubsystem;
     // this.autoAimSubsystem = autoAimSubsystem;
 
-    addRequirements(intake, drivetrain);
+    addRequirements(intake, drivetrain, shooterRotationSubsystem);
 
   }
 
@@ -46,6 +50,7 @@ public class AutoNoteIntake extends Command {
   public void initialize() {
     loopsWithoutTarget = 21;
     photon.setPhotonPipeline(VisionConstants.kNotePipeline);
+    shooterRotationSubsystem.setShooterIntakeAngle();
 
   }
 

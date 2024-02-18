@@ -36,9 +36,11 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-    shooterConfig.Slot1.kP = 9.5;
-    shooterConfig.Slot1.kI = 0.6;
-    shooterConfig.Slot1.kD = 0.00005;
+    shooterConfig.Slot1.kP = 8;
+    shooterConfig.Slot1.kI = 0.0;
+    shooterConfig.Slot1.kD = 0.1;
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 75;
+    shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
     shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
     shooterMotorMaster.getConfigurator().apply(shooterConfig);
@@ -53,7 +55,7 @@ public class Shooter extends SubsystemBase {
 
     acceleratorWheel = new CANSparkMax(PortConstants.kAcceleratorWheelPort, MotorType.kBrushless);
     acceleratorWheel.setInverted(true);
-    acceleratorWheel.setIdleMode(IdleMode.kCoast);
+    acceleratorWheel.setIdleMode(IdleMode.kBrake);
 
     amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
     amplifierWheel.setInverted(false);
@@ -64,40 +66,41 @@ public class Shooter extends SubsystemBase {
     beamBreakMiddleBack = new DigitalInput(PortConstants.kMiddleBackBeamBreak);
     beamBreakMiddleFront = new DigitalInput(PortConstants.kMiddleFrontBeamBreak);
 
-    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-    shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
-
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Velocity", getShooterVelocity());
+    SmartDashboard.putBoolean("Beambreak amp", getAmpBeambreak());
+    SmartDashboard.putBoolean("BeamBreak shot", getShotBeambreak());
+    SmartDashboard.putBoolean("beambreak middle front", getMiddleFrontBeambreak());
+    SmartDashboard.putBoolean("Beambreak middle back", getMiddleBackBeambreak());
 
   }
 
   public void acceleratorWheelOutput(double acceleratorWheelSpeed) {
-    acceleratorWheel.set(ShooterConstants.kacceleratorWheelSpeed);
+    acceleratorWheel.set(acceleratorWheelSpeed);
   }
 
-  public void ampScore(double acceleratorWheelSpeed) {
-    acceleratorWheel.set(-acceleratorWheelSpeed);
-    amplifierWheel.set(acceleratorWheelSpeed);
+  public void ampScore() {
+    acceleratorWheel.set(-ShooterConstants.kacceleratorWheelSpeed);
+    amplifierWheel.set(ShooterConstants.kacceleratorWheelSpeed);
   }
 
   public void intakeNote() {
-    acceleratorWheel.set(ShooterConstants.kIntakeSpeed);
+    acceleratorWheel.set(.75);
     amplifierWheel.set(ShooterConstants.kIntakeSpeed);
   }
 
   public void setShooterVelocity(double targetRPM) {
-    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60));
-    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60));
+    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(25));
+    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(25));
 
   }
 
   public Double getShooterVelocity() {
-    double shooterVelocity = shooterMotorMaster.getVelocity().getValue();
+    double shooterVelocity = shooterMotorMaster.getVelocity().getValue() * 60;
     return shooterVelocity;
   }
 
@@ -117,31 +120,21 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShotBeambreak() {
-    if (beamBreakShot.get()) {
-      return false;
-    } else
-      return true;
+    return !beamBreakShot.get();
+
   }
 
   public boolean getAmpBeambreak() {
-    if (beamBreakAmp.get()) {
-      return false;
-    } else
-      return true;
+    return !beamBreakAmp.get();
+
   }
 
   public boolean getMiddleBackBeambreak() {
-    if (beamBreakMiddleBack.get()) {
-      return false;
-    } else
-      return true;
+    return !beamBreakMiddleBack.get();
   }
 
   public boolean getMiddleFrontBeambreak() {
-    if (beamBreakMiddleFront.get()) {
-      return false;
-    } else
-      return true;
+    return !beamBreakMiddleFront.get(); // returns true when broken
   }
 
 }

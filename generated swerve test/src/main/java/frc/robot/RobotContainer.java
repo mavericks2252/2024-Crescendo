@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -24,7 +23,6 @@ import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
-//import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -56,11 +54,7 @@ public class RobotContainer {
   public final Shooter shooter = new Shooter();
   public final Intake intake = new Intake();
   public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-  // public final VisionSubsystem visionSubsystem = new
-  // VisionSubsystem(drivetrain);
   public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
-  // public final AutoAimSubsystem autoAimSubsystem = new
-  // AutoAimSubsystem(visionPhotonSubsystem, ledSubsystem);
   public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionPhotonSubsystem);
 
   // Robot Commands
@@ -141,16 +135,23 @@ public class RobotContainer {
 
     m_driver_controler.start().onTrue(new InstantCommand(() -> visionPhotonSubsystem.seedRobotPoseFromVision()));
     m_driver_controler.rightBumper().toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
-    m_driver_controler.a().whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain));
+    m_driver_controler.a()
+        .whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain, shooterRotationSubsystem));
     m_driver_controler.y().onTrue(drivetrain.ampPathCommand());
 
     // Operator Buttons
-    m_operatorController.b().whileTrue(new ShootNote(shooter, ShooterConstants.kShooterMotorSlaveSpeed,
-        ShooterConstants.kShooterMotorMasterSpeed, 0.75, 0.85, 4250));
 
-    m_operatorController.y().whileTrue(new InstantCommand(() -> shooter.acceleratorWheelOutput(1)));
-    m_operatorController.y().whileFalse(new InstantCommand(() -> shooter.stopAcceleratorWheel()));
+    m_operatorController.b()
+        .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
+            4250));
+
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
+
+    m_operatorController.y().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setSpeakerTracking()));
+    // m_operatorController.x().onTrue(new InstantCommand(() ->
+    // shooterRotationSubsystem.setAmpMode()));
+    // m_operatorController.a().onTrue(new InstantCommand(() ->
+    // shooterRotationSubsystem.setIntakeMode()));
 
   }
 
@@ -159,11 +160,7 @@ public class RobotContainer {
 
     // named commands
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, shooter));
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter,
-        4000,
-        4000,
-        0.75,
-        0.85,
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
         4250));
 
     autoChooser = AutoBuilder.buildAutoChooser();

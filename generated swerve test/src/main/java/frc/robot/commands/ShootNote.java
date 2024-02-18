@@ -4,48 +4,51 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterRotationSubsystem;
+import frc.robot.subsystems.VisionPhotonSubsystem;
 
 public class ShootNote extends Command {
   /** Creates a new ShootNote. */
   Shooter shooter;
-  double topMotorRpm;
-  double bottomMotorRpm;
-  double topMotorSpeed;
-  double bottomMotorSpeed;
+  ShooterRotationSubsystem shooterRotationSubsystem;
+  VisionPhotonSubsystem photon;
+
   double targetRPM;
 
-  public ShootNote(Shooter shooter, double bottomMotorRpm, double topMotorRpm, double bottomMotorSpeed,
-      double topMotorSpeed, double targetRPM) {
+  public ShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem, VisionPhotonSubsystem photon,
+      double targetRPM) {
     this.shooter = shooter;
-    // this.acceleratorWheelSpeed = acceleratorWheelSpeed;
-    this.topMotorRpm = topMotorRpm;
-    this.bottomMotorRpm = bottomMotorRpm;
-    this.topMotorSpeed = topMotorSpeed;
-    this.bottomMotorSpeed = bottomMotorSpeed;
+    this.shooterRotationSubsystem = shooterRotationSubsystem;
+    this.photon = photon;
     this.targetRPM = targetRPM;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter);
+    addRequirements(shooter, shooterRotationSubsystem);
+    SmartDashboard.putNumber("test shoot RPM", 0);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooterRotationSubsystem.setSpeakerTracking();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    if (ShooterConstants.kShooterMotorMasterSpeed - shooter.getShooterVelocity() < 200) {
-      shooter.acceleratorWheelOutput(ShooterConstants.kacceleratorWheelSpeed);
+    // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
+
+    if (3500 - shooter.getShooterVelocity() < 75) {
+      shooter.acceleratorWheelOutput(1);
     }
 
-    // shooter.setPercentOutput(topMotorSpeed, bottomMotorSpeed);
-    shooter.setShooterVelocity(targetRPM);
-    shooter.acceleratorWheelOutput(1);
+    // shooter.setShooterVelocity(targetRPM);
+    shooter.setShooterVelocity(3500);
+
   }
 
   // Called once the command ends or is interrupted.
@@ -53,8 +56,8 @@ public class ShootNote extends Command {
   public void end(boolean interrupted) {
 
     shooter.stopShooter();
-    // shooter.setShooterVelocity(1500);
     shooter.stopAcceleratorWheel();
+    shooterRotationSubsystem.setIntakeMode();
 
   }
 

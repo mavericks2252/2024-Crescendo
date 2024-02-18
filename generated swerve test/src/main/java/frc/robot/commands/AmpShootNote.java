@@ -8,28 +8,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
+import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class IntakeNote extends Command {
-  /** Creates a new IntakeNote. */
+public class AmpShootNote extends Command {
+  /** Creates a new AmpShootNote. */
+
   Shooter shooter;
   Intake intake;
   ShooterRotationSubsystem shooterRotationSubsystem;
-  double speed;
+  VisionPhotonSubsystem photon;
 
-  public IntakeNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter) {
+  public AmpShootNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
+      VisionPhotonSubsystem photon) {
+    // Use addRequirements() here to declare subsystem dependencies.
+
     this.intake = intake;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.shooter = shooter;
+    this.photon = photon;
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake, shooterRotationSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
-    shooterRotationSubsystem.setIntakeMode();
+    addRequirements(shooterRotationSubsystem);
+    shooterRotationSubsystem.setShooterAmpAngle();
 
   }
 
@@ -37,18 +42,8 @@ public class IntakeNote extends Command {
   @Override
   public void execute() {
 
-    if (shooterRotationSubsystem.isAngleOnTarget()) {
-      intake.setIntakeSpeed();
-      if (shooter.getMiddleBackBeambreak()) { // if middle beam break is broken
-        shooter.acceleratorWheelOutput(0.5);
-      } else {
-        shooter.intakeNote(); // sets to full speed when no note is in middle beam break
-      }
-    }
-
-    else {
-      intake.stopIntake();
-      shooter.stopAmplifierWheel();
+    if (shooterRotationSubsystem.getAngleMotorError() < 0.0139) {
+      shooter.ampScore();
     }
 
   }
@@ -56,19 +51,13 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
-    intake.stopIntake();
     shooter.stopAcceleratorWheel();
     shooter.stopAmplifierWheel();
-    shooterRotationSubsystem.setSpeakerTracking();
-
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    return shooter.getMiddleFrontBeambreak();
-
+    return false;
   }
 }
