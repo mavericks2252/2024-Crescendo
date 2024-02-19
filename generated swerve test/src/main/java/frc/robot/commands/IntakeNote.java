@@ -39,10 +39,13 @@ public class IntakeNote extends Command {
 
     if (shooterRotationSubsystem.isAngleOnTarget()) {
       intake.setIntakeSpeed();
+      shooter.setAmpWheel(1);
+
       if (shooter.getMiddleBackBeambreak()) { // if middle beam break is broken
         shooter.acceleratorWheelOutput(0.5);
+
       } else {
-        shooter.intakeNote(); // sets to full speed when no note is in middle beam break
+        shooter.acceleratorWheelOutput(1); // sets to full speed when no note is in middle beam break
       }
     }
 

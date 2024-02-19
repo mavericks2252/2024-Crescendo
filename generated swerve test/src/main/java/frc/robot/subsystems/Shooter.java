@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -80,22 +79,27 @@ public class Shooter extends SubsystemBase {
   }
 
   public void acceleratorWheelOutput(double acceleratorWheelSpeed) {
-    acceleratorWheel.set(acceleratorWheelSpeed);
+    acceleratorWheel.set(acceleratorWheelSpeed); // starts the accelerator wheels
   }
 
-  public void ampScore() {
-    acceleratorWheel.set(-ShooterConstants.kacceleratorWheelSpeed);
-    amplifierWheel.set(ShooterConstants.kacceleratorWheelSpeed);
+  public void ampScore() { // runs the accelerator wheels and amplifier wheels to score into the amplifier
+    acceleratorWheel.set(-ShooterConstants.kacceleratorWheelSpeed); // sets the accelerator wheels to run backwatds
+    amplifierWheel.set(ShooterConstants.kacceleratorWheelSpeed); // sets the amp wheel to run forwards
   }
 
-  public void intakeNote() {
-    acceleratorWheel.set(.75);
-    amplifierWheel.set(ShooterConstants.kIntakeSpeed);
+  public void intakeNote() { // runs the accelerator wheels and amplifier wheels to intake a note
+    acceleratorWheel.set(.75); // sets the accelerator wheels to run at 75%
+    amplifierWheel.set(ShooterConstants.kIntakeSpeed); // sets the amplifier wheels to run at full speed
+  }
+
+  public void setAmpWheel(double ampSpeed) {
+    amplifierWheel.set(ampSpeed);
   }
 
   public void setShooterVelocity(double targetRPM) {
-    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(25));
-    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(25));
+
+    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30));
+    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30));
 
   }
 

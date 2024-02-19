@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootNote;
@@ -32,7 +32,7 @@ import frc.robot.subsystems.VisionPhotonSubsystem;
 public class RobotContainer {
 
   // Swerve Stuff
-  public static double MaxSpeed = 2.25; // 6 meters per second desired top speed
+  public static double MaxSpeed = 2.5; // 6 meters per second desired top speed
   public static double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -46,9 +46,6 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
-
-  private final SwerveRequest.FieldCentric autoAimDrive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.15).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   // Robot Subsystems
   public final Shooter shooter = new Shooter();
@@ -93,34 +90,22 @@ public class RobotContainer {
             .withModuleDirection(new Rotation2d(-m_driver_controler.getLeftY(), -m_driver_controler.getLeftX()))));
 
     m_driver_controler.x()
-        .whileTrue(drivetrain.applyRequest(() -> autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) // Drive
-                                                                                                                       // forward
-                                                                                                                       // with
-            // negative Y (forward)
-            .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(
-                visionPhotonSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise with negative X (left)
-        ));
+        .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, drivetrain));
 
     /*
-     * m_driver_controler.a().whileTrue(new ParallelCommandGroup(
-     * 
-     * drivetrain.applyRequest(() ->
+     * m_driver_controler.x()
+     * .whileTrue(drivetrain.applyRequest(() ->
      * autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) //
      * Drive
      * // forward
      * // with
-     * // negative
-     * // Y
-     * // (forward)
+     * // negative Y (forward)
      * .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with
      * negative X (left)
      * .withRotationalRate(
-     * visionPhotonSubsystem.noteAutoAimRateOutput())),
-     * 
-     * new IntakeNote(intake,
-     * shooterRotationSubsystem,
-     * shooter)));
+     * visionPhotonSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise
+     * with negative X (left)
+     * ));
      */
 
     // reset the field-centric heading on left bumper press
@@ -142,16 +127,13 @@ public class RobotContainer {
     // Operator Buttons
 
     m_operatorController.b()
-        .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
-            4250));
+        .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
 
     m_operatorController.y().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setSpeakerTracking()));
-    // m_operatorController.x().onTrue(new InstantCommand(() ->
-    // shooterRotationSubsystem.setAmpMode()));
-    // m_operatorController.a().onTrue(new InstantCommand(() ->
-    // shooterRotationSubsystem.setIntakeMode()));
+    m_operatorController.x().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setAmpMode()));
+    m_operatorController.a().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setIntakeMode()));
 
   }
 
@@ -160,8 +142,7 @@ public class RobotContainer {
 
     // named commands
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, shooter));
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
-        4250));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);

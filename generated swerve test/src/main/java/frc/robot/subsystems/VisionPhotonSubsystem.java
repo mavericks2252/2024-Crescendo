@@ -56,7 +56,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(20, 0.25, 0, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -67,8 +67,6 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-    SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
 
     var visionEst = getEstimatedGlobePose();
 
@@ -87,9 +85,10 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
     SmartDashboard.putNumber("Target Angle", getTargetAngle());
-
+    SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("Amp Distance", getAmpDistance());
     SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
+
   }
 
   public Optional<EstimatedRobotPose> getEstimatedGlobePose() {
@@ -150,25 +149,41 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
   }
 
-  public double getTargetAngle() {
-    // double speakerToPivot = FieldConstants.kPivotToSpeaker;
-    double targetAngle;
-    if (getSpeakerDistance() > 4) {
-      targetAngle = -1.7458 * getSpeakerDistance() + 122.24;
-    } else {
-      targetAngle = -9.5963 * getSpeakerDistance() + 153.64;
-    }
-    return targetAngle;
+  public double getTargetRPM() {
+    double distance = getSpeakerDistance();
+    if (distance < 5.5)
+      return 3500;
+    else
+      return 350 * distance + 1575;
+  }
 
-    // return Math.toDegrees(Math.atan2(speakerToPivot, getSpeakerDistance())) + 95;
+  public double getTargetAngle() {
+
+    double targetAngle;
+    double distance = getSpeakerDistance();
+    // far shot farther than 5.5 meters
+    if (distance > 5.5) {
+      targetAngle = -1.8 * distance + 122.5;
+    }
+    // middle shot 5.5 meters to 4 meters
+    else if (distance > 4) {
+      targetAngle = -2.9333 * distance + 128.73;
+    }
+    // close shot less than 4 meters
+    else {
+      targetAngle = -8.8608 * distance + 152.44;
+    }
+
+    return targetAngle;
   }
 
   public double getAmpDistance() {
     double botX = drivetrain.getState().Pose.getX();
     double botY = drivetrain.getState().Pose.getY();
     double oppositetSide = botY - FieldConstants.kBlueAmpYPosMeters;
+    double adjacentSide = botX - FieldConstants.kBlueAmpXPosMeters;
 
-    return Math.hypot(oppositetSide, botX);
+    return Math.hypot(oppositetSide, adjacentSide) - 0.45;
   }
 
   public void seedRobotPoseFromVision() {
@@ -183,8 +198,12 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public double speakerAutoAimRateOutput() {
     Pose2d currentPos = getCurrentPose2d();
     Pose2d targetPos = getSpeakerTargetRotation2d();
+    double compensation = Units.degreesToRadians(0);
+    double targetAngle = targetPos.getRotation().getRadians() + compensation;
 
-    return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
+    SmartDashboard.putNumber("Speaker Target Rotation Angle Compensated", targetAngle);
+
+    return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
 
   }
 

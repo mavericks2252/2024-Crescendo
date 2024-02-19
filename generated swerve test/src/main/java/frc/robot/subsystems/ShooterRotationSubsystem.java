@@ -49,6 +49,8 @@ public class ShooterRotationSubsystem extends SubsystemBase {
         ShooterConstants.kForwardSoftLimit);
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degreesToMotorRevs(
         ShooterConstants.kReverseSoftLimit);
+    shooterAngleConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterAngleConfig.CurrentLimits.StatorCurrentLimit = 15;
     FeedbackConfigs fdb = shooterAngleConfig.Feedback;
     fdb.SensorToMechanismRatio = ShooterConstants.kShooterGearBoxRatio;
 
@@ -60,7 +62,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     shooterAngleMotor.setInverted(false);
     shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    // SmartDashboard.putNumber("test shooter angle", 90);
+    SmartDashboard.putNumber("test shooter angle", 90);
 
   }
 
@@ -76,88 +78,101 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     if (speakerAngleTracking) {
 
       // setShooterAngle(SmartDashboard.getNumber("test shooter angle", 90));
-      setShooterAngle(photon.getTargetAngle());
+      setShooterAngle(photon.getTargetAngle()); // sets shooter to track the
+      // speaker
     }
 
     else if (intakeMode) {
 
-      setShooterIntakeAngle();
+      setShooterIntakeAngle(); // sets shooter to position to intake
 
     }
 
     else if (ampMode) {
-      setShooterAmpAngle();
+      if (photon.getAmpDistance() < 2)
+        setShooterAmpAngle(); // sets shooter to point for shooting into amp if within 1 meter of it
+      else
+        setShooterAngle(90); // sets shooter to flat if not within 1 meter
     }
 
   }
 
   public static double getThroughBoreEncoder() {
-    return throughBoreEncoder.get();
+    return throughBoreEncoder.get(); // gets the position of the shooter's rotation
   }
 
   public double getAngleMotorError() {
-    return shooterAngleMotor.getClosedLoopError().refresh().getValueAsDouble();
+    return shooterAngleMotor.getClosedLoopError().refresh().getValueAsDouble(); // gives the error between the motor and
+                                                                                // where it should be
   }
 
   public boolean isAngleOnTarget() {
     double tolerance;
-    if (speakerTracking()) {
-      tolerance = degreesToMotorRevs(0.5);
-    } else {
-      tolerance = degreesToMotorRevs(2);
+    if (speakerTracking()) { // if we are tracking speaker
+      tolerance = degreesToMotorRevs(0.5); // sets the allowed error to half a degree
+    } else { // if we are tracking anything else
+      tolerance = degreesToMotorRevs(2); // sets the allowed error to 2 degrees
     }
 
-    return getAngleMotorError() < tolerance;
+    return getAngleMotorError() < tolerance; // tells us whether the motor is within our tolerence
   }
 
   public void setShooterIntakeAngle() {
-    double motorTarget = degreesToMotorRevs(ShooterConstants.kIntakeAngle);
+    double motorTarget = degreesToMotorRevs(ShooterConstants.kIntakeAngle); // sets motorTarget equal to the posision
+                                                                            // for intaking
 
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget));
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget)); // sets our shooter to the motorTarget
+                                                                                 // position
   }
 
   public void setShooterAmpAngle() {
-    double motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle);
+    double motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle); // sets motorTarget equal to the posision for
+                                                                         // scoring in the amp
 
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget));
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget)); // sets our shooter to the motorTarget
+                                                                                 // position
   }
 
   public void setShooterAngle(double targetDegrees) {
-    double targetRevs = degreesToMotorRevs(targetDegrees);
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(targetRevs));
+    double targetRevs = degreesToMotorRevs(targetDegrees); // sets targetRevs equal to a position we choose
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(targetRevs)); // sets our shooter to the position we
+                                                                                // chose
   }
 
-  public void setSpeakerTracking() {
+  public void setSpeakerTracking() { // sets the shooter to our mode that tracks the speaker and turns off all other
+                                     // modes
     speakerAngleTracking = true;
     intakeMode = false;
     ampMode = false;
   }
 
-  public void setIntakeMode() {
+  public void setIntakeMode() { // sets the shooter to our mode that tracks the intake and turns off all other
+                                // modes
     intakeMode = true;
     speakerAngleTracking = false;
     ampMode = false;
   }
 
-  public void setAmpMode() {
+  public void setAmpMode() { // sets the shooter to our mode that tracks the amp and turns off all other
+                             // modes
     ampMode = true;
     speakerAngleTracking = false;
     intakeMode = false;
   }
 
   public boolean speakerTracking() {
-    return speakerAngleTracking;
+    return speakerAngleTracking; // returns true if we are tracking the speaker
   }
 
   public double getAngleMotorPos() {
     return shooterAngleMotor.getPosition().getValue();
   }
 
-  public double motorRevsToDegrees(double revs) {
+  public double motorRevsToDegrees(double revs) {// converts motor revolutions to degrees
     return revs * 360;
   }
 
-  public double degreesToMotorRevs(double degrees) {
+  public double degreesToMotorRevs(double degrees) {// converts degrees to motor revolutions
     return degrees / 360;
   }
 
@@ -165,18 +180,22 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     int loops = 50;
     double encoderReadings = 0;
     for (int i = 0; i < loops; i++) {
-      encoderReadings += getThroughBoreEncoder();
+      encoderReadings += getThroughBoreEncoder(); // averages out the reding from our encoder after 50 loops of it
     }
-    double averageEncoderReadings = encoderReadings / loops;
+    double averageEncoderReadings = encoderReadings / loops; // divides the final number by the number of loops to get
+                                                             // the average
 
     SmartDashboard.putNumber("encoder Readings", averageEncoderReadings);
-    shooterAngleMotor.setPosition(averageEncoderReadings + 0.001214);
+    shooterAngleMotor.setPosition(averageEncoderReadings + 0.001214); // adds an offset to the position and makes the
+                                                                      // motor go to it
 
   }
 
   public void setRobotEnablePos() {
 
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos()));
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos())); // sets the pose of the shooter
+                                                                                        // when the robot is first
+                                                                                        // enabled
   }
 
 }

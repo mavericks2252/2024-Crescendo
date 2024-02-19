@@ -14,68 +14,71 @@ import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstants;
 
-
-
 public class AutoAimSubsystem extends SubsystemBase {
-  TrapezoidProfile.Constraints aim_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate, TunerConstants.kMaxAngularAcceleration);
-  
-  
+  TrapezoidProfile.Constraints aim_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate,
+      TunerConstants.kMaxAngularAcceleration);
+
   ProfiledPIDController autoAimPIDController;
   ProfiledPIDController noteAimPidController;
-  //VisionSubsystem vision;
+  // VisionSubsystem vision;
   VisionPhotonSubsystem photon;
 
-  // Creates a new AutoAimSubsystem. 
+  // Creates a new AutoAimSubsystem.
   public AutoAimSubsystem(VisionPhotonSubsystem photon, LEDSubsystem ledSubsystem) {
-    //this.vision = vision;
+    // this.vision = vision;
     this.photon = photon;
-    
-      
+
     noteAimPidController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
-    
-    
-    autoAimPIDController= new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints,.01);
+
+    autoAimPIDController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
-    
-    //autoAimPIDController.setTolerance(3);
+
+    // autoAimPIDController.setTolerance(3);
     autoAimPIDController.setIZone(.5);
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
-    //SmartDashboard.putNumber("auto aim note output", noteAutoAimRateOutput());
-    
+    // SmartDashboard.putNumber("auto aim note output", noteAutoAimRateOutput());
+
   }
 
-  public double speakerAutoAimRateOutput(){
+  public double speakerAutoAimRateOutput() {
     Pose2d currentPos = photon.getCurrentPose2d();
     Pose2d targetPos = photon.getSpeakerTargetRotation2d();
-  
+
     return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
+    // takes the current pose and its target pose and calculates the rotation to get
+    // there
 
-   }
+  }
 
-   public double noteAutoAimRateOutput(){
-    //double currentRotation = photon.getCurrentPose2d().getRotation().getDegrees();
+  public double noteAutoAimRateOutput() {
+    // double currentRotation =
+    // photon.getCurrentPose2d().getRotation().getDegrees();
     double angleToNote;
     double turnRate;
-    var target = photon.camera.getLatestResult();
+    var target = photon.camera.getLatestResult(); // sets "target" to the closest note on the field
 
-    if(target.hasTargets()){
-      angleToNote = target.getBestTarget().getYaw();
-      turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote));
-    }
-    else{
-      angleToNote = 0;
-      turnRate = CommandSwerveDrivetrain.getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate);
+    if (target.hasTargets()) { // if there is a note
+      angleToNote = target.getBestTarget().getYaw(); // finds the rotation needed to get to the note
+      turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote)); // returns the calculation needed
+                                                                                      // to reach the note in radians
+    } else { // if there isn't a note
+      angleToNote = 0; // set the rotation needed to 0
+      turnRate = CommandSwerveDrivetrain
+          .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate); // sets the
+                                                                                                           // control to
+                                                                                                           // the driver
+                                                                                                           // controller
     }
     SmartDashboard.putNumber("angle to note", turnRate);
     return turnRate;
-    
-    
-   }
+
+  }
 
 }

@@ -58,13 +58,12 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int kShooterMotorMasterSpeed = 4250;
-    public static final int kShooterMotorSlaveSpeed = 4250;
+    public static final int kShooterMotorSpeed = 4200;
     public static final double kacceleratorWheelSpeed = 0.8;
     public static final double kIntakeSpeed = 1;
-    public static final double kIntakeAngle = 131;
+    public static final double kIntakeAngle = 135;
     public static final double kAmpAngle = 8;
-    public static final double kShooterGearBoxRatio = 309.5209876543;
+    public static final double kShooterGearBoxRatio = 270.830864;
     public static final int kForwardSoftLimit = 140;
     public static final int kReverseSoftLimit = 5;
   }
@@ -143,7 +142,7 @@ public final class Constants {
   }
 
   public final class DriveTrainConstants {
-    public static final double kExponent = 2;
+    public static final double kExponent = 3;
     public static final double kWeight = 0.75;
     public static final double kDeadBand = 0.1;
 

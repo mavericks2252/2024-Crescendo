@@ -4,9 +4,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
@@ -19,15 +17,13 @@ public class ShootNote extends Command {
 
   double targetRPM;
 
-  public ShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem, VisionPhotonSubsystem photon,
-      double targetRPM) {
+  public ShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem, VisionPhotonSubsystem photon) {
     this.shooter = shooter;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.photon = photon;
-    this.targetRPM = targetRPM;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, shooterRotationSubsystem);
-    SmartDashboard.putNumber("test shoot RPM", 0);
   }
 
   // Called when the command is initially scheduled.
@@ -40,14 +36,14 @@ public class ShootNote extends Command {
   @Override
   public void execute() {
 
-    // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
+    targetRPM = photon.getTargetRPM();
+    shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
-    if (3500 - shooter.getShooterVelocity() < 75) {
+    if (targetRPM - shooter.getShooterVelocity() < 75) {
       shooter.acceleratorWheelOutput(1);
     }
 
-    // shooter.setShooterVelocity(targetRPM);
-    shooter.setShooterVelocity(3500);
+    shooter.setShooterVelocity(targetRPM);
 
   }
 

@@ -34,7 +34,7 @@ public class AmpShootNote extends Command {
   public void initialize() {
 
     addRequirements(shooterRotationSubsystem);
-    shooterRotationSubsystem.setShooterAmpAngle();
+    shooterRotationSubsystem.setAmpMode();
 
   }
 

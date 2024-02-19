@@ -44,13 +44,13 @@ public class Intake extends SubsystemBase {
   }
 
   // sets intake motor to a percent speed
-  public void setIntakeSpeed() {
+  public void setIntakeSpeed() { // sets the speed of our intake
     intakeMotor.set(IntakeConstants.kIntakeSpeed);
     centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
   }
 
   // stops intake motor
-  public void stopIntake() {
+  public void stopIntake() { // stops the intake motors
     intakeMotor.stopMotor();
     centeringWheelMotor.stopMotor();
   }
