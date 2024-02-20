@@ -5,68 +5,49 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class AmpShootNote extends Command {
-  /** Creates a new AmpShootNote. */
-
+public class AutoShooterSpool extends Command {
   Shooter shooter;
-  Intake intake;
-  ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
+  ShooterRotationSubsystem shooterRotationSubsystem;
 
-  double loops;
-
-  public AmpShootNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
-      VisionPhotonSubsystem photon) {
+  /** Creates a new AutoShooterSpool. */
+  public AutoShooterSpool(Shooter shooter, VisionPhotonSubsystem photon,
+      ShooterRotationSubsystem shooterRotationSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-
-    this.intake = intake;
-    this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.shooter = shooter;
     this.photon = photon;
-
+    this.shooterRotationSubsystem = shooterRotationSubsystem;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    addRequirements(shooterRotationSubsystem, shooter);
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if (shooterRotationSubsystem.isAngleOnTarget()) {
-      shooter.ampScore();
-
-    } else {
-      shooter.stopAcceleratorWheel();
-      shooter.stopAmplifierWheel();
-    }
-
+    if ((shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) && photon.getSpeakerDistance() < 7.5
+        && shooterRotationSubsystem.speakerTracking()) {
+      shooter.setShooterVelocity(2000);
+    } else
+      shooter.stopShooter();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopAcceleratorWheel();
-    shooter.stopAmplifierWheel();
+    shooter.stopShooter();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    if (!shooter.getMiddleBackBeambreak() && !shooter.getAmpBeambreak()) {
-      return true;
-    } else
-      return false;
+    return false;
   }
 }

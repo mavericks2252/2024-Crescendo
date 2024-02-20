@@ -10,17 +10,16 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class AmpShootNote extends Command {
-  /** Creates a new AmpShootNote. */
+public class SetAmpMode extends Command {
 
+  double loops;
   Shooter shooter;
   Intake intake;
   ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
 
-  double loops;
-
-  public AmpShootNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
+  /** Creates a new AmpPreStage. */
+  public SetAmpMode(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
       VisionPhotonSubsystem photon) {
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -29,6 +28,8 @@ public class AmpShootNote extends Command {
     this.shooter = shooter;
     this.photon = photon;
 
+    loops = 0;
+
   }
 
   // Called when the command is initially scheduled.
@@ -36,6 +37,7 @@ public class AmpShootNote extends Command {
   public void initialize() {
 
     addRequirements(shooterRotationSubsystem, shooter);
+    shooterRotationSubsystem.setAmpMode();
 
   }
 
@@ -43,29 +45,28 @@ public class AmpShootNote extends Command {
   @Override
   public void execute() {
 
-    if (shooterRotationSubsystem.isAngleOnTarget()) {
-      shooter.ampScore();
-
-    } else {
-      shooter.stopAcceleratorWheel();
-      shooter.stopAmplifierWheel();
-    }
+    shooter.ampScore();
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
     shooter.stopAcceleratorWheel();
     shooter.stopAmplifierWheel();
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    if (!shooter.getMiddleBackBeambreak() && !shooter.getAmpBeambreak()) {
-      return true;
+    if (!shooter.getMiddleFrontBeambreak()) {
+      if (loops < 1) {
+        loops++;
+        return false;
+      } else
+        return true;
     } else
       return false;
   }

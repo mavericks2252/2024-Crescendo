@@ -29,21 +29,23 @@ public class ShootNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRotationSubsystem.setSpeakerTracking();
+    shooterRotationSubsystem.setSpeakerTracking(); // sets the shooter to track the speaker
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    targetRPM = photon.getTargetRPM();
-    shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
+    targetRPM = photon.getTargetRPM(); // sets the shooter to a desired rpm
+    // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle()); // sets
+    // the angle that the shooter needs to
+    // target
 
-    if (targetRPM - shooter.getShooterVelocity() < 75) {
-      shooter.acceleratorWheelOutput(1);
+    if (targetRPM - shooter.getShooterVelocity() < 75) { // if the shooter is within 75 rpm of the desired speed
+      shooter.acceleratorWheelOutput(1); // sets the accelerator wheel to full speed
     }
 
-    shooter.setShooterVelocity(targetRPM);
+    shooter.setShooterVelocity(targetRPM); // sets the speed of the shooter when the command starts
 
   }
 

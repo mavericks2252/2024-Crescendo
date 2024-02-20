@@ -16,11 +16,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AmpShootNote;
 import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
+import frc.robot.commands.AutoShooterSpool;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.SetAmpMode;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake;
@@ -62,6 +67,8 @@ public class RobotContainer {
 
   private void configureBindings() {
 
+    shooter.setDefaultCommand(new AutoShooterSpool(shooter, visionPhotonSubsystem, shooterRotationSubsystem));
+
     // Swerve Buttons
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
@@ -89,9 +96,6 @@ public class RobotContainer {
         .applyRequest(() -> point
             .withModuleDirection(new Rotation2d(-m_driver_controler.getLeftY(), -m_driver_controler.getLeftX()))));
 
-    m_driver_controler.x()
-        .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, drivetrain));
-
     /*
      * m_driver_controler.x()
      * .whileTrue(drivetrain.applyRequest(() ->
@@ -109,7 +113,6 @@ public class RobotContainer {
      */
 
     // reset the field-centric heading on left bumper press
-    m_driver_controler.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
@@ -118,22 +121,31 @@ public class RobotContainer {
 
     // Driver Buttons
 
-    m_driver_controler.start().onTrue(new InstantCommand(() -> visionPhotonSubsystem.seedRobotPoseFromVision()));
+    m_driver_controler.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    m_driver_controler.leftBumper()
+        .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, drivetrain));
     m_driver_controler.rightBumper().toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
+
     m_driver_controler.a()
         .whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain, shooterRotationSubsystem));
-    m_driver_controler.y().onTrue(drivetrain.ampPathCommand());
+    m_driver_controler.y().onTrue(new SequentialCommandGroup(
+        new ParallelCommandGroup(drivetrain.ampPathCommand(),
+            new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+
+            new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem))));
 
     // Operator Buttons
 
     m_operatorController.b()
         .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
-
     m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
+    m_operatorController.a()
+        .toggleOnTrue(new SequentialCommandGroup(
 
-    m_operatorController.y().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setSpeakerTracking()));
-    m_operatorController.x().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setAmpMode()));
-    m_operatorController.a().onTrue(new InstantCommand(() -> shooterRotationSubsystem.setIntakeMode()));
+            new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+            new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
+    m_operatorController.rightBumper()
+        .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
 
   }
 

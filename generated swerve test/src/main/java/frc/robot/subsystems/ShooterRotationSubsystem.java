@@ -92,7 +92,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
       if (photon.getAmpDistance() < 2)
         setShooterAmpAngle(); // sets shooter to point for shooting into amp if within 1 meter of it
       else
-        setShooterAngle(90); // sets shooter to flat if not within 1 meter
+        setShooterAngle(100); // sets shooter to flat if not within 1 meter
     }
 
   }
@@ -108,13 +108,26 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
   public boolean isAngleOnTarget() {
     double tolerance;
+    double target = 0;
     if (speakerTracking()) { // if we are tracking speaker
       tolerance = degreesToMotorRevs(0.5); // sets the allowed error to half a degree
     } else { // if we are tracking anything else
       tolerance = degreesToMotorRevs(2); // sets the allowed error to 2 degrees
     }
 
-    return getAngleMotorError() < tolerance; // tells us whether the motor is within our tolerence
+    if (speakerAngleTracking) {
+      target = photon.getTargetAngle();
+    } else if (intakeMode) {
+      target = degreesToMotorRevs(ShooterConstants.kIntakeAngle);
+    } else if (ampMode) {
+      target = degreesToMotorRevs(ShooterConstants.kAmpAngle);
+    }
+
+    double error = Math.abs(getAngleMotorPos() - target);
+
+    return error < tolerance;
+    // return getAngleMotorError() < tolerance; // tells us whether the motor is
+    // within our tolerence
   }
 
   public void setShooterIntakeAngle() {

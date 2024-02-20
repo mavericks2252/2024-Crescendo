@@ -62,6 +62,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // autoAimPIDController.setTolerance(3);
     autoAimPIDController.setIZone(.5);
 
+    SmartDashboard.putNumber("test shooter RPM", 3000);
+
   }
 
   @Override
@@ -70,7 +72,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     var visionEst = getEstimatedGlobePose();
 
-    visionEst.ifPresent(
+    visionEst.ifPresent( // if we have an estimated pose
         est -> {
           // var estPose = est.estimatedPose.toPose2d();
           // add standard deviation trust here
@@ -91,14 +93,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedGlobePose() {
-    var visionEst = photonPoseEstimator.update();
-    double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
-    boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;
+  public Optional<EstimatedRobotPose> getEstimatedGlobePose() { // will return an estimated pose but only when it has
+                                                                // one
+    var visionEst = photonPoseEstimator.update(); // recieves the newest pose estimation
+    double latestTimestamp = camera.getLatestResult().getTimestampSeconds(); // gets the time that it took the latest
+                                                                             // pose estimation
+    boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5; // sees if the time of this estimation is
+                                                                             // too close to the time of the last
+                                                                             // estimation
 
-    if (newResult)
-      lastEstTimestamp = latestTimestamp;
-    return visionEst;
+    if (newResult) // if the time isn't too close
+      lastEstTimestamp = latestTimestamp; // sets our current pose to our old pose
+    return visionEst; // returns the new pose
   }
 
   public Pose2d getCurrentPose2d() {
@@ -140,21 +146,37 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
   public double getSpeakerDistance() {
 
-    double botX = drivetrain.getState().Pose.getX();
-    double botY = drivetrain.getState().Pose.getY();
-    double oppositetSide = botY - FieldConstants.kBlueSpeakerYPosMeters;
+    double speakerYPos;
 
-    return Math.hypot(oppositetSide, botX);
+    if (driverStationAlliance()) {
+      speakerYPos = FieldConstants.kRedSpeakerYPosMeters; // sets the robot to look for the red speaker if on red team
+    } else {
+      speakerYPos = FieldConstants.kBlueSpeakerYPosMeters; // sets the robot to look for the blue speaker if on blue
+                                                           // team
+    }
+
+    double botX = drivetrain.getState().Pose.getX(); // gets the x pose of the bot
+    double botY = drivetrain.getState().Pose.getY(); // gets the y pose of the bot
+    double oppositetSide = botY - speakerYPos; // finds the distance from the bot to the back of the arena
+
+    return Math.hypot(oppositetSide, botX); // calculates the distance with an angle to the speaker
     // return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
 
   }
 
   public double getTargetRPM() {
+
     double distance = getSpeakerDistance();
-    if (distance < 5.5)
-      return 3500;
-    else
-      return 350 * distance + 1575;
+
+    if (distance < 4)
+      return 426.8 * distance + 1792.8; // if the bot is within 4 meters of the speaker use this equasion
+
+    if (distance < 5.5) // if the bot is within 5.5 to 4 meters of the speaker
+      return 3500; // shoot at 3500 rpm
+    else // if it is not within 5.5
+      return 125 * distance + 2812.5; // shoot based on this equasion
+
+    // return SmartDashboard.getNumber("test shooter RPM", 0);
   }
 
   public double getTargetAngle() {
@@ -162,28 +184,29 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     double targetAngle;
     double distance = getSpeakerDistance();
     // far shot farther than 5.5 meters
-    if (distance > 5.5) {
-      targetAngle = -1.8 * distance + 122.5;
+    if (distance > 5.5) { // if the distance to the speakeris more than 5.5 meters
+      targetAngle = -1.325 * distance + 119.94; // use this equasion
     }
     // middle shot 5.5 meters to 4 meters
-    else if (distance > 4) {
-      targetAngle = -2.9333 * distance + 128.73;
+    else if (distance > 4) { // if the distance is between 4 and 5.5 meters
+      targetAngle = -2.9 * distance + 128.6; // use this equasion
     }
     // close shot less than 4 meters
-    else {
-      targetAngle = -8.8608 * distance + 152.44;
+    else { // if the distance is less than 4 meters
+      targetAngle = -10.67 * distance + 159.68; // use this equasion
     }
 
     return targetAngle;
   }
 
   public double getAmpDistance() {
-    double botX = drivetrain.getState().Pose.getX();
-    double botY = drivetrain.getState().Pose.getY();
-    double oppositetSide = botY - FieldConstants.kBlueAmpYPosMeters;
-    double adjacentSide = botX - FieldConstants.kBlueAmpXPosMeters;
+    double botX = drivetrain.getState().Pose.getX(); // get the x position of the bot
+    double botY = drivetrain.getState().Pose.getY(); // gets the y position of the bot
+    double oppositetSide = botY - FieldConstants.kBlueAmpYPosMeters; // finds how far the bot y is from the amp y
+    double adjacentSide = botX - FieldConstants.kBlueAmpXPosMeters; // finds how far the bot x is from the amp x
 
-    return Math.hypot(oppositetSide, adjacentSide) - 0.45;
+    return Math.hypot(oppositetSide, adjacentSide) - 1; // calculates the distance from amp with an offset to account
+                                                        // for robot size and bumpers
   }
 
   public void seedRobotPoseFromVision() {
@@ -192,16 +215,15 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   }
 
   public void setPhotonPipeline(int pipeline) {
-    camera.setPipelineIndex(pipeline);
+    camera.setPipelineIndex(pipeline); // sets the photon vision pipeline to any we choose
   }
 
   public double speakerAutoAimRateOutput() {
-    Pose2d currentPos = getCurrentPose2d();
+    Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
-    double compensation = Units.degreesToRadians(0);
-    double targetAngle = targetPos.getRotation().getRadians() + compensation;
-
-    SmartDashboard.putNumber("Speaker Target Rotation Angle Compensated", targetAngle);
+    double correction = Units.degreesToRadians(3);
+    double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
+                                                                            // speaker
 
     return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
 
@@ -212,17 +234,19 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // photon.getCurrentPose2d().getRotation().getDegrees();
     double angleToNote;
     double turnRate;
-    var target = camera.getLatestResult();
+    var target = camera.getLatestResult(); // gets the latest pose from the camera
 
-    if (target.hasTargets()) {
-      angleToNote = target.getBestTarget().getYaw();
-      turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote));
-    } else {
-      angleToNote = 0;
-      turnRate = CommandSwerveDrivetrain
+    if (target.hasTargets()) { // if the camera had targets
+      angleToNote = target.getBestTarget().getYaw(); // find the best target and get the angle to it
+      turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote)); // calculates how far the robot
+                                                                                      // needs to turn to the note in
+                                                                                      // radians
+    } else { // if there were no notes detected
+      angleToNote = 0; // set the angle needed to get to a note to 0
+      turnRate = CommandSwerveDrivetrain // sets the turning of the robot to the controller
           .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate);
     }
-    SmartDashboard.putNumber("angle to note", turnRate);
+
     return turnRate;
 
   }

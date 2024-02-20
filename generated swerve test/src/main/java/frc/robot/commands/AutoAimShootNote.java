@@ -6,8 +6,6 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -23,7 +21,7 @@ public class AutoAimShootNote extends Command {
   RobotContainer robotContainer;
   CommandSwerveDrivetrain drivetrain;
 
-  double targetRPM, maxSpeed = 2.25;
+  double targetRPM, maxSpeed = 2;
 
   private final SwerveRequest.FieldCentric autoAimDrive = new SwerveRequest.FieldCentric()
       .withDeadband(RobotContainer.MaxSpeed * 0.15).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -44,7 +42,7 @@ public class AutoAimShootNote extends Command {
   @Override
   public void initialize() {
     shooterRotationSubsystem.setSpeakerTracking();
-    SmartDashboard.putBoolean("autoaimshootrunning", true);
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,7 +50,6 @@ public class AutoAimShootNote extends Command {
   public void execute() {
     double error = Math.abs((photon.speakerAutoAimRateOutput()));
     targetRPM = photon.getTargetRPM();
-
     shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
     if (targetRPM - shooter.getShooterVelocity() < 75 && error < .75) {

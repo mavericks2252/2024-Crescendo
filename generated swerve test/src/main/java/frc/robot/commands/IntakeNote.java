@@ -42,7 +42,7 @@ public class IntakeNote extends Command {
       shooter.setAmpWheel(1);
 
       if (shooter.getMiddleBackBeambreak()) { // if middle beam break is broken
-        shooter.acceleratorWheelOutput(0.5);
+        shooter.acceleratorWheelOutput(0.4);
 
       } else {
         shooter.acceleratorWheelOutput(1); // sets to full speed when no note is in middle beam break
@@ -63,7 +63,8 @@ public class IntakeNote extends Command {
     intake.stopIntake();
     shooter.stopAcceleratorWheel();
     shooter.stopAmplifierWheel();
-    shooterRotationSubsystem.setSpeakerTracking();
+    if (shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak())
+      shooterRotationSubsystem.setSpeakerTracking();
 
   }
 

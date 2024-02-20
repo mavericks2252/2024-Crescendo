@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
     shooterConfig.Slot1.kP = 8;
     shooterConfig.Slot1.kI = 0.0;
     shooterConfig.Slot1.kD = 0.1;
-    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 75;
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 50;
     shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
     shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
@@ -83,62 +83,64 @@ public class Shooter extends SubsystemBase {
   }
 
   public void ampScore() { // runs the accelerator wheels and amplifier wheels to score into the amplifier
-    acceleratorWheel.set(-ShooterConstants.kacceleratorWheelSpeed); // sets the accelerator wheels to run backwatds
-    amplifierWheel.set(ShooterConstants.kacceleratorWheelSpeed); // sets the amp wheel to run forwards
+    acceleratorWheel.set(-0.25); // sets the accelerator wheels to run backwatds
+    amplifierWheel.set(0.5); // sets the amp wheel to run forwards
   }
 
   public void intakeNote() { // runs the accelerator wheels and amplifier wheels to intake a note
-    acceleratorWheel.set(.75); // sets the accelerator wheels to run at 75%
+    acceleratorWheel.set(0.75); // sets the accelerator wheels to run at 75%
     amplifierWheel.set(ShooterConstants.kIntakeSpeed); // sets the amplifier wheels to run at full speed
   }
 
   public void setAmpWheel(double ampSpeed) {
-    amplifierWheel.set(ampSpeed);
+    amplifierWheel.set(ampSpeed); // sets the speed of our amplifier wheel to any speed we want
   }
 
   public void setShooterVelocity(double targetRPM) {
 
-    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30));
+    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30)); // sets our shooter motor
+                                                                                               // to a set speed with a
+                                                                                               // feed forward
     shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30));
 
   }
 
   public Double getShooterVelocity() {
-    double shooterVelocity = shooterMotorMaster.getVelocity().getValue() * 60;
+    double shooterVelocity = shooterMotorMaster.getVelocity().getValue() * 60; // finds the velocity our shooter is
+                                                                               // currently running at
     return shooterVelocity;
   }
 
-  // stops shooter motor
-  public void stopShooter() {
+  public void stopShooter() { // stops shooter motor
     shooterMotorMaster.stopMotor();
     shooterMotorSlave.stopMotor();
   }
 
-  public void stopAcceleratorWheel() {
+  public void stopAcceleratorWheel() { // stops accelerator wheel
     acceleratorWheel.stopMotor();
 
   }
 
-  public void stopAmplifierWheel() {
+  public void stopAmplifierWheel() { // stops amplifier wheel
     amplifierWheel.stopMotor();
   }
 
-  public boolean getShotBeambreak() {
+  public boolean getShotBeambreak() { // returns true when the shooter beam break is broken
     return !beamBreakShot.get();
 
   }
 
-  public boolean getAmpBeambreak() {
+  public boolean getAmpBeambreak() { // returns true when the amp shot's beam break is broken
     return !beamBreakAmp.get();
 
   }
 
-  public boolean getMiddleBackBeambreak() {
+  public boolean getMiddleBackBeambreak() { // returns true when the middle back beam break is broken
     return !beamBreakMiddleBack.get();
   }
 
-  public boolean getMiddleFrontBeambreak() {
-    return !beamBreakMiddleFront.get(); // returns true when broken
+  public boolean getMiddleFrontBeambreak() { // returns true when the middle front beam break is broken
+    return !beamBreakMiddleFront.get();
   }
 
 }

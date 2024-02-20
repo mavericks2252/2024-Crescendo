@@ -49,14 +49,13 @@ public class Intake extends SubsystemBase {
     centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
   }
 
-  // stops intake motor
   public void stopIntake() { // stops the intake motors
     intakeMotor.stopMotor();
     centeringWheelMotor.stopMotor();
   }
 
   public boolean getBeamBreak() {
-    return !beamBreakSensor.get();
+    return !beamBreakSensor.get(); // returns true if the beam is broken
 
   }
 
