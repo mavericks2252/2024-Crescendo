@@ -42,7 +42,7 @@ public class ShootNote extends Command {
     // target
 
     if (targetRPM - shooter.getShooterVelocity() < 75) { // if the shooter is within 75 rpm of the desired speed
-      shooter.acceleratorWheelOutput(1); // sets the accelerator wheel to full speed
+      shooter.acceleratorWheelOutput(0.95); // sets the accelerator wheel to full speed
     }
 
     shooter.setShooterVelocity(targetRPM); // sets the speed of the shooter when the command starts

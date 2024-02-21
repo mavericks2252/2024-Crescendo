@@ -109,7 +109,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   public boolean isAngleOnTarget() {
     double tolerance;
     double target = 0;
-    if (speakerTracking()) { // if we are tracking speaker
+    if (getSpeakerTracking()) { // if we are tracking speaker
       tolerance = degreesToMotorRevs(0.5); // sets the allowed error to half a degree
     } else { // if we are tracking anything else
       tolerance = degreesToMotorRevs(2); // sets the allowed error to 2 degrees
@@ -173,7 +173,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     intakeMode = false;
   }
 
-  public boolean speakerTracking() {
+  public boolean getSpeakerTracking() {
     return speakerAngleTracking; // returns true if we are tracking the speaker
   }
 

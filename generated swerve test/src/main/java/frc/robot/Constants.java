@@ -41,12 +41,14 @@ public final class Constants {
     public static final int kShooterAngleMotorPort = 22;
     public static final int kAmplifierWheelPort = 23;
     public static final int kCenteringWheelPort = 25;
+    public static final int kClimberMotorPort = 26;
 
     public static final int kShotBeamBreak = 1;
     public static final int kAmpBeamBreak = 2;
     public static final int kMiddleBackBeamBreak = 3;
     public static final int kMiddleFrontBeamBreak = 4;
     public static final int kThroughBoreEncoder = 5;
+
   }
 
   public static final class IntakeConstants {
@@ -102,6 +104,7 @@ public final class Constants {
     public static final double kBlueShot = -0.83;
     public static final double kFire = -0.57;
     public static final double kRaindow = -0.99;
+    public static final double kOrange = 0.65;
 
   }
 
@@ -168,6 +171,10 @@ public final class Constants {
             Units.inchesToMeters(9)),
 
         new Rotation3d(0, Units.degreesToRadians(-34), 0));
+  }
+
+  public final class ClimberConstants {
+    public static final double kClimberGearRatio = 0;
   }
 
 }

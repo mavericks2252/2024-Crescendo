@@ -30,7 +30,8 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.generated.TunerConstants;
 
 /**
- * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
+ * Class that extends the Phoenix SwerveDrivetrain class and implements
+ * subsystem
  * so it can be used in command-based projects easily.
  */
 public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsystem {
@@ -40,22 +41,21 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     Pose2d ampPos = new Pose2d(0, 0, new Rotation2d(0));
     Pose2d infrontAmpPos = new Pose2d(0, 0, new Rotation2d(0));
 
-   
+    public final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); // creates a
+                                                                                                        // swerve
+                                                                                                        // request
+                                                                                                        // called auto
+                                                                                                        // request
 
-
-    
-       
-    
-
-    public final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); //creates a swerve request called auto request
-
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants... modules) {
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency,
+            SwerveModuleConstants... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         configPathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
         }
     }
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         configPathPlanner();
@@ -83,41 +83,39 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    public HolonomicPathFollowerConfig getHolonomicPathFollowerConfig(){
+    public HolonomicPathFollowerConfig getHolonomicPathFollowerConfig() {
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-            //finds the radius by taking the larger of the locations
-           } 
+            // finds the radius by taking the larger of the locations
+        }
 
-            return new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0), //constants for the translation controller
-                                                    new PIDConstants(10, 0, 0), //constants for the rotation controller
-                                                    TunerConstants.kSpeedAt12VoltsMps, //sets the max speed 
-                                                    driveBaseRadius,
-                                                    new ReplanningConfig());
-        
+        return new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0), // constants for the translation controller
+                new PIDConstants(10, 0, 0), // constants for the rotation controller
+                TunerConstants.kSpeedAt12VoltsMps, // sets the max speed
+                driveBaseRadius,
+                new ReplanningConfig());
+
     }
 
-
-    //Configure auto builder
-    private void configPathPlanner(){
-        
+    // Configure auto builder
+    private void configPathPlanner() {
 
         AutoBuilder.configureHolonomic(
-                ()->this.getState().Pose, //gives the current robot location
-                this::seedFieldRelative,  //takes the location and makes it the pose
-                this::getCurrentChassisSpeeds,  //makes a command that applies the chassis speed
-                (speeds)->this.setControl(autoRequest.withSpeeds(speeds)),
+                () -> this.getState().Pose, // gives the current robot location
+                this::seedFieldRelative, // takes the location and makes it the pose
+                this::getCurrentChassisSpeeds, // makes a command that applies the chassis speed
+                (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)),
                 getHolonomicPathFollowerConfig(),
-                 ()->false, //determines the red or blue team
-                 this);
+                () -> false, // determines the red or blue team
+                this);
     }
 
-    public ChassisSpeeds getCurrentChassisSpeeds(){ //creates getCurrentChassisSpeeds
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates); //gets the current speed
+    public ChassisSpeeds getCurrentChassisSpeeds() { // creates getCurrentChassisSpeeds
+        return m_kinematics.toChassisSpeeds(getState().ModuleStates); // gets the current speed
     }
 
-    public static double getExponential(double input){
+    public static double getExponential(double input) {
 
         if (Math.abs(input) < DriveTrainConstants.kDeadBand) {
             return 0;
@@ -125,64 +123,67 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         double sign = Math.signum(input);
         double v = Math.abs(input);
-        
-        double a = DriveTrainConstants.kWeight * Math.pow(v, DriveTrainConstants.kExponent) + (1 - DriveTrainConstants.kWeight) * v;
-        double b = DriveTrainConstants.kWeight * Math.pow(DriveTrainConstants.kDeadBand, DriveTrainConstants.kExponent) + (1 - DriveTrainConstants.kWeight) * DriveTrainConstants.kDeadBand;
+
+        double a = DriveTrainConstants.kWeight * Math.pow(v, DriveTrainConstants.kExponent)
+                + (1 - DriveTrainConstants.kWeight) * v;
+        double b = DriveTrainConstants.kWeight * Math.pow(DriveTrainConstants.kDeadBand, DriveTrainConstants.kExponent)
+                + (1 - DriveTrainConstants.kWeight) * DriveTrainConstants.kDeadBand;
         v = (a - 1 * b) / (1 - b);
 
         v *= sign;
         return v;
     }
 
-   
+    public Command ampPathCommand() {
 
-        
-    
+        var alliance = DriverStation.getAlliance();
 
-    public Command ampPathCommand(){
-
-
-        var alliance = DriverStation.getAlliance();        
-        
         if (alliance.isPresent()) {
-            
-            if(alliance.get() == DriverStation.Alliance.Blue){
+
+            if (alliance.get() == DriverStation.Alliance.Blue) {
                 infrontAmpPos = FieldConstants.kInfrontBluePos;
                 ampPos = FieldConstants.kBlueAmpScorePose;
-            }
-            else {
+            } else {
                 infrontAmpPos = FieldConstants.kInfrontRedPos;
                 ampPos = FieldConstants.kRedAmp;
-            } 
+            }
         }
 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-            //getState().Pose,
-            infrontAmpPos,
-            ampPos
-            
+                // getState().Pose,
+                infrontAmpPos,
+                ampPos
+
         );
 
         PathPlannerPath newpath = new PathPlannerPath(
-            bezierPoints,
-            DriveTrainConstants.kPathConstraints,
-            new GoalEndState(0.0, Rotation2d.fromDegrees(90))
-            );
-        
+                bezierPoints,
+                DriveTrainConstants.kPathConstraints,
+                new GoalEndState(0.0, Rotation2d.fromDegrees(90)));
+
         return new FollowPathHolonomic(
-            newpath, 
-            ()-> this.getState().Pose, //supplies the robot pose
-            this::getCurrentChassisSpeeds, //supplies the current chassis speed
-            (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), //will drive robot using given chassis speeds
-            getHolonomicPathFollowerConfig(), //
-            ()->false, //flips path for opposite side
-            this //requiering this drivetrain
-            );
-
-
+                newpath,
+                () -> this.getState().Pose, // supplies the robot pose
+                this::getCurrentChassisSpeeds, // supplies the current chassis speed
+                (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)), // will drive robot using given chassis
+                                                                             // speeds
+                getHolonomicPathFollowerConfig(), //
+                () -> false, // flips path for opposite side
+                this // requiering this drivetrain
+        );
 
     }
 
+    public Command AmpPathfinding() {
 
-   
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Amp Score");
+
+        Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
+                path,
+                DriveTrainConstants.kPathConstraints,
+                0.25);
+
+        return pathfindingCommand;
+    }
+
 }

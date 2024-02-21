@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -128,17 +127,25 @@ public class RobotContainer {
 
     m_driver_controler.a()
         .whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain, shooterRotationSubsystem));
-    m_driver_controler.y().onTrue(new SequentialCommandGroup(
-        new ParallelCommandGroup(drivetrain.ampPathCommand(),
-            new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+    /*
+     * m_driver_controler.y().onTrue(new SequentialCommandGroup(
+     * new ParallelCommandGroup(drivetrain.ampPathCommand(),
+     * new SetAmpMode(intake, shooterRotationSubsystem, shooter,
+     * visionPhotonSubsystem),
+     * 
+     * new AmpShootNote(intake, shooterRotationSubsystem, shooter,
+     * visionPhotonSubsystem))));
+     */
 
-            new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem))));
+    m_driver_controler.y().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
+        new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+        drivetrain.AmpPathfinding()),
+        new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
 
     // Operator Buttons
 
     m_operatorController.b()
         .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
-    m_operatorController.leftBumper().onTrue(new InstantCommand(() -> ledSubsystem.setSpeakerMode()));
     m_operatorController.a()
         .toggleOnTrue(new SequentialCommandGroup(
 
@@ -155,6 +162,8 @@ public class RobotContainer {
     // named commands
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, shooter));
     NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+    NamedCommands.registerCommand("AmpShootNote",
+        new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
