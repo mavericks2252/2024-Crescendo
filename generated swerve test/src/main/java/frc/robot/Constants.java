@@ -159,10 +159,11 @@ public final class Constants {
 
   public final class VisionConstants {
     public static final String kCameraName = "FrontAprilTagCam";
+    public static final String kNoteCameraName = "NoteCamera";
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
 
-    public static final int kApriltagePipeline = 0;
-    public static final int kNotePipeline = 1;
+    // public static final int kApriltagePipeline = 0;
+    // public static final int kNotePipeline = 1;
 
     public static final Transform3d kRobotToCam = new Transform3d(
 

@@ -31,6 +31,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public final PhotonCamera camera;
   private final PhotonPoseEstimator photonPoseEstimator;
   double lastEstTimestamp = 0;
+  public final PhotonCamera noteCam;
 
   CommandSwerveDrivetrain drivetrain;
 
@@ -44,6 +45,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     this.drivetrain = drivetrain;
     camera = new PhotonCamera(VisionConstants.kCameraName);
+    noteCam = new PhotonCamera(VisionConstants.kNoteCameraName);
     photonPoseEstimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -77,10 +79,14 @@ public class VisionPhotonSubsystem extends SubsystemBase {
           // var estPose = est.estimatedPose.toPose2d();
           // add standard deviation trust here
 
+          double targetArea = camera.getCameraTable().getValue("targetArea").getDouble();
+          SmartDashboard.putNumber("target area", targetArea);
           // adds vision measurement to drivetrain
-          drivetrain.addVisionMeasurement(
-              est.estimatedPose.toPose2d(),
-              est.timestampSeconds);
+          if (targetArea > 0.04) {
+            drivetrain.addVisionMeasurement(
+                est.estimatedPose.toPose2d(),
+                est.timestampSeconds);
+          }
 
           SmartDashboard.putString("photon pose", est.estimatedPose.toPose2d().toString());
         });
@@ -98,6 +104,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     var visionEst = photonPoseEstimator.update(); // recieves the newest pose estimation
     double latestTimestamp = camera.getLatestResult().getTimestampSeconds(); // gets the time that it took the latest
                                                                              // pose estimation
+
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5; // sees if the time of this estimation is
                                                                              // too close to the time of the last
                                                                              // estimation
@@ -234,7 +241,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // photon.getCurrentPose2d().getRotation().getDegrees();
     double angleToNote;
     double turnRate;
-    var target = camera.getLatestResult(); // gets the latest pose from the camera
+    var target = noteCam.getLatestResult(); // gets the latest pose from the camera
 
     if (target.hasTargets()) { // if the camera had targets
       angleToNote = target.getBestTarget().getYaw(); // find the best target and get the angle to it

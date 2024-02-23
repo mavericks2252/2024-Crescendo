@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.VisionConstants;
 //import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterRotationSubsystem;
@@ -49,7 +48,6 @@ public class AutoNoteIntake extends Command {
   @Override
   public void initialize() {
     loopsWithoutTarget = 21;
-    photon.setPhotonPipeline(VisionConstants.kNotePipeline);
     shooterRotationSubsystem.setShooterIntakeAngle();
 
   }
@@ -58,7 +56,7 @@ public class AutoNoteIntake extends Command {
   @Override
   public void execute() {
 
-    if (photon.camera.getLatestResult().hasTargets()) {
+    if (photon.noteCam.getLatestResult().hasTargets()) {
       loopsWithoutTarget = 0;
     } else {
       loopsWithoutTarget++;
@@ -66,12 +64,12 @@ public class AutoNoteIntake extends Command {
 
     SmartDashboard.putNumber("loops without target", loopsWithoutTarget);
 
-    if (photon.camera.getLatestResult().hasTargets() || loopsWithoutTarget < 20) {
+    if (photon.noteCam.getLatestResult().hasTargets() || loopsWithoutTarget < 20) {
       intake.setIntakeSpeed();
 
       // drivetrain.applyRequest(() ->
       // autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
-      drivetrain.setControl(autoNote.withVelocityX(-3).withRotationalRate(photon.noteAutoAimRateOutput()));
+      drivetrain.setControl(autoNote.withVelocityX(-5).withRotationalRate(photon.noteAutoAimRateOutput()));
 
     }
 

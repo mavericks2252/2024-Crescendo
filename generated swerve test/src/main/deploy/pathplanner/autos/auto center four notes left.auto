@@ -20,6 +20,12 @@
                 "data": {
                   "pathName": "Middle Start to center node"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
               }
             ]
           }

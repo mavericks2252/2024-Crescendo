@@ -33,7 +33,7 @@ public class AutoShooterSpool extends Command {
   @Override
   public void execute() {
     if ((shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) && photon.getSpeakerDistance() < 7.5
-        && shooterRotationSubsystem.speakerTracking()) {
+        && shooterRotationSubsystem.getSpeakerTracking()) {
       shooter.setShooterVelocity(2000);
     } else
       shooter.stopShooter();

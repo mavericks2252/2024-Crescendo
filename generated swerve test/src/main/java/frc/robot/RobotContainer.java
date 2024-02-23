@@ -35,145 +35,173 @@ import frc.robot.subsystems.VisionPhotonSubsystem;
 
 public class RobotContainer {
 
-  // Swerve Stuff
-  public static double MaxSpeed = 2.5; // 6 meters per second desired top speed
-  public static double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+        // Swerve Stuff
+        public static double MaxSpeed = 2.5; // 6 meters per second desired top speed
+        public static double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-  /* Setting up bindings for necessary control of the swerve drive platform */
-  public static final CommandXboxController m_driver_controler = new CommandXboxController(0); // My m_driver_controler
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        public static final CommandXboxController m_driver_controler = new CommandXboxController(0); // My
+                                                                                                     // m_driver_controler
+        public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
-  public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+        public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+                                                                                 // driving in open loop
+        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+        private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  // Robot Subsystems
-  public final Shooter shooter = new Shooter();
-  public final Intake intake = new Intake();
-  public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-  public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
-  public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(visionPhotonSubsystem);
+        // Robot Subsystems
+        public final Shooter shooter = new Shooter();
+        public final Intake intake = new Intake();
+        public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
+        public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(
+                        visionPhotonSubsystem);
+        public final LEDSubsystem ledSubsystem = new LEDSubsystem(shooter, intake, visionPhotonSubsystem,
+                        shooterRotationSubsystem);
 
-  // Robot Commands
-  public final static CommandXboxController m_operatorController = new CommandXboxController(
-      OIConstants.kOperatorControllerPort);
+        // Robot Commands
+        public final static CommandXboxController m_operatorController = new CommandXboxController(
+                        OIConstants.kOperatorControllerPort);
 
-  private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> autoChooser;
 
-  private void configureBindings() {
+        private void configureBindings() {
 
-    shooter.setDefaultCommand(new AutoShooterSpool(shooter, visionPhotonSubsystem, shooterRotationSubsystem));
+                shooter.setDefaultCommand(
+                                new AutoShooterSpool(shooter, visionPhotonSubsystem, shooterRotationSubsystem));
 
-    // Swerve Buttons
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
-            () -> drive.withVelocityX(CommandSwerveDrivetrain.getExponential(-m_driver_controler.getLeftY() * MaxSpeed)) // Drive
+                // Swerve Buttons
+                drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(
+                                                () -> drive
+                                                                .withVelocityX(CommandSwerveDrivetrain
+                                                                                .getExponential(-m_driver_controler
+                                                                                                .getLeftY() * MaxSpeed)) // Drive
                                                                                                                          // forward
                                                                                                                          // with
-                // negative Y (forward)
-                .withVelocityY(CommandSwerveDrivetrain.getExponential(-m_driver_controler.getLeftX() * MaxSpeed)) // Drive
-                                                                                                                  // left
-                                                                                                                  // with
-                                                                                                                  // negative
-                                                                                                                  // X
-                                                                                                                  // (left)
-                .withRotationalRate(
-                    CommandSwerveDrivetrain.getExponential(-m_driver_controler.getRightX() * MaxAngularRate)) // Drive
-                                                                                                              // counterclockwise
-                                                                                                              // with
-                                                                                                              // negative
-                                                                                                              // X
-                                                                                                              // (left)
-        ));
+                                                                // negative Y (forward)
+                                                                .withVelocityY(CommandSwerveDrivetrain
+                                                                                .getExponential(-m_driver_controler
+                                                                                                .getLeftX() * MaxSpeed)) // Drive
+                                                                                                                         // left
+                                                                                                                         // with
+                                                                                                                         // negative
+                                                                                                                         // X
+                                                                                                                         // (left)
+                                                                .withRotationalRate(
+                                                                                CommandSwerveDrivetrain
+                                                                                                .getExponential(-m_driver_controler
+                                                                                                                .getRightX()
+                                                                                                                * MaxAngularRate)) // Drive
+                                                                                                                                   // counterclockwise
+                                                                                                                                   // with
+                                                                                                                                   // negative
+                                                                                                                                   // X
+                                                                                                                                   // (left)
+                                ));
 
-    m_driver_controler.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    m_driver_controler.b().whileTrue(drivetrain
-        .applyRequest(() -> point
-            .withModuleDirection(new Rotation2d(-m_driver_controler.getLeftY(), -m_driver_controler.getLeftX()))));
+                m_driver_controler.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                m_driver_controler.b().whileTrue(drivetrain
+                                .applyRequest(() -> point
+                                                .withModuleDirection(
+                                                                new Rotation2d(-m_driver_controler.getLeftY(),
+                                                                                -m_driver_controler.getLeftX()))));
 
-    /*
-     * m_driver_controler.x()
-     * .whileTrue(drivetrain.applyRequest(() ->
-     * autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) //
-     * Drive
-     * // forward
-     * // with
-     * // negative Y (forward)
-     * .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with
-     * negative X (left)
-     * .withRotationalRate(
-     * visionPhotonSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise
-     * with negative X (left)
-     * ));
-     */
+                /*
+                 * m_driver_controler.x()
+                 * .whileTrue(drivetrain.applyRequest(() ->
+                 * autoAimDrive.withVelocityX(-m_driver_controler.getLeftY() * MaxSpeed) //
+                 * Drive
+                 * // forward
+                 * // with
+                 * // negative Y (forward)
+                 * .withVelocityY(-m_driver_controler.getLeftX() * MaxSpeed) // Drive left with
+                 * negative X (left)
+                 * .withRotationalRate(
+                 * visionPhotonSubsystem.speakerAutoAimRateOutput()) // Drive counterclockwise
+                 * with negative X (left)
+                 * ));
+                 */
 
-    // reset the field-centric heading on left bumper press
+                // reset the field-centric heading on left bumper press
 
-    if (Utils.isSimulation()) {
-      drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
-    }
-    drivetrain.registerTelemetry(logger::telemeterize);
+                if (Utils.isSimulation()) {
+                        drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
+                }
+                drivetrain.registerTelemetry(logger::telemeterize);
 
-    // Driver Buttons
+                // Driver Buttons
 
-    m_driver_controler.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-    m_driver_controler.leftBumper()
-        .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, drivetrain));
-    m_driver_controler.rightBumper().toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
+                m_driver_controler.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+                m_driver_controler.leftBumper()
+                                .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
+                                                drivetrain));
+                m_driver_controler.rightBumper()
+                                .toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
 
-    m_driver_controler.a()
-        .whileTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain, shooterRotationSubsystem));
-    /*
-     * m_driver_controler.y().onTrue(new SequentialCommandGroup(
-     * new ParallelCommandGroup(drivetrain.ampPathCommand(),
-     * new SetAmpMode(intake, shooterRotationSubsystem, shooter,
-     * visionPhotonSubsystem),
-     * 
-     * new AmpShootNote(intake, shooterRotationSubsystem, shooter,
-     * visionPhotonSubsystem))));
-     */
+                m_driver_controler.povDown()
+                                .toggleOnTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
+                                                shooterRotationSubsystem));
+                /*
+                 * m_driver_controler.y().onTrue(new SequentialCommandGroup(
+                 * new ParallelCommandGroup(drivetrain.ampPathCommand(),
+                 * new SetAmpMode(intake, shooterRotationSubsystem, shooter,
+                 * visionPhotonSubsystem),
+                 * 
+                 * new AmpShootNote(intake, shooterRotationSubsystem, shooter,
+                 * visionPhotonSubsystem))));
+                 */
 
-    m_driver_controler.y().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
-        new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
-        drivetrain.AmpPathfinding()),
-        new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
+                m_driver_controler.y().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
+                                new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+                                drivetrain.AmpPathfinding()),
+                                new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
 
-    // Operator Buttons
+                // Operator Buttons
 
-    m_operatorController.b()
-        .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
-    m_operatorController.a()
-        .toggleOnTrue(new SequentialCommandGroup(
+                m_operatorController.b()
+                                .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+                m_operatorController.a()
+                                .toggleOnTrue(new SequentialCommandGroup(
 
-            new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
-            new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
-    m_operatorController.rightBumper()
-        .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
+                                                new SetAmpMode(intake, shooterRotationSubsystem, shooter,
+                                                                visionPhotonSubsystem),
+                                                new AmpShootNote(intake, shooterRotationSubsystem, shooter,
+                                                                visionPhotonSubsystem)));
+                m_operatorController.rightBumper()
+                                .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter,
+                                                visionPhotonSubsystem));
 
-  }
+        }
 
-  public RobotContainer() {
-    configureBindings();
+        public RobotContainer() {
+                configureBindings();
 
-    // named commands
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooterRotationSubsystem, shooter));
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
-    NamedCommands.registerCommand("AmpShootNote",
-        new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
+                // named commands
+                NamedCommands.registerCommand("IntakeNote",
+                                new IntakeNote(intake, shooterRotationSubsystem, shooter).withTimeout(1.5));
+                NamedCommands.registerCommand("ShootNote",
+                                new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+                NamedCommands.registerCommand("AmpShootNote",
+                                new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
+                NamedCommands.registerCommand("AutoAimShot",
+                                new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
+                                                drivetrain));
+                NamedCommands.registerCommand("AutoNoteIntake",
+                                new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
+                                                shooterRotationSubsystem));
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
+        }
 
-  public Command getAutonomousCommand() {
+        public Command getAutonomousCommand() {
 
-    return autoChooser.getSelected();
+                return autoChooser.getSelected();
 
-    // return Commands.print("No autonomous command configured");
-  }
+                // return Commands.print("No autonomous command configured");
+        }
 
 }
