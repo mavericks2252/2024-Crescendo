@@ -35,6 +35,7 @@ public class AmpShootNote extends Command {
   @Override
   public void initialize() {
 
+    shooterRotationSubsystem.toggleAmpShot();
     addRequirements(shooterRotationSubsystem, shooter);
     loops = 0;
   }
@@ -46,9 +47,6 @@ public class AmpShootNote extends Command {
     if (shooterRotationSubsystem.isAngleOnTarget()) {
       shooter.ampScore();
 
-    } else {
-      shooter.stopAcceleratorWheel();
-      shooter.stopAmplifierWheel();
     }
 
   }
@@ -58,6 +56,7 @@ public class AmpShootNote extends Command {
   public void end(boolean interrupted) {
     shooter.stopAcceleratorWheel();
     shooter.stopAmplifierWheel();
+    shooterRotationSubsystem.toggleAmpShot();
   }
 
   // Returns true when the command should end.
@@ -66,7 +65,7 @@ public class AmpShootNote extends Command {
 
     if (!shooter.getMiddleBackBeambreak() && !shooter.getAmpBeambreak()) {
       loops++;
-      if (loops < 20)
+      if (loops < 10)
         return false;
       else
         return true;

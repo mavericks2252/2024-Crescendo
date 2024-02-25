@@ -29,6 +29,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   boolean speakerAngleTracking = false;
   boolean intakeMode = false;
   boolean ampMode = false;
+  boolean ampShot = false;
 
   TrapezoidProfile.Constraints angle_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate,
       TunerConstants.kMaxAngularAcceleration);
@@ -142,9 +143,13 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   }
 
   public void setShooterAmpAngle() {
-    double motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle); // sets motorTarget equal to the posision for
-                                                                         // scoring in the amp
-
+    double motorTarget;
+    if (ampShot) {
+      motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle);
+    } else
+      motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle); // sets
+    // motorTarget equal to the posision for
+    // scoring in the amp
     shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget)); // sets our shooter to the motorTarget
                                                                                  // position
   }
@@ -211,7 +216,15 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
     shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos())); // sets the pose of the shooter
                                                                                         // when the robot is first
-                                                                                        // enabled
+
+    // enabled
+  }
+
+  public void toggleAmpShot() {
+    if (ampShot) {
+      ampShot = false;
+    } else
+      ampShot = true;
   }
 
 }

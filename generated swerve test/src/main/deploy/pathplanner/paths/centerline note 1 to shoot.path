@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.6616781882212415,
-        "y": 6.8965485678719105
+        "x": 7.687840240545346,
+        "y": 7.053708521831459
       },
       "isLocked": false,
       "linkedName": "middle left note"
     },
     {
       "anchor": {
-        "x": 4.572375270876667,
-        "y": 6.5360051440823606
+        "x": 5.903612527945777,
+        "y": 6.637696878997361
       },
       "prevControl": {
-        "x": 5.700229058115773,
-        "y": 7.164644959920551
+        "x": 6.670922891395332,
+        "y": 6.785612129782819
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.05,
       "command": {
         "type": "parallel",
         "data": {
@@ -47,11 +47,28 @@
           ]
         }
       }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -66,5 +83,5 @@
     "rotation": -157.38013505195946,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

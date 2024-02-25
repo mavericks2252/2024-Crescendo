@@ -87,8 +87,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void ampScore() { // runs the accelerator wheels and amplifier wheels to score into the amplifier
-    acceleratorWheel.set(-0.5); // sets the accelerator wheels to run backwatds
-    amplifierWheel.set(.25); // sets the amp wheel to run forwards
+    acceleratorWheel.set(-1); // sets the accelerator wheels to run backwatds
+    amplifierWheel.set(1); // sets the amp wheel to run forwards
   }
 
   public void intakeNote() { // runs the accelerator wheels and amplifier wheels to intake a note

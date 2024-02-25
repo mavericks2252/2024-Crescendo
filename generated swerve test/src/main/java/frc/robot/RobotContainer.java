@@ -163,9 +163,13 @@ public class RobotContainer {
                  */
 
                 m_driver_controler.y().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
-                                new SetAmpMode(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem),
+
+                                new SetAmpMode(intake, shooterRotationSubsystem, shooter,
+                                                visionPhotonSubsystem),
+
                                 drivetrain.AmpPathfinding()),
-                                new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
+                                new AmpShootNote(intake, shooterRotationSubsystem, shooter,
+                                                visionPhotonSubsystem)));
 
                 // Operator Buttons
 
@@ -212,7 +216,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("IntakeAndShoot",
                                 new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
-                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
+                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(4000)));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
