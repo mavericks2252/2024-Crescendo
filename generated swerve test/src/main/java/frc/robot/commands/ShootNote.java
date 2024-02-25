@@ -53,15 +53,21 @@ public class ShootNote extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    shooter.stopShooter();
-    shooter.stopAcceleratorWheel();
-    shooterRotationSubsystem.setIntakeMode();
+    shooter.stopShooter(); // stops the front shooter modes
+    shooter.stopAcceleratorWheel(); // stops the accelerator wheels
+    shooter.stopAmplifierWheel();
+    shooterRotationSubsystem.setIntakeMode(); // sets the shooter into intake mode
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (!shooter.getMiddleBackBeambreak() && !shooter.getShotBeambreak() && !shooter.getMiddleFrontBeambreak()) {
+      return true;
+    } else {
+      return false;
+    }
+
   }
 }

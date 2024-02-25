@@ -74,6 +74,9 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Angle Motor Position", getAngleMotorPos());
     SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
     SmartDashboard.putNumber("Rotation position Error", getAngleMotorError());
+    SmartDashboard.putBoolean("amp mode", ampMode);
+    SmartDashboard.putBoolean("intake mode", intakeMode);
+    SmartDashboard.putBoolean("speaker tracking", speakerAngleTracking);
 
     if (speakerAngleTracking) {
 

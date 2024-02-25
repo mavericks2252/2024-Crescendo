@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -23,7 +24,9 @@ import frc.robot.commands.AmpShootNote;
 import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.AutoShooterSpool;
+import frc.robot.commands.IntakeAndShoot;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.IntakeStage;
 import frc.robot.commands.SetAmpMode;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
@@ -139,11 +142,16 @@ public class RobotContainer {
                                 .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
                                                 drivetrain));
                 m_driver_controler.rightBumper()
-                                .toggleOnTrue(new IntakeNote(intake, shooterRotationSubsystem, shooter));
+                                .toggleOnTrue(new SequentialCommandGroup(
+                                                new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
+                                                new IntakeStage(shooter, intake)));
 
-                m_driver_controler.povDown()
-                                .toggleOnTrue(new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
-                                                shooterRotationSubsystem));
+                m_driver_controler.rightTrigger()
+                                .toggleOnTrue(new SequentialCommandGroup(
+                                                new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
+                                                                shooterRotationSubsystem),
+                                                new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
+                                                new IntakeStage(shooter, intake)));
                 /*
                  * m_driver_controler.y().onTrue(new SequentialCommandGroup(
                  * new ParallelCommandGroup(drivetrain.ampPathCommand(),
@@ -174,6 +182,12 @@ public class RobotContainer {
                                 .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem));
 
+                m_operatorController.povUp().onTrue(new InstantCommand(() -> shooter.ampScore()));
+                m_operatorController.povRight()
+                                .onTrue(new ParallelCommandGroup(
+                                                new InstantCommand(() -> shooter.stopAcceleratorWheel()),
+                                                new InstantCommand(() -> shooter.stopAmplifierWheel())));
+
         }
 
         public RobotContainer() {
@@ -181,9 +195,11 @@ public class RobotContainer {
 
                 // named commands
                 NamedCommands.registerCommand("IntakeNote",
-                                new IntakeNote(intake, shooterRotationSubsystem, shooter).withTimeout(1.5));
+                                new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem)
+                                                .withTimeout(3));
                 NamedCommands.registerCommand("ShootNote",
                                 new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+
                 NamedCommands.registerCommand("AmpShootNote",
                                 new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
                 NamedCommands.registerCommand("AutoAimShot",
@@ -192,6 +208,11 @@ public class RobotContainer {
                 NamedCommands.registerCommand("AutoNoteIntake",
                                 new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
                                                 shooterRotationSubsystem));
+
+                NamedCommands.registerCommand("IntakeAndShoot",
+                                new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+
+                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

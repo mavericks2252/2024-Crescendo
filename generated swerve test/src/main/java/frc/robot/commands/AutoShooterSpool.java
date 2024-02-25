@@ -43,6 +43,8 @@ public class AutoShooterSpool extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.stopShooter();
+    shooter.stopAcceleratorWheel();
+    shooter.stopAmplifierWheel();
   }
 
   // Returns true when the command should end.

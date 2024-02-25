@@ -33,6 +33,7 @@ public class Intake extends SubsystemBase {
     centeringWheelMotor.restoreFactoryDefaults();
     centeringWheelMotor.setIdleMode(IdleMode.kBrake);
     centeringWheelMotor.setInverted(false);
+    centeringWheelMotor.setSmartCurrentLimit(20);
 
     beamBreakSensor = new DigitalInput(IntakeConstants.kBeamBreak);
   }
@@ -40,7 +41,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("beambreak boolean", getBeamBreak());
+    SmartDashboard.putBoolean("intake beambreak", getBeamBreak());
   }
 
   // sets intake motor to a percent speed

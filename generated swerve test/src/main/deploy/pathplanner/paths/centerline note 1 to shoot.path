@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.738779928010306,
-        "y": 6.1292382044223555
+        "x": 4.572375270876667,
+        "y": 6.5360051440823606
       },
       "prevControl": {
-        "x": 5.866633715249412,
-        "y": 6.757878020260546
+        "x": 5.700229058115773,
+        "y": 7.164644959920551
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,25 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "AutoSpool"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

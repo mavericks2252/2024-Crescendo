@@ -55,10 +55,12 @@ public class Shooter extends SubsystemBase {
     acceleratorWheel = new CANSparkMax(PortConstants.kAcceleratorWheelPort, MotorType.kBrushless);
     acceleratorWheel.setInverted(true);
     acceleratorWheel.setIdleMode(IdleMode.kBrake);
+    acceleratorWheel.setSmartCurrentLimit(40);
 
     amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
     amplifierWheel.setInverted(false);
     amplifierWheel.setIdleMode(IdleMode.kCoast);
+    amplifierWheel.setSmartCurrentLimit(40);
 
     beamBreakShot = new DigitalInput(PortConstants.kShotBeamBreak);
     beamBreakAmp = new DigitalInput(PortConstants.kAmpBeamBreak);
@@ -75,6 +77,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("BeamBreak shot", getShotBeambreak());
     SmartDashboard.putBoolean("beambreak middle front", getMiddleFrontBeambreak());
     SmartDashboard.putBoolean("Beambreak middle back", getMiddleBackBeambreak());
+    SmartDashboard.putNumber("Amp Wheel Output", amplifierWheel.get());
+    SmartDashboard.putNumber("Accelerator Wheel Output", acceleratorWheel.get());
 
   }
 
@@ -83,8 +87,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void ampScore() { // runs the accelerator wheels and amplifier wheels to score into the amplifier
-    acceleratorWheel.set(-0.25); // sets the accelerator wheels to run backwatds
-    amplifierWheel.set(0.5); // sets the amp wheel to run forwards
+    acceleratorWheel.set(-0.5); // sets the accelerator wheels to run backwatds
+    amplifierWheel.set(.25); // sets the amp wheel to run forwards
   }
 
   public void intakeNote() { // runs the accelerator wheels and amplifier wheels to intake a note

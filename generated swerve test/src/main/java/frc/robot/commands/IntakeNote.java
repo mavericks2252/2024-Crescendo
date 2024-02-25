@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 
@@ -15,11 +16,14 @@ public class IntakeNote extends Command {
   Intake intake;
   ShooterRotationSubsystem shooterRotationSubsystem;
   double speed;
+  LEDSubsystem ledSubsystem;
 
-  public IntakeNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter) {
+  public IntakeNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
+      LEDSubsystem ledSubsystem) {
     this.intake = intake;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.shooter = shooter;
+    this.ledSubsystem = ledSubsystem;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake, shooterRotationSubsystem);
@@ -37,16 +41,18 @@ public class IntakeNote extends Command {
   @Override
   public void execute() {
 
-    // if (shooterRotationSubsystem.isAngleOnTarget()) {
-    intake.setIntakeSpeed();
-    shooter.setAmpWheel(1);
-
+    if (shooterRotationSubsystem.isAngleOnTarget()) {
+      intake.setIntakeSpeed(); // runs the front intake wheels
+      shooter.setAmpWheel(1); // runs the amplifier wheels at 100%
+    }
     if (shooter.getMiddleBackBeambreak()) { // if middle beam break is broken
-      shooter.acceleratorWheelOutput(0.4);
+      shooter.acceleratorWheelOutput(0.4); // runs the accelerator wheels at 40%
 
     } else {
       shooter.acceleratorWheelOutput(1); // sets to full speed when no note is in middle beam break
     }
+    ledSubsystem.isIntaking = true;
+
     /*
      * }
      * 
@@ -62,11 +68,14 @@ public class IntakeNote extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    intake.stopIntake();
-    shooter.stopAcceleratorWheel();
-    shooter.stopAmplifierWheel();
-    if (shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak())
-      shooterRotationSubsystem.setSpeakerTracking();
+    intake.stopIntake(); // stops the front intake wheels
+    shooter.stopAcceleratorWheel(); // stops the accelerator wheels
+    shooter.stopAmplifierWheel(); // stops the amplifier wheels
+    if (shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) // if the middle front or middle back
+                                                                               // beam brakes
+      shooterRotationSubsystem.setSpeakerTracking(); // set the shooter to speaker tracking
+
+    ledSubsystem.isIntaking = false;
 
   }
 
@@ -74,7 +83,8 @@ public class IntakeNote extends Command {
   @Override
   public boolean isFinished() {
 
-    return shooter.getMiddleFrontBeambreak();
+    return shooter.getMiddleFrontBeambreak(); // will stop when middle front beam
+    // brake is broken
 
   }
 }

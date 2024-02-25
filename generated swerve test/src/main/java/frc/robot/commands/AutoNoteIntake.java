@@ -28,6 +28,11 @@ public class AutoNoteIntake extends Command {
 
   private final SwerveRequest.RobotCentric autoNote = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(RobotContainer.MaxSpeed * 0.1).withRotationalDeadband(RobotContainer.MaxAngularRate * 0.1) // Add a
+                                                                                                               // 10%
+                                                                                                               // deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   public AutoNoteIntake(VisionPhotonSubsystem photon,
       Intake intake,
@@ -47,7 +52,7 @@ public class AutoNoteIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    loopsWithoutTarget = 21;
+    loopsWithoutTarget = 11;
     shooterRotationSubsystem.setShooterIntakeAngle();
 
   }
@@ -64,17 +69,17 @@ public class AutoNoteIntake extends Command {
 
     SmartDashboard.putNumber("loops without target", loopsWithoutTarget);
 
-    if (photon.noteCam.getLatestResult().hasTargets() || loopsWithoutTarget < 20) {
+    if (photon.noteCam.getLatestResult().hasTargets() || loopsWithoutTarget < 10) {
       intake.setIntakeSpeed();
 
       // drivetrain.applyRequest(() ->
       // autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
-      drivetrain.setControl(autoNote.withVelocityX(-5).withRotationalRate(photon.noteAutoAimRateOutput()));
+      drivetrain.setControl(autoNote.withVelocityX(-2).withRotationalRate(photon.noteAutoAimRateOutput()));
 
     }
 
     else {
-      drivetrain.setControl(RobotContainer.drive
+      drivetrain.setControl(drive
           .withVelocityX(CommandSwerveDrivetrain
               .getExponential(-RobotContainer.m_driver_controler.getLeftY() * RobotContainer.MaxSpeed)) // Drive forward
                                                                                                         // with
@@ -101,11 +106,12 @@ public class AutoNoteIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopIntake();
+    drivetrain.setControl(new SwerveRequest.SwerveDriveBrake());
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return intake.getBeamBreak();
   }
 }

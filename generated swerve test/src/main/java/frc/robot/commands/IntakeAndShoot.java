@@ -10,45 +10,45 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class AmpShootNote extends Command {
-  /** Creates a new AmpShootNote. */
-
-  Shooter shooter;
+public class IntakeAndShoot extends Command {
   Intake intake;
+  Shooter shooter;
   ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
+  double targetRPM, error;
 
-  double loops;
-
-  public AmpShootNote(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
+  /** Creates a new IntakeAndShoot. */
+  public IntakeAndShoot(Intake intake, Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem,
       VisionPhotonSubsystem photon) {
-    // Use addRequirements() here to declare subsystem dependencies.
-
     this.intake = intake;
-    this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.shooter = shooter;
+    this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.photon = photon;
 
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooter, intake, shooterRotationSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
-    addRequirements(shooterRotationSubsystem, shooter);
-    loops = 0;
+    shooterRotationSubsystem.setSpeakerTracking();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    targetRPM = photon.getTargetRPM();
+    error = targetRPM - shooter.getShooterVelocity();
+    shooter.setShooterVelocity(targetRPM);
+    if (error < 100)
+      shooter.acceleratorWheelOutput(0.95);
 
-    if (shooterRotationSubsystem.isAngleOnTarget()) {
-      shooter.ampScore();
-
-    } else {
-      shooter.stopAcceleratorWheel();
-      shooter.stopAmplifierWheel();
+    if (!shooter.getMiddleFrontBeambreak() && !shooter.getMiddleBackBeambreak() && !shooter.getShotBeambreak()) {
+      intake.setIntakeSpeed();
+      shooter.setAmpWheel(1);
     }
 
   }
@@ -56,21 +56,11 @@ public class AmpShootNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopAcceleratorWheel();
-    shooter.stopAmplifierWheel();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    if (!shooter.getMiddleBackBeambreak() && !shooter.getAmpBeambreak()) {
-      loops++;
-      if (loops < 20)
-        return false;
-      else
-        return true;
-    } else
-      return false;
+    return false;
   }
 }

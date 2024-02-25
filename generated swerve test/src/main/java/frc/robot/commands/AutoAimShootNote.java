@@ -21,7 +21,7 @@ public class AutoAimShootNote extends Command {
   RobotContainer robotContainer;
   CommandSwerveDrivetrain drivetrain;
 
-  double targetRPM, maxSpeed = 2;
+  double targetRPM, maxSpeed = 0.75;
 
   private final SwerveRequest.FieldCentric autoAimDrive = new SwerveRequest.FieldCentric()
       .withDeadband(RobotContainer.MaxSpeed * 0.15).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -74,6 +74,7 @@ public class AutoAimShootNote extends Command {
 
     shooter.stopShooter();
     shooter.stopAcceleratorWheel();
+    shooter.stopAmplifierWheel();
     shooterRotationSubsystem.setIntakeMode();
 
   }
@@ -81,7 +82,7 @@ public class AutoAimShootNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (!shooter.getMiddleFrontBeambreak() && !shooter.getShotBeambreak()) {
+    if (!shooter.getMiddleBackBeambreak() && !shooter.getShotBeambreak() && !shooter.getMiddleFrontBeambreak()) {
       return true;
     } else {
       return false;

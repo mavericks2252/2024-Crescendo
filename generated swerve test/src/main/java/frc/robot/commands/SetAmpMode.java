@@ -17,6 +17,7 @@ public class SetAmpMode extends Command {
   Intake intake;
   ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
+  Boolean hasBeenBroken;
 
   /** Creates a new AmpPreStage. */
   public SetAmpMode(Intake intake, ShooterRotationSubsystem shooterRotationSubsystem, Shooter shooter,
@@ -28,8 +29,7 @@ public class SetAmpMode extends Command {
     this.shooter = shooter;
     this.photon = photon;
 
-    loops = 0;
-
+    hasBeenBroken = false;
   }
 
   // Called when the command is initially scheduled.
@@ -37,37 +37,52 @@ public class SetAmpMode extends Command {
   public void initialize() {
 
     addRequirements(shooterRotationSubsystem, shooter);
-    shooterRotationSubsystem.setAmpMode();
-
+    shooterRotationSubsystem.setAmpMode(); // sets the shooter to amp mode
+    loops = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    /*
+     * if (shooter.getMiddleFrontBeambreak()) {
+     * shooter.ampScore(); // runs the amp and accelerator wheels as to score into
+     * the amp
+     * } else {
+     * shooter.acceleratorWheelOutput(0.2);
+     * }
+     */
+    if (shooter.getMiddleFrontBeambreak()) {
+      hasBeenBroken = true;
+    }
 
-    shooter.ampScore();
-
+    if (!shooter.getMiddleFrontBeambreak() && !hasBeenBroken) {
+      shooter.acceleratorWheelOutput(0.2);
+    } else {
+      shooter.acceleratorWheelOutput(-0.3);
+      shooter.setAmpWheel(0.5);
+    }
+    if (shooter.getAmpBeambreak())
+      loops++;
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
 
-    shooter.stopAcceleratorWheel();
-    shooter.stopAmplifierWheel();
+    shooter.stopAcceleratorWheel(); // stops the accelerator wheels
+    shooter.stopAmplifierWheel(); // stops the amplifier wheels
 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (!shooter.getMiddleFrontBeambreak()) {
-      if (loops < 1) {
-        loops++;
-        return false;
-      } else
-        return true;
-    } else
-      return false;
+
+    if (loops < 7) { // and loops is less than 1
+      return false; // and dont stop
+    } else // if loops is more than 1
+      return true; // stop
+
   }
 }

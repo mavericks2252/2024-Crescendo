@@ -17,7 +17,11 @@ public class LEDSubsystem extends SubsystemBase {
   VisionPhotonSubsystem photon;
   ShooterRotationSubsystem shooterRotationSubsystem;
 
-  Spark blinkin;
+  Boolean hasNote;
+  boolean seesNote;
+  public Boolean isIntaking;
+
+  public Spark blinkin;
 
   /** Creates a new LEDSubsystem. */
   public LEDSubsystem(Shooter shooter, Intake intake, VisionPhotonSubsystem photon,
@@ -26,7 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     this.intake = intake;
     this.photon = photon;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
-    blinkin = new Spark(0);
+    blinkin = new Spark(9);
 
   }
 
@@ -34,27 +38,33 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // intaking, sees note, score mode & has note
+    hasNote = (shooter.getMiddleFrontBeambreak() &&
+        shooterRotationSubsystem.getSpeakerTracking());
+    seesNote = (photon.noteCam.getLatestResult().hasTargets());
 
-    if (shooter.getMiddleFrontBeambreak() && shooterRotationSubsystem.getSpeakerTracking())
-      blinkin.set(BlinkinConstants.kGreen);
-
-    else if (intake.intakeMotor.get() < 0)
-      blinkin.set(BlinkinConstants.kOrange);
-
-    else if (photon.noteCam.getLatestResult().hasTargets())
-      blinkin.set(0.05);
-
-    else
-      teamLEDColor();
-
+    /*
+     * if (isIntaking) {
+     * blinkin.set(BlinkinConstants.kOrange);
+     * }
+     * 
+     * else if (hasNote) {
+     * blinkin.set(BlinkinConstants.kGreen);
+     * }
+     * else if (seesNote) {
+     * blinkin.set(0.05);
+     * }
+     * 
+     * else
+     * teamLEDColor();
+     */
   }
 
   public void teamLEDColor() {
-    if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue)
-        blinkin.set(BlinkinConstants.kBlue);
-      else if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
-        blinkin.set(BlinkinConstants.kRed);
+    if (DriverStation.getAlliance().isPresent()) { // if we are getting an alliance color
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) // if its blue
+        blinkin.set(BlinkinConstants.kBlue); // make the lights blue
+      else if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red)// if its red
+        blinkin.set(BlinkinConstants.kRed); // make the lights red
     }
   }
 

@@ -58,7 +58,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(20, 0.25, 0, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(15, 0.25, 0, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -96,6 +96,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("Amp Distance", getAmpDistance());
     SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
+    // noteAutoAimRateOutput();
 
   }
 
@@ -203,7 +204,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
       targetAngle = -10.67 * distance + 159.68; // use this equasion
     }
 
-    return targetAngle;
+    return targetAngle - 1;
   }
 
   public double getAmpDistance() {
@@ -228,6 +229,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public double speakerAutoAimRateOutput() {
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
+    // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
     double correction = Units.degreesToRadians(3);
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
@@ -248,6 +250,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
       turnRate = noteAimPidController.calculate(Units.degreesToRadians(angleToNote)); // calculates how far the robot
                                                                                       // needs to turn to the note in
                                                                                       // radians
+
+      SmartDashboard.putNumber("angle to note", target.getBestTarget().getYaw());
     } else { // if there were no notes detected
       angleToNote = 0; // set the angle needed to get to a note to 0
       turnRate = CommandSwerveDrivetrain // sets the turning of the robot to the controller
