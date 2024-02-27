@@ -26,10 +26,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
       false);
   // VisionSubsystem vision;
   VisionPhotonSubsystem photon;
-  boolean speakerAngleTracking = false;
-  boolean intakeMode = false;
-  boolean ampMode = false;
-  boolean ampShot = false;
+  boolean speakerAngleTracking = false, intakeMode = false, ampMode = false, ampShot = false, climbMode = false;
 
   TrapezoidProfile.Constraints angle_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate,
       TunerConstants.kMaxAngularAcceleration);
@@ -42,7 +39,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
     shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
     shooterAngleConfig.Slot2.kP = 30;
-    shooterAngleConfig.Slot2.kI = 0;
+    shooterAngleConfig.Slot2.kI = 15;
     shooterAngleConfig.Slot2.kD = 0;
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -63,25 +60,23 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     shooterAngleMotor.setInverted(false);
     shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    SmartDashboard.putNumber("test shooter angle", 90);
+    // SmartDashboard.putNumber("TestShooterAngle", 112.65);
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("ThroughBore Encoder", getThroughBoreEncoder());
     SmartDashboard.putNumber("ThroughBoreEncoderDegrees", motorRevsToDegrees(getThroughBoreEncoder()));
-    SmartDashboard.putNumber("Angle Motor Position", getAngleMotorPos());
     SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
-    SmartDashboard.putNumber("Rotation position Error", getAngleMotorError());
-    SmartDashboard.putBoolean("amp mode", ampMode);
-    SmartDashboard.putBoolean("intake mode", intakeMode);
-    SmartDashboard.putBoolean("speaker tracking", speakerAngleTracking);
+    SmartDashboard.putNumber("photon target angle", photon.getTargetAngle());
 
-    if (speakerAngleTracking) {
+    if (climbMode) {
+      setShooterAngle(20);
+    }
 
-      // setShooterAngle(SmartDashboard.getNumber("test shooter angle", 90));
+    else if (speakerAngleTracking) {
+
       setShooterAngle(photon.getTargetAngle()); // sets shooter to track the
       // speaker
     }
@@ -144,10 +139,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
   public void setShooterAmpAngle() {
     double motorTarget;
-    if (ampShot) {
-      motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle);
-    } else
-      motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle); // sets
+    motorTarget = degreesToMotorRevs(ShooterConstants.kAmpAngle); // sets
     // motorTarget equal to the posision for
     // scoring in the amp
     shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(motorTarget)); // sets our shooter to the motorTarget
@@ -165,6 +157,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     speakerAngleTracking = true;
     intakeMode = false;
     ampMode = false;
+    climbMode = false;
   }
 
   public void setIntakeMode() { // sets the shooter to our mode that tracks the intake and turns off all other
@@ -172,6 +165,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     intakeMode = true;
     speakerAngleTracking = false;
     ampMode = false;
+    climbMode = false;
   }
 
   public void setAmpMode() { // sets the shooter to our mode that tracks the amp and turns off all other
@@ -179,6 +173,20 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     ampMode = true;
     speakerAngleTracking = false;
     intakeMode = false;
+    climbMode = false;
+  }
+
+  public void setClimbMode() {
+    ampMode = false;
+    intakeMode = false;
+    if (climbMode) {
+      climbMode = false;
+      speakerAngleTracking = true;
+
+    } else {
+      climbMode = true;
+      speakerAngleTracking = false;
+    }
   }
 
   public boolean getSpeakerTracking() {

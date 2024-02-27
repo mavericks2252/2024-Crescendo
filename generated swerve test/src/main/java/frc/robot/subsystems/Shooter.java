@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
     shooterConfig.Slot1.kP = 8;
     shooterConfig.Slot1.kI = 0.0;
     shooterConfig.Slot1.kD = 0.1;
-    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 50;
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 65;
     shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
     shooterMotorMaster = new TalonFX(PortConstants.kShooterMotorMasterPort);
@@ -77,8 +77,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("BeamBreak shot", getShotBeambreak());
     SmartDashboard.putBoolean("beambreak middle front", getMiddleFrontBeambreak());
     SmartDashboard.putBoolean("Beambreak middle back", getMiddleBackBeambreak());
-    SmartDashboard.putNumber("Amp Wheel Output", amplifierWheel.get());
-    SmartDashboard.putNumber("Accelerator Wheel Output", acceleratorWheel.get());
 
   }
 
@@ -145,6 +143,11 @@ public class Shooter extends SubsystemBase {
 
   public boolean getMiddleFrontBeambreak() { // returns true when the middle front beam break is broken
     return !beamBreakMiddleFront.get();
+  }
+
+  public void SetIntakeWheelsBack() {
+    amplifierWheel.set(-1);
+    acceleratorWheel.set(-1);
   }
 
 }

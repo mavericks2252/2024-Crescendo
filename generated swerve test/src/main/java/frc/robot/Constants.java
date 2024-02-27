@@ -175,7 +175,7 @@ public final class Constants {
   }
 
   public final class ClimberConstants {
-    public static final double kClimberGearRatio = 0;
+    public static final double kClimberGearRatio = 7;
   }
 
 }

@@ -27,9 +27,11 @@ import frc.robot.commands.AutoShooterSpool;
 import frc.robot.commands.IntakeAndShoot;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeStage;
+import frc.robot.commands.ManualShootNote;
 import frc.robot.commands.SetAmpMode;
 import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -63,6 +65,7 @@ public class RobotContainer {
                         visionPhotonSubsystem);
         public final LEDSubsystem ledSubsystem = new LEDSubsystem(shooter, intake, visionPhotonSubsystem,
                         shooterRotationSubsystem);
+        public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
         // Robot Commands
         public final static CommandXboxController m_operatorController = new CommandXboxController(
@@ -71,6 +74,9 @@ public class RobotContainer {
         private final SendableChooser<Command> autoChooser;
 
         private void configureBindings() {
+
+                climberSubsystem.setDefaultCommand(
+                                climberSubsystem.applyRequests(() -> -m_operatorController.getLeftY()));
 
                 shooter.setDefaultCommand(
                                 new AutoShooterSpool(shooter, visionPhotonSubsystem, shooterRotationSubsystem));
@@ -185,12 +191,16 @@ public class RobotContainer {
                 m_operatorController.rightBumper()
                                 .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem));
-
-                m_operatorController.povUp().onTrue(new InstantCommand(() -> shooter.ampScore()));
-                m_operatorController.povRight()
-                                .onTrue(new ParallelCommandGroup(
-                                                new InstantCommand(() -> shooter.stopAcceleratorWheel()),
-                                                new InstantCommand(() -> shooter.stopAmplifierWheel())));
+                m_operatorController.leftStick()
+                                .onTrue(new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()));
+                m_operatorController.x()
+                                .toggleOnTrue(new ParallelCommandGroup(
+                                                new InstantCommand(() -> intake.setIntakeBackwards()),
+                                                new InstantCommand(() -> shooter.SetIntakeWheelsBack())));
+                m_operatorController.y().whileTrue(new ManualShootNote(shooter, shooterRotationSubsystem));
+                m_operatorController.leftBumper().toggleOnTrue(new ParallelCommandGroup(
+                                new InstantCommand(() -> shooterRotationSubsystem.setShooterAmpAngle()),
+                                new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
 
         }
 
@@ -216,7 +226,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("IntakeAndShoot",
                                 new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
-                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(4000)));
+                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
