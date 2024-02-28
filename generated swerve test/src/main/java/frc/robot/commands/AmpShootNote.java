@@ -57,6 +57,7 @@ public class AmpShootNote extends Command {
     shooter.stopAcceleratorWheel();
     shooter.stopAmplifierWheel();
     shooterRotationSubsystem.toggleAmpShot();
+    shooterRotationSubsystem.setIntakeMode();
   }
 
   // Returns true when the command should end.

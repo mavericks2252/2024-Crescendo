@@ -25,6 +25,7 @@ import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.AutoShooterSpool;
 import frc.robot.commands.IntakeAndShoot;
+import frc.robot.commands.IntakeAndShootcopy;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeStage;
 import frc.robot.commands.ManualShootNote;
@@ -142,33 +143,30 @@ public class RobotContainer {
                 drivetrain.registerTelemetry(logger::telemeterize);
 
                 // Driver Buttons
-
+                // reseed field orientation
                 m_driver_controler.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+
+                // auto aim and shoot
                 m_driver_controler.leftBumper()
                                 .onTrue(new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
                                                 drivetrain));
+
+                // intake note
                 m_driver_controler.rightBumper()
                                 .toggleOnTrue(new SequentialCommandGroup(
                                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
                                                 new IntakeStage(shooter, intake)));
 
+                // auto aim and intake note
                 m_driver_controler.rightTrigger()
                                 .toggleOnTrue(new SequentialCommandGroup(
                                                 new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
-                                                                shooterRotationSubsystem),
+                                                                shooterRotationSubsystem, shooter),
                                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
                                                 new IntakeStage(shooter, intake)));
-                /*
-                 * m_driver_controler.y().onTrue(new SequentialCommandGroup(
-                 * new ParallelCommandGroup(drivetrain.ampPathCommand(),
-                 * new SetAmpMode(intake, shooterRotationSubsystem, shooter,
-                 * visionPhotonSubsystem),
-                 * 
-                 * new AmpShootNote(intake, shooterRotationSubsystem, shooter,
-                 * visionPhotonSubsystem))));
-                 */
 
-                m_driver_controler.y().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
+                // auto amp path and shot
+                m_driver_controler.x().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
 
                                 new SetAmpMode(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem),
@@ -178,29 +176,23 @@ public class RobotContainer {
                                                 visionPhotonSubsystem)));
 
                 // Operator Buttons
-
-                m_operatorController.b()
-                                .whileTrue(new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
-                m_operatorController.a()
-                                .toggleOnTrue(new SequentialCommandGroup(
-
-                                                new SetAmpMode(intake, shooterRotationSubsystem, shooter,
-                                                                visionPhotonSubsystem),
-                                                new AmpShootNote(intake, shooterRotationSubsystem, shooter,
-                                                                visionPhotonSubsystem)));
-                m_operatorController.rightBumper()
-                                .toggleOnTrue(new SetAmpMode(intake, shooterRotationSubsystem, shooter,
-                                                visionPhotonSubsystem));
-                m_operatorController.leftStick()
-                                .onTrue(new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()));
-                m_operatorController.x()
-                                .toggleOnTrue(new ParallelCommandGroup(
-                                                new InstantCommand(() -> intake.setIntakeBackwards()),
-                                                new InstantCommand(() -> shooter.SetIntakeWheelsBack())));
+                // manual speaker shot
                 m_operatorController.y().whileTrue(new ManualShootNote(shooter, shooterRotationSubsystem));
+
+                // manual amp shot
                 m_operatorController.leftBumper().toggleOnTrue(new ParallelCommandGroup(
                                 new InstantCommand(() -> shooterRotationSubsystem.setShooterAmpAngle()),
                                 new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
+
+                // run intake backwards
+                m_operatorController.x()
+                                .whileTrue(new ParallelCommandGroup(
+                                                new InstantCommand(() -> intake.setIntakeBackwards()),
+                                                new InstantCommand(() -> shooter.SetIntakeWheelsBack())));
+
+                // set climbing mode on left joystick click
+                m_operatorController.leftStick()
+                                .onTrue(new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()));
 
         }
 
@@ -221,12 +213,17 @@ public class RobotContainer {
                                                 drivetrain));
                 NamedCommands.registerCommand("AutoNoteIntake",
                                 new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
-                                                shooterRotationSubsystem));
+                                                shooterRotationSubsystem, shooter));
 
                 NamedCommands.registerCommand("IntakeAndShoot",
                                 new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
                 NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
+
+                NamedCommands.registerCommand("IntakeAndShoot2", new IntakeAndShootcopy(intake,
+                                shooter,
+                                shooterRotationSubsystem,
+                                visionPhotonSubsystem));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

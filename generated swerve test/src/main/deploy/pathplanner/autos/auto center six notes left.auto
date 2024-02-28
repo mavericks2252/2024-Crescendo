@@ -22,13 +22,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Middle Start to center node"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "center note to left note"
+                        "pathName": "Copy of Middle Start to center node"
                       }
                     }
                   ]
@@ -37,10 +31,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAndShoot"
+                  "name": "IntakeAndShoot2"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of center note to left note"
           }
         },
         {
@@ -77,6 +77,24 @@
           "type": "path",
           "data": {
             "pathName": "centerline to left shoot location"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shot location to note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center note 3 to shot"
           }
         },
         {

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5493573329464563,
-        "y": 5.539268936198303
+        "x": 1.8082090218234488,
+        "y": 5.796428890155078
       },
       "isLocked": false,
       "linkedName": "middle note 1"
@@ -20,8 +20,8 @@
         "y": 6.785612129782819
       },
       "prevControl": {
-        "x": 1.826698428171631,
-        "y": 6.489781628211906
+        "x": 1.8544325376939041,
+        "y": 6.7301439107382715
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,13 +30,31 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.7,
-      "rotationDegrees": -147.38,
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -145.18771188166994,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -45,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -147.38,
+    "rotation": -146.59217541029102,
     "rotateFast": false
   },
   "reversed": false,

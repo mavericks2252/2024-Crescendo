@@ -176,6 +176,13 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     climbMode = false;
   }
 
+  public void setManualShoot() {
+    ampMode = false;
+    speakerAngleTracking = false;
+    intakeMode = false;
+    climbMode = false;
+  }
+
   public void setClimbMode() {
     ampMode = false;
     intakeMode = false;

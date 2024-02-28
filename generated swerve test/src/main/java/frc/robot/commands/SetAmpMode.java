@@ -59,7 +59,7 @@ public class SetAmpMode extends Command {
     if (!shooter.getMiddleFrontBeambreak() && !hasBeenBroken) {
       shooter.acceleratorWheelOutput(0.2);
     } else {
-      shooter.acceleratorWheelOutput(-0.5);
+      shooter.acceleratorWheelOutput(-0.25);
       shooter.setAmpWheel(0.5);
     }
     if (shooter.getAmpBeambreak())

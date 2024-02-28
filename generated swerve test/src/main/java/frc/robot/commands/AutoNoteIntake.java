@@ -13,6 +13,7 @@ import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
 //import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
@@ -22,7 +23,9 @@ public class AutoNoteIntake extends Command {
   Intake intake;
   CommandSwerveDrivetrain drivetrain;
   ShooterRotationSubsystem shooterRotationSubsystem;
+  Shooter shooter;
   int loopsWithoutTarget;
+  double forwardSpeed;
 
   // AutoAimSubsystem autoAimSubsystem;
 
@@ -37,12 +40,14 @@ public class AutoNoteIntake extends Command {
   public AutoNoteIntake(VisionPhotonSubsystem photon,
       Intake intake,
       CommandSwerveDrivetrain drivetrain,
-      ShooterRotationSubsystem shooterRotationSubsystem) {
+      ShooterRotationSubsystem shooterRotationSubsystem,
+      Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.photon = photon;
     this.intake = intake;
     this.drivetrain = drivetrain;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
+    this.shooter = shooter;
     // this.autoAimSubsystem = autoAimSubsystem;
 
     addRequirements(intake, drivetrain, shooterRotationSubsystem);
@@ -72,9 +77,14 @@ public class AutoNoteIntake extends Command {
     if (photon.noteCam.getLatestResult().hasTargets() || loopsWithoutTarget < 10) {
       intake.setIntakeSpeed();
 
+      if (photon.getNoteTargetArea() > 3) {
+        forwardSpeed = -1;
+      } else
+        forwardSpeed = -3;
+
       // drivetrain.applyRequest(() ->
       // autoNote.withVelocityX(1).withRotationalRate(photon.noteAutoAimRateOutput()));
-      drivetrain.setControl(autoNote.withVelocityX(-2).withRotationalRate(photon.noteAutoAimRateOutput()));
+      drivetrain.setControl(autoNote.withVelocityX(forwardSpeed).withRotationalRate(photon.noteAutoAimRateOutput()));
 
     }
 
@@ -112,6 +122,9 @@ public class AutoNoteIntake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.getBeamBreak();
+    if (intake.getBeamBreak() || shooter.getMiddleBackBeambreak()) {
+      return true;
+    } else
+      return false;
   }
 }

@@ -13,7 +13,7 @@ public class ManualShootNote extends Command {
   Shooter shooter;
   ShooterRotationSubsystem shooterRotationSubsystem;
 
-  double targetRPM;
+  double targetRPM, error, targetAngle = 144;
 
   public ManualShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem) {
     this.shooter = shooter;
@@ -25,19 +25,21 @@ public class ManualShootNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRotationSubsystem.setShooterAngle(112.25); // sets the shooter to track the speaker
+    shooterRotationSubsystem.setShooterAngle(targetAngle); // sets the shooter to track the speaker
+    shooterRotationSubsystem.setManualShoot();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    targetRPM = 3500; // sets the shooter to a desired rpm
+    error = Math.abs((shooterRotationSubsystem.getAngleMotorPos() * 360) - targetAngle);
+    targetRPM = 2000; // sets the shooter to a desired rpm
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle()); // sets
     // the angle that the shooter needs to
     // target
 
-    if (targetRPM - shooter.getShooterVelocity() < 75) { // if the shooter is within 75 rpm of the desired speed
+    if (targetRPM - shooter.getShooterVelocity() < 75 && error < 0.5) { // if the shooter is within 75 rpm of the
+                                                                        // desired speed
       shooter.acceleratorWheelOutput(0.95); // sets the accelerator wheel to full speed
     }
 

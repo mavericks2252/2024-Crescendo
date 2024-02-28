@@ -259,4 +259,12 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
   }
 
+  public double getNoteTargetArea() {
+    var target = noteCam.getLatestResult();
+    if (target.hasTargets())
+      return noteCam.getCameraTable().getValue("targetArea").getDouble();
+    else
+      return 0;
+  }
+
 }
