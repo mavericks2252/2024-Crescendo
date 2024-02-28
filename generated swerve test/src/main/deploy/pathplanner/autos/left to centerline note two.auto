@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.708089344106616,
+      "y": 6.748633317086454
+    },
+    "rotation": -121.1593045083444
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of start left to center"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoNoteIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerline to left shoot location"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "fixedAngleShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shot location 3 auto note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoNoteIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center note 3 to shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "under stage to left note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

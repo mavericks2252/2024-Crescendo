@@ -51,8 +51,8 @@ public class Intake extends SubsystemBase {
   }
 
   public void setIntakeBackwards() {
-    intakeMotor.set(-IntakeConstants.kIntakeSpeed);
-    centeringWheelMotor.set(-IntakeConstants.kCenteringWheelSpeed);
+    intakeMotor.set(-0.5);
+    centeringWheelMotor.set(-0.5);
   }
 
   public void stopIntake() { // stops the intake motors

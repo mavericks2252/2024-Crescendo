@@ -24,6 +24,12 @@
                       "data": {
                         "pathName": "Copy of Middle Start to center node"
                       }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "center note to left note"
+                      }
                     }
                   ]
                 }
@@ -31,16 +37,10 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAndShoot2"
+                  "name": "IntakeAndShoot"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Copy of center note to left note"
           }
         },
         {

@@ -34,13 +34,14 @@ public class IntakeAndShoot extends Command {
   public void initialize() {
 
     shooterRotationSubsystem.setSpeakerTracking();
+    intake.setIntakeSpeed();
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    targetRPM = photon.getTargetRPM();
+    targetRPM = 2000;
     error = targetRPM - shooter.getShooterVelocity();
     shooter.setShooterVelocity(targetRPM);
     if (error < 100)

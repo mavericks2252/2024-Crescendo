@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -17,17 +16,14 @@ public class IntakeAndShootcopy extends Command {
   ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
   double targetRPM, error;
-  double rpm1, rpm2, delayTime, shooterAngle1, shooterAngle2, targetAngle;
-  Timer delayTimer = new Timer();
+  double shooterAngle1, shooterAngle2, targetAngle;
 
   /** Creates a new IntakeAndShoot. */
   public IntakeAndShootcopy(Intake intake, Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem,
       VisionPhotonSubsystem photon) {
-    delayTime = 2;
-    rpm1 = 2000;
-    rpm2 = 2500;
-    shooterAngle1 = 131;
-    shooterAngle2 = 125;
+
+    targetRPM = 3500;
+    targetAngle = 111.75;
     this.intake = intake;
     this.shooter = shooter;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
@@ -41,33 +37,19 @@ public class IntakeAndShootcopy extends Command {
   @Override
   public void initialize() {
 
-    delayTimer.restart();
-
+    shooterRotationSubsystem.setShooterAngle(targetAngle);
     shooterRotationSubsystem.setManualShoot();
-
+    shooter.setShooterVelocity(targetRPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    if (delayTimer.get() < delayTime) {
-      targetRPM = rpm1;
-      targetAngle = shooterAngle1;
-    } else {
-      targetRPM = rpm2;
-      targetAngle = shooterAngle2;
-    }
     error = targetRPM - shooter.getShooterVelocity();
-    shooterRotationSubsystem.setShooterAngle(targetAngle);
-    shooter.setShooterVelocity(targetRPM);
-    if (error < 125)
-      shooter.acceleratorWheelOutput(0.95);
 
-    if (!shooter.getMiddleFrontBeambreak() && !shooter.getMiddleBackBeambreak() && !shooter.getShotBeambreak()) {
-      intake.setIntakeSpeed();
-      shooter.setAmpWheel(1);
-    }
+    if (error < 100)
+      shooter.acceleratorWheelOutput(0.95);
 
   }
 
@@ -84,6 +66,9 @@ public class IntakeAndShootcopy extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (!shooter.getMiddleBackBeambreak() && !shooter.getMiddleFrontBeambreak() && !shooter.getShotBeambreak())
+      return true;
+    else
+      return false;
   }
 }

@@ -3,37 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.7818593294844245,
-        "y": 4.132382318818692
+        "x": 5.016121023233037,
+        "y": 6.323376971078266
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.1640362740184935,
-        "y": 3.226401407757771
+        "x": 7.170136862796246,
+        "y": 6.62845217582327
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "center note 1 shot"
     },
     {
       "anchor": {
-        "x": 4.248810659783482,
-        "y": 5.047607933053705
+        "x": 6.874306361225335,
+        "y": 5.491353685410074
       },
       "prevControl": {
-        "x": 4.165608331216662,
-        "y": 4.345010491822786
+        "x": 6.106995997775779,
+        "y": 6.249419345685538
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": 135.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.1,
+      "waypointRelativePos": 0.6,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,7 +47,7 @@
             {
               "type": "named",
               "data": {
-                "name": "AutoSpool"
+                "name": "IntakeNote"
               }
             }
           ]
@@ -56,14 +62,14 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 165.20323775494268,
+    "velocity": 3.5,
+    "rotation": 113.2,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 162.58202920779715,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

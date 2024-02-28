@@ -212,18 +212,22 @@ public class RobotContainer {
                                 new AutoAimShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem,
                                                 drivetrain));
                 NamedCommands.registerCommand("AutoNoteIntake",
-                                new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
-                                                shooterRotationSubsystem, shooter));
-
+                                new SequentialCommandGroup(
+                                                new AutoNoteIntake(visionPhotonSubsystem, intake, drivetrain,
+                                                                shooterRotationSubsystem, shooter),
+                                                new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
+                                                new IntakeStage(shooter, intake)));
                 NamedCommands.registerCommand("IntakeAndShoot",
                                 new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
                 NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
 
-                NamedCommands.registerCommand("IntakeAndShoot2", new IntakeAndShootcopy(intake,
+                NamedCommands.registerCommand("fixedAngleShot", new IntakeAndShootcopy(intake,
                                 shooter,
                                 shooterRotationSubsystem,
                                 visionPhotonSubsystem));
+
+                NamedCommands.registerCommand("IntakeStage", new IntakeStage(shooter, intake));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

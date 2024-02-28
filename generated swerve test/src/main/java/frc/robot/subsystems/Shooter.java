@@ -146,8 +146,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void SetIntakeWheelsBack() {
-    amplifierWheel.set(-1);
-    acceleratorWheel.set(-1);
+    amplifierWheel.set(-0.5);
+    acceleratorWheel.set(-0.5);
   }
 
 }

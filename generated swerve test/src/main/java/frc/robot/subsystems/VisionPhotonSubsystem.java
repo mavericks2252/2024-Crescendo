@@ -79,7 +79,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
           double targetArea = camera.getCameraTable().getValue("targetArea").getDouble();
           // adds vision measurement to drivetrain
-          if (targetArea > 0.04) {
+          if (targetArea > 0.033) {
             drivetrain.addVisionMeasurement(
                 est.estimatedPose.toPose2d(),
                 est.timestampSeconds);

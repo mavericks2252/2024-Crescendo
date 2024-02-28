@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.761797865938074,
-        "y": 5.972078250462808
+        "x": 7.216360378666703,
+        "y": 6.101504094900082
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.874306361225335,
-        "y": 6.304887564730085
+        "x": 6.328868873953964,
+        "y": 6.434313409167359
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.812737553403035,
-        "y": 6.267908752033721
+        "x": 5.016121023233037,
+        "y": 6.323376971078266
       },
       "prevControl": {
-        "x": 5.533824400982135,
-        "y": 6.44355811234145
+        "x": 5.737207870812137,
+        "y": 6.499026331385996
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "parallel",
         "data": {
@@ -42,6 +42,23 @@
               "type": "named",
               "data": {
                 "name": "AutoSpool"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeStage"
               }
             }
           ]
@@ -57,7 +74,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -168.6900675259797,
+    "rotation": -169.6951535312341,
     "rotateFast": false
   },
   "reversed": false,
