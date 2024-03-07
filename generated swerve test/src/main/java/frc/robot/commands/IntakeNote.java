@@ -51,8 +51,6 @@ public class IntakeNote extends Command {
     } else {
       shooter.acceleratorWheelOutput(1); // sets to full speed when no note is in middle beam break
     }
-    ledSubsystem.isIntaking = true;
-
     /*
      * }
      * 
@@ -74,8 +72,6 @@ public class IntakeNote extends Command {
     if (shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) // if the middle front or middle back
                                                                                // beam brakes
       shooterRotationSubsystem.setSpeakerTracking(); // set the shooter to speaker tracking
-
-    ledSubsystem.isIntaking = false;
 
   }
 

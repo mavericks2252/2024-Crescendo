@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putString("Commands", CommandScheduler.getInstance().toString());
+    SmartDashboard.putData("Commands", CommandScheduler.getInstance());
 
   }
 
@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    RobotContainer.shooter.autoTorqueCurrent();
   }
 
   @Override
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    RobotContainer.shooter.teleopTorqueCurrent();
   }
 
   @Override

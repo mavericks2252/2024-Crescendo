@@ -3,54 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.011404851638531,
-        "y": 7.451230758317373
+        "x": 0.7450681568029801,
+        "y": 4.409723414041423
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.678595537371254,
-        "y": 7.340294320228282
+        "x": 1.604825551993446,
+        "y": 2.662474514138218
       },
       "isLocked": false,
-      "linkedName": "middle left note"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.563130567702577,
-        "y": 6.203195829815082
+        "x": 7.826510788156711,
+        "y": 0.8597573951904666
       },
       "prevControl": {
-        "x": 5.330440931152132,
-        "y": 6.35111108060054
+        "x": 7.00373220566261,
+        "y": 0.8135338793200114
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 163.17654272068032,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.4,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "AutoSpool"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.7,
       "command": {
         "type": "parallel",
         "data": {
@@ -74,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -168.87081071038895,
+    "rotation": 172.33319573818576,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -157.38013505195946,
+    "rotation": 122.10625595511787,
     "velocity": 0
   },
   "useDefaultConstraints": true

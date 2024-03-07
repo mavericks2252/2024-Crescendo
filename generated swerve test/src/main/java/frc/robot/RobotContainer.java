@@ -20,14 +20,18 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpShootNote;
+import frc.robot.commands.AutoAimManualAngle;
 import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.AutoShooterSpool;
 import frc.robot.commands.IntakeAndShoot;
 import frc.robot.commands.IntakeAndShootcopy;
+import frc.robot.commands.IntakeBackwards;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeStage;
+import frc.robot.commands.ManualAmpShot;
 import frc.robot.commands.ManualShootNote;
 import frc.robot.commands.SetAmpMode;
 import frc.robot.commands.ShootNote;
@@ -59,13 +63,12 @@ public class RobotContainer {
         private final Telemetry logger = new Telemetry(MaxSpeed);
 
         // Robot Subsystems
-        public final Shooter shooter = new Shooter();
+        public final static Shooter shooter = new Shooter();
         public final Intake intake = new Intake();
         public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
         public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(
                         visionPhotonSubsystem);
-        public final LEDSubsystem ledSubsystem = new LEDSubsystem(shooter, intake, visionPhotonSubsystem,
-                        shooterRotationSubsystem);
+        public final static LEDSubsystem ledSubsystem = new LEDSubsystem();
         public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
         // Robot Commands
@@ -102,14 +105,15 @@ public class RobotContainer {
                                                                                                                          // (left)
                                                                 .withRotationalRate(
                                                                                 CommandSwerveDrivetrain
-                                                                                                .getExponential(-m_driver_controler
-                                                                                                                .getRightX()
-                                                                                                                * MaxAngularRate)) // Drive
-                                                                                                                                   // counterclockwise
-                                                                                                                                   // with
-                                                                                                                                   // negative
-                                                                                                                                   // X
-                                                                                                                                   // (left)
+                                                                                                .getRotationalExponential(
+                                                                                                                -m_driver_controler
+                                                                                                                                .getRightX()
+                                                                                                                                * MaxAngularRate)) // Drive
+                                                                                                                                                   // counterclockwise
+                                                                                                                                                   // with
+                                                                                                                                                   // negative
+                                                                                                                                                   // X
+                                                                                                                                                   // (left)
                                 ));
 
                 m_driver_controler.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -166,7 +170,7 @@ public class RobotContainer {
                                                 new IntakeStage(shooter, intake)));
 
                 // auto amp path and shot
-                m_driver_controler.x().onTrue(new SequentialCommandGroup(new ParallelCommandGroup(
+                m_driver_controler.x().toggleOnTrue(new SequentialCommandGroup(new ParallelCommandGroup(
 
                                 new SetAmpMode(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem),
@@ -177,18 +181,21 @@ public class RobotContainer {
 
                 // Operator Buttons
                 // manual speaker shot
+                m_operatorController.rightBumper()
+                                .onTrue(new SequentialCommandGroup(
+                                                new InstantCommand(() -> shooterRotationSubsystem.setManualShoot()),
+                                                new InstantCommand(() -> shooterRotationSubsystem
+                                                                .setShooterAngle(ShooterConstants.kAmpAngle))));
+
                 m_operatorController.y().whileTrue(new ManualShootNote(shooter, shooterRotationSubsystem));
 
                 // manual amp shot
-                m_operatorController.leftBumper().toggleOnTrue(new ParallelCommandGroup(
-                                new InstantCommand(() -> shooterRotationSubsystem.setShooterAmpAngle()),
-                                new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem)));
+                m_operatorController.leftBumper().whileTrue(
+                                new ManualAmpShot(shooter));
 
                 // run intake backwards
                 m_operatorController.x()
-                                .whileTrue(new ParallelCommandGroup(
-                                                new InstantCommand(() -> intake.setIntakeBackwards()),
-                                                new InstantCommand(() -> shooter.SetIntakeWheelsBack())));
+                                .whileTrue(new IntakeBackwards(intake, shooter));
 
                 // set climbing mode on left joystick click
                 m_operatorController.leftStick()
@@ -220,12 +227,20 @@ public class RobotContainer {
                 NamedCommands.registerCommand("IntakeAndShoot",
                                 new IntakeAndShoot(intake, shooter, shooterRotationSubsystem, visionPhotonSubsystem));
 
-                NamedCommands.registerCommand("AutoSpool", new InstantCommand(() -> shooter.setShooterVelocity(3000)));
+                NamedCommands.registerCommand("AutoSpool", new SequentialCommandGroup(
+                                new IntakeStage(shooter, intake),
+                                new InstantCommand(() -> shooter.setShooterVelocity(3000))));
 
                 NamedCommands.registerCommand("fixedAngleShot", new IntakeAndShootcopy(intake,
                                 shooter,
                                 shooterRotationSubsystem,
                                 visionPhotonSubsystem));
+
+                NamedCommands.registerCommand("AutoAimManualAngle", new AutoAimManualAngle(shooter,
+                                shooterRotationSubsystem, visionPhotonSubsystem, drivetrain, 113));
+
+                NamedCommands.registerCommand("AutoAimManual2", new AutoAimManualAngle(shooter,
+                                shooterRotationSubsystem, visionPhotonSubsystem, drivetrain, 111.5));
 
                 NamedCommands.registerCommand("IntakeStage", new IntakeStage(shooter, intake));
 

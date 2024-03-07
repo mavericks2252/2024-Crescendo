@@ -13,25 +13,27 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class AutoAimShootNote extends Command {
+public class AutoAimManualAngle extends Command {
   /** Creates a new ShootNote. */
   Shooter shooter;
   ShooterRotationSubsystem shooterRotationSubsystem;
   VisionPhotonSubsystem photon;
   RobotContainer robotContainer;
   CommandSwerveDrivetrain drivetrain;
+  double targetAngle;
 
   double targetRPM, maxSpeed = 0.75;
 
   private final SwerveRequest.FieldCentric autoAimDrive = new SwerveRequest.FieldCentric()
       .withDeadband(RobotContainer.MaxSpeed * 0.15).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  public AutoAimShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem,
-      VisionPhotonSubsystem photon, CommandSwerveDrivetrain drivetrain) {
+  public AutoAimManualAngle(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem,
+      VisionPhotonSubsystem photon, CommandSwerveDrivetrain drivetrain, double targetAngle) {
     this.shooter = shooter;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.photon = photon;
     this.drivetrain = drivetrain;
+    this.targetAngle = targetAngle;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, shooterRotationSubsystem, drivetrain);
@@ -41,7 +43,7 @@ public class AutoAimShootNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRotationSubsystem.setSpeakerTracking();
+    shooterRotationSubsystem.setManualShoot();
 
   }
 
@@ -50,9 +52,9 @@ public class AutoAimShootNote extends Command {
   public void execute() {
     double error = Math.abs((photon.speakerAutoAimRateOutput()));
     targetRPM = photon.getTargetRPM();
-    shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
+    shooterRotationSubsystem.setShooterAngle(targetAngle);
 
-    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .75) {
+    if (targetRPM - shooter.getShooterVelocity() < 75 && error < .75) {
       shooter.acceleratorWheelOutput(1);
     }
 

@@ -13,6 +13,7 @@ import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
 //import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterRotationSubsystem;
 import frc.robot.subsystems.VisionPhotonSubsystem;
@@ -76,6 +77,7 @@ public class AutoNoteIntake extends Command {
 
     if (photon.noteCam.getLatestResult().hasTargets() || loopsWithoutTarget < 10) {
       intake.setIntakeSpeed();
+      LEDSubsystem.orange();
 
       if (photon.getNoteTargetArea() > 3) {
         forwardSpeed = -1;
@@ -89,6 +91,7 @@ public class AutoNoteIntake extends Command {
     }
 
     else {
+      LEDSubsystem.blue();
       drivetrain.setControl(drive
           .withVelocityX(CommandSwerveDrivetrain
               .getExponential(-RobotContainer.m_driver_controler.getLeftY() * RobotContainer.MaxSpeed)) // Drive forward
@@ -99,12 +102,12 @@ public class AutoNoteIntake extends Command {
                                                                                                         // with negative
                                                                                                         // X (left)
           .withRotationalRate(CommandSwerveDrivetrain
-              .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate)) // Drive
-                                                                                                               // counterclockwise
-                                                                                                               // with
-                                                                                                               // negative
-                                                                                                               // X
-                                                                                                               // (left)
+              .getRotationalExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate)) // Drive
+      // counterclockwise
+      // with
+      // negative
+      // X
+      // (left)
       );
 
       intake.stopIntake();
@@ -115,8 +118,8 @@ public class AutoNoteIntake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.stopIntake();
     drivetrain.setControl(new SwerveRequest.SwerveDriveBrake());
+    LEDSubsystem.green();
   }
 
   // Returns true when the command should end.

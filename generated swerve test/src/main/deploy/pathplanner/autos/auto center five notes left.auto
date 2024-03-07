@@ -50,9 +50,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "intake centerline note 1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "intake centerline note 1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
           }
         },
         {
@@ -64,7 +77,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoAimShot"
+            "name": "AutoAimManualAngle"
           }
         },
         {
@@ -82,7 +95,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoAimShot"
+            "name": "AutoAimManual2"
           }
         }
       ]

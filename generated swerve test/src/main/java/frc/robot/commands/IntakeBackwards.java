@@ -7,50 +7,29 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.ShooterRotationSubsystem;
-import frc.robot.subsystems.VisionPhotonSubsystem;
 
-public class IntakeAndShoot extends Command {
+public class IntakeBackwards extends Command {
   Intake intake;
   Shooter shooter;
-  ShooterRotationSubsystem shooterRotationSubsystem;
-  VisionPhotonSubsystem photon;
-  double targetRPM, error;
 
-  /** Creates a new IntakeAndShoot. */
-  public IntakeAndShoot(Intake intake, Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem,
-      VisionPhotonSubsystem photon) {
+  /** Creates a new IntakeBackwards. */
+  public IntakeBackwards(Intake intake, Shooter shooter) {
     this.intake = intake;
     this.shooter = shooter;
-    this.shooterRotationSubsystem = shooterRotationSubsystem;
-    this.photon = photon;
-
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter, intake, shooterRotationSubsystem);
+    addRequirements(shooter, intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    shooterRotationSubsystem.setSpeakerTracking();
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    targetRPM = 2200;
-    error = targetRPM - shooter.getShooterVelocity();
-    shooter.setShooterVelocity(targetRPM);
-    if (error < 100)
-      shooter.acceleratorWheelOutput(0.95);
-
-    if (!shooter.getMiddleFrontBeambreak() && !shooter.getMiddleBackBeambreak()) {
-      intake.setIntakeSpeed();
-      shooter.setAmpWheel(1);
-    }
-
+    shooter.SetIntakeWheelsBack();
+    intake.setIntakeBackwards();
   }
 
   // Called once the command ends or is interrupted.

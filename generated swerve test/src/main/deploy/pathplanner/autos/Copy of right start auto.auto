@@ -14,19 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNote"
+            "name": "AutoAimShot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right start to right note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "right note to centerline 5"
+            "pathName": "Right start to centerline"
           }
         },
         {

@@ -2,7 +2,6 @@ package frc.robot;
 
 import java.util.List;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
@@ -15,7 +14,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -107,7 +105,13 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 this::getCurrentChassisSpeeds, // makes a command that applies the chassis speed
                 (speeds) -> this.setControl(autoRequest.withSpeeds(speeds)),
                 getHolonomicPathFollowerConfig(),
-                () -> false, // determines the red or blue team
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                }, // determines the red or blue team
                 this);
     }
 
@@ -131,6 +135,31 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         v = (a - 1 * b) / (1 - b);
 
         v *= sign;
+
+        if (driverStationAlliance()) {
+            v *= -1;
+        }
+
+        return v;
+    }
+
+    public static double getRotationalExponential(double input) {
+
+        if (Math.abs(input) < DriveTrainConstants.kDeadBand) {
+            return 0;
+        }
+
+        double sign = Math.signum(input);
+        double v = Math.abs(input);
+
+        double a = DriveTrainConstants.kWeight * Math.pow(v, DriveTrainConstants.kExponent)
+                + (1 - DriveTrainConstants.kWeight) * v;
+        double b = DriveTrainConstants.kWeight * Math.pow(DriveTrainConstants.kDeadBand, DriveTrainConstants.kExponent)
+                + (1 - DriveTrainConstants.kWeight) * DriveTrainConstants.kDeadBand;
+        v = (a - 1 * b) / (1 - b);
+
+        v *= sign;
+
         return v;
     }
 
@@ -184,6 +213,26 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 0.25);
 
         return pathfindingCommand;
+    }
+
+    public Command ClimberPathFinding() {
+
+        PathPlannerPath climb = PathPlannerPath.fromPathFile("Auto Climb Path");
+
+        Command pathFindingCommand = AutoBuilder.pathfindThenFollowPath(
+                climb,
+                DriveTrainConstants.kPathConstraints,
+                0.25);
+
+        return pathFindingCommand;
+    }
+
+    public static boolean driverStationAlliance() {
+        var alliance = DriverStation.getAlliance(); // creates a variable called alliance
+        if (alliance.isPresent()) { // checks if alliance variable has been set to anything
+            return alliance.get() == DriverStation.Alliance.Red; // checks if the alliance color is red
+        }
+        return false; // returns false if color is not red or if no color
     }
 
 }

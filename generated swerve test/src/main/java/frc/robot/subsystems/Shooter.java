@@ -30,11 +30,11 @@ public class Shooter extends SubsystemBase {
   DigitalInput beamBreakAmp;
   DigitalInput beamBreakMiddleFront;
   DigitalInput beamBreakMiddleBack;
+  TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
   private final VelocityTorqueCurrentFOC shooterTV = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
 
   public Shooter() {
-    TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
     shooterConfig.Slot1.kP = 8;
     shooterConfig.Slot1.kI = 0.0;
     shooterConfig.Slot1.kD = 0.1;
@@ -77,6 +77,10 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("BeamBreak shot", getShotBeambreak());
     SmartDashboard.putBoolean("beambreak middle front", getMiddleFrontBeambreak());
     SmartDashboard.putBoolean("Beambreak middle back", getMiddleBackBeambreak());
+    if (getMiddleBackBeambreak() || getMiddleFrontBeambreak())
+      LEDSubsystem.green();
+
+    SmartDashboard.putNumber("torqueCurrent", shooterMotorMaster.getTorqueCurrent().getValue());
 
   }
 
@@ -100,10 +104,10 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterVelocity(double targetRPM) {
 
-    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30)); // sets our shooter motor
+    shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(20)); // sets our shooter motor
                                                                                                // to a set speed with a
                                                                                                // feed forward
-    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(30));
+    shooterMotorSlave.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(20));
 
   }
 
@@ -148,6 +152,18 @@ public class Shooter extends SubsystemBase {
   public void SetIntakeWheelsBack() {
     amplifierWheel.set(-0.5);
     acceleratorWheel.set(-0.5);
+  }
+
+  public void teleopTorqueCurrent() {
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    shooterMotorMaster.getConfigurator().apply(shooterConfig);
+    shooterMotorSlave.getConfigurator().apply(shooterConfig);
+  }
+
+  public void autoTorqueCurrent() {
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 65;
+    shooterMotorMaster.getConfigurator().apply(shooterConfig);
+    shooterMotorSlave.getConfigurator().apply(shooterConfig);
   }
 
 }

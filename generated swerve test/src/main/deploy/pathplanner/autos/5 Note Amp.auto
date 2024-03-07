@@ -2,37 +2,38 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7450681568029801,
-      "y": 4.409723414041423
+      "x": 1.3624573945999146,
+      "y": 5.540017127990723
     },
-    "rotation": 121.75948008481282
+    "rotation": 179.99996255206335
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center Note and Amp Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAndShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right start to right note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "right note to centerline 5"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "centerline to shot right"
+            "name": "AutoNoteIntake"
           }
         },
         {
@@ -44,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Centerline note 4"
+            "pathName": "Center note #1"
           }
         },
         {
@@ -56,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "centerline to shot right"
+            "pathName": "Center note 1 to shot"
           }
         },
         {
@@ -64,16 +65,10 @@
           "data": {
             "name": "AutoAimShot"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "centerline 3 from right"
-          }
         }
       ]
     }
   },
   "folder": null,
-  "choreoAuto": false
+  "choreoAuto": true
 }

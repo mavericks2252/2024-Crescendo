@@ -54,11 +54,11 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-    noteAimPidController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
+    noteAimPidController = new ProfiledPIDController(3, 0.25, 0, aim_PIDConstraints, .01);
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(15, 0.25, 0, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(10, 0.25, 0, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -79,7 +79,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
           double targetArea = camera.getCameraTable().getValue("targetArea").getDouble();
           // adds vision measurement to drivetrain
-          if (targetArea > 0.033) {
+          if (targetArea > 0.04) {
             drivetrain.addVisionMeasurement(
                 est.estimatedPose.toPose2d(),
                 est.timestampSeconds);
@@ -150,20 +150,24 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
   public double getSpeakerDistance() {
 
+    double speakerXPos;
     double speakerYPos;
 
     if (driverStationAlliance()) {
-      speakerYPos = FieldConstants.kRedSpeakerYPosMeters; // sets the robot to look for the red speaker if on red team
+      speakerXPos = FieldConstants.kRedSpeakerXPosMeters; // sets the robot to look for the red speaker if on red team
+      speakerYPos = FieldConstants.kRedSpeakerYPosMeters;
     } else {
-      speakerYPos = FieldConstants.kBlueSpeakerYPosMeters; // sets the robot to look for the blue speaker if on blue
-                                                           // team
+      speakerXPos = FieldConstants.kBlueSpeakerXPosMeters; // sets the robot to look for the blue speaker if on blue
+      speakerYPos = FieldConstants.kBlueSpeakerYPosMeters;
+      // team
     }
 
     double botX = drivetrain.getState().Pose.getX(); // gets the x pose of the bot
     double botY = drivetrain.getState().Pose.getY(); // gets the y pose of the bot
-    double oppositetSide = botY - speakerYPos; // finds the distance from the bot to the back of the arena
+    double oppositetSide = botX - speakerXPos; // finds the distance from the bot to the back of the arena
+    double adjacentSide = botY - speakerYPos;
 
-    return Math.hypot(oppositetSide, botX); // calculates the distance with an angle to the speaker
+    return Math.abs(Math.hypot(oppositetSide, adjacentSide)); // calculates the distance with an angle to the speaker
     // return Math.sqrt((botX*botX)+(oppositetSide*oppositetSide));
 
   }
@@ -195,11 +199,11 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     }
     // middle shot 5.5 meters to 4 meters
     else if (distance > 4) { // if the distance is between 4 and 5.5 meters
-      targetAngle = -3.1667 * distance + 129.67; // use this equasion
+      targetAngle = -2.5 * distance + 126; // use this equasion
     }
     // close shot less than 4 meters
     else { // if the distance is less than 4 meters
-      targetAngle = -8.9629 * distance + 152.85; // use this equasion
+      targetAngle = -11.097 * distance + 160.39; // use this equasion
     }
 
     return targetAngle;
@@ -207,10 +211,16 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   }
 
   public double getAmpDistance() {
+    double ampXPos;
+    if (driverStationAlliance()) {
+      ampXPos = FieldConstants.kRedAmpXPosMeters;
+    } else {
+      ampXPos = FieldConstants.kBlueAmpXPosMeters;
+    }
     double botX = drivetrain.getState().Pose.getX(); // get the x position of the bot
     double botY = drivetrain.getState().Pose.getY(); // gets the y position of the bot
     double oppositetSide = botY - FieldConstants.kBlueAmpYPosMeters; // finds how far the bot y is from the amp y
-    double adjacentSide = botX - FieldConstants.kBlueAmpXPosMeters; // finds how far the bot x is from the amp x
+    double adjacentSide = botX - ampXPos; // finds how far the bot x is from the amp x
 
     return Math.hypot(oppositetSide, adjacentSide) - 1; // calculates the distance from amp with an offset to account
                                                         // for robot size and bumpers
@@ -229,7 +239,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
-    double correction = Units.degreesToRadians(1);
+    double correction = Units.degreesToRadians(0);
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
 
@@ -252,7 +262,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     } else { // if there were no notes detected
       angleToNote = 0; // set the angle needed to get to a note to 0
       turnRate = CommandSwerveDrivetrain // sets the turning of the robot to the controller
-          .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate);
+          .getRotationalExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate);
     }
 
     return turnRate;

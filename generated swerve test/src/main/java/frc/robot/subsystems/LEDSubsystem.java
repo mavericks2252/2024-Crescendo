@@ -11,61 +11,49 @@ import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants.BlinkinConstants;
 
 public class LEDSubsystem extends SubsystemBase {
-  Shooter shooter;
   CommandSwerveDrivetrain drivetrain;
-  Intake intake;
-  VisionPhotonSubsystem photon;
-  ShooterRotationSubsystem shooterRotationSubsystem;
 
   Boolean hasNote;
   boolean seesNote;
   public Boolean isIntaking;
 
-  public Spark blinkin;
+  public static Spark blinkin;
 
   /** Creates a new LEDSubsystem. */
-  public LEDSubsystem(Shooter shooter, Intake intake, VisionPhotonSubsystem photon,
-      ShooterRotationSubsystem shooterRotationSubsystem) {
-    this.shooter = shooter;
-    this.intake = intake;
-    this.photon = photon;
-    this.shooterRotationSubsystem = shooterRotationSubsystem;
+  public LEDSubsystem() {
+
     blinkin = new Spark(9);
 
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // intaking, sees note, score mode & has note
-    hasNote = (shooter.getMiddleFrontBeambreak() &&
-        shooterRotationSubsystem.getSpeakerTracking());
-    seesNote = (photon.noteCam.getLatestResult().hasTargets());
 
-    /*
-     * if (isIntaking) {
-     * blinkin.set(BlinkinConstants.kOrange);
-     * }
-     * 
-     * else if (hasNote) {
-     * blinkin.set(BlinkinConstants.kGreen);
-     * }
-     * else if (seesNote) {
-     * blinkin.set(0.05);
-     * }
-     * 
-     * else
-     * teamLEDColor();
-     */
   }
 
-  public void teamLEDColor() {
+  public static void teamLEDColor() {
     if (DriverStation.getAlliance().isPresent()) { // if we are getting an alliance color
       if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) // if its blue
         blinkin.set(BlinkinConstants.kBlue); // make the lights blue
       else if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red)// if its red
         blinkin.set(BlinkinConstants.kRed); // make the lights red
     }
+  }
+
+  public static void orange() {
+    blinkin.set(BlinkinConstants.kOrange);
+  }
+
+  public static void green() {
+    blinkin.set(BlinkinConstants.kGreen);
+  }
+
+  public static void red() {
+    blinkin.set(BlinkinConstants.kRed);
+  }
+
+  public static void blue() {
+    blinkin.set(BlinkinConstants.kBlue);
   }
 
 }

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -24,9 +25,12 @@ public class Intake extends SubsystemBase {
   CANSparkMax centeringWheelMotor;
 
   public Intake() {
-
+    TalonFXConfiguration intakeConfiguration = new TalonFXConfiguration();
     intakeMotor = new TalonFX(PortConstants.kIntakeMotorPort);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+    intakeConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    intakeConfiguration.CurrentLimits.StatorCurrentLimit = 60;
+    intakeMotor.getConfigurator().apply(intakeConfiguration);
     intakeMotor.setInverted(true);
 
     centeringWheelMotor = new CANSparkMax(PortConstants.kCenteringWheelPort, MotorType.kBrushless);

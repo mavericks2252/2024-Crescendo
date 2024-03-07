@@ -28,7 +28,7 @@ public class AutoAimSubsystem extends SubsystemBase {
     // this.vision = vision;
     this.photon = photon;
 
-    noteAimPidController = new ProfiledPIDController(5, 0.25, 0, aim_PIDConstraints, .01);
+    noteAimPidController = new ProfiledPIDController(3, 0.25, 0, aim_PIDConstraints, .01);
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
@@ -71,10 +71,11 @@ public class AutoAimSubsystem extends SubsystemBase {
     } else { // if there isn't a note
       angleToNote = 0; // set the rotation needed to 0
       turnRate = CommandSwerveDrivetrain
-          .getExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate); // sets the
-                                                                                                           // control to
-                                                                                                           // the driver
-                                                                                                           // controller
+          .getRotationalExponential(-RobotContainer.m_driver_controler.getRightX() * RobotContainer.MaxAngularRate); // sets
+                                                                                                                     // the
+      // control to
+      // the driver
+      // controller
     }
     SmartDashboard.putNumber("angle to note", turnRate);
     return turnRate;
