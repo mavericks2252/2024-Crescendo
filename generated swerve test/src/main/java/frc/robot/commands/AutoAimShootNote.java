@@ -54,6 +54,7 @@ public class AutoAimShootNote extends Command {
 
     if (targetRPM - shooter.getShooterVelocity() < 100 && error < .75) {
       shooter.acceleratorWheelOutput(1);
+      shooter.setAmpWheel(1);
     }
 
     drivetrain.setControl(autoAimDrive.withVelocityX(-RobotContainer.m_driver_controler.getLeftY() * maxSpeed) // Drive

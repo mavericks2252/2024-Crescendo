@@ -36,7 +36,7 @@ public class ShootNote extends Command {
   @Override
   public void execute() {
 
-    targetRPM = photon.getTargetRPM(); // sets the shooter to a desired rpm
+    targetRPM = 1950; // sets the shooter to a desired rpm
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle()); // sets
     // the angle that the shooter needs to
     // target

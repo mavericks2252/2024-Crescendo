@@ -58,7 +58,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(10, 0.25, 0, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(12, 0.25, 0, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -239,7 +239,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
-    double correction = Units.degreesToRadians(0);
+    double correction = Units.degreesToRadians(2);
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
 

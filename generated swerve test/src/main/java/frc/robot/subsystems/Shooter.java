@@ -81,6 +81,7 @@ public class Shooter extends SubsystemBase {
       LEDSubsystem.green();
 
     SmartDashboard.putNumber("torqueCurrent", shooterMotorMaster.getTorqueCurrent().getValue());
+    SmartDashboard.putNumber("accelerator wheel output", acceleratorWheel.get());
 
   }
 

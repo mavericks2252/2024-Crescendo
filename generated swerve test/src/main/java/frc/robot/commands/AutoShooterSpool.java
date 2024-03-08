@@ -13,6 +13,7 @@ public class AutoShooterSpool extends Command {
   Shooter shooter;
   VisionPhotonSubsystem photon;
   ShooterRotationSubsystem shooterRotationSubsystem;
+  double targetRPM;
 
   /** Creates a new AutoShooterSpool. */
   public AutoShooterSpool(Shooter shooter, VisionPhotonSubsystem photon,
@@ -32,9 +33,15 @@ public class AutoShooterSpool extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (photon.getSpeakerDistance() < 4)
+      targetRPM = 426.8 * photon.getSpeakerDistance() + 1792.8;
+    else
+      targetRPM = -600 * photon.getSpeakerDistance() + 6500;
+    if (targetRPM > 3500)
+      targetRPM = 3500;
     if ((shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) && photon.getSpeakerDistance() < 7.5
         && shooterRotationSubsystem.getSpeakerTracking()) {
-      shooter.setShooterVelocity(2000);
+      shooter.setShooterVelocity(targetRPM);
     } else
       shooter.stopShooter();
   }

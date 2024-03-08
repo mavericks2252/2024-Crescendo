@@ -3,43 +3,55 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7,
-        "y": 5.45
+        "x": 1.3737079726411703,
+        "y": 6.563739253604634
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9049555270281713,
-        "y": 5.8264288901550785
+        "x": 2.9268181058884637,
+        "y": 5.6854924520659855
       },
       "isLocked": false,
-      "linkedName": "middle note 1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.787619289524294,
-        "y": 6.714031713777714
+        "x": 6.624699375524877,
+        "y": 7.16464495992055
       },
       "prevControl": {
-        "x": 2.0387983324229206,
-        "y": 6.658563494733166
+        "x": 5.84814430890123,
+        "y": 6.924282677394184
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "left note"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -145.18771188166994,
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": -162.77420491598227,
       "rotateFast": false
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.1,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 5.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -47,7 +59,7 @@
             {
               "type": "named",
               "data": {
-                "name": "IntakeNote"
+                "name": "ShootNote"
               }
             }
           ]
@@ -56,21 +68,21 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.75,
+    "maxAcceleration": 5.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -146.59217541029102,
+    "velocity": 2.0,
+    "rotation": -163.61045966596524,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
     "rotation": 180.0,
-    "velocity": 0
+    "velocity": 2.0
   },
   "useDefaultConstraints": false
 }

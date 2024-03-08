@@ -26,6 +26,7 @@ import frc.robot.commands.AutoAimManualAngle;
 import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.AutoShooterSpool;
+import frc.robot.commands.AutonomousNoteIntake;
 import frc.robot.commands.IntakeAndShoot;
 import frc.robot.commands.IntakeAndShootcopy;
 import frc.robot.commands.IntakeBackwards;
@@ -243,6 +244,16 @@ public class RobotContainer {
                                 shooterRotationSubsystem, visionPhotonSubsystem, drivetrain, 111.5));
 
                 NamedCommands.registerCommand("IntakeStage", new IntakeStage(shooter, intake));
+
+                NamedCommands.registerCommand("AutonomousIntake", new AutonomousNoteIntake(visionPhotonSubsystem,
+                                intake, drivetrain, shooterRotationSubsystem, shooter));
+
+                NamedCommands.registerCommand("AutonomousIntake",
+                                new SequentialCommandGroup(
+                                                new AutonomousNoteIntake(visionPhotonSubsystem, intake, drivetrain,
+                                                                shooterRotationSubsystem, shooter),
+                                                new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
+                                                new IntakeStage(shooter, intake)));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
