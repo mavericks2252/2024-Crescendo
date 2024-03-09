@@ -176,9 +176,19 @@ public class RobotContainer {
                                 new SetAmpMode(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem),
 
-                                drivetrain.AmpPathfinding()),
+                                drivetrain.pathfinding("Amp Score")),
                                 new AmpShootNote(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem)));
+
+                m_driver_controler.povLeft().toggleOnFalse(new SequentialCommandGroup(
+                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
+                                drivetrain.pathfinding("AutoClimbLeft")));
+                m_driver_controler.povRight().toggleOnFalse(new SequentialCommandGroup(
+                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
+                                drivetrain.pathfinding("AutoClimbRight")));
+                m_driver_controler.povUp().toggleOnFalse(new SequentialCommandGroup(
+                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
+                                drivetrain.pathfinding("AutoClimbBack")));
 
                 // Operator Buttons
                 // manual speaker shot
@@ -212,7 +222,7 @@ public class RobotContainer {
                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem)
                                                 .withTimeout(3));
                 NamedCommands.registerCommand("ShootNote",
-                                new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem));
+                                new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, 134.75));
 
                 NamedCommands.registerCommand("AmpShootNote",
                                 new AmpShootNote(intake, shooterRotationSubsystem, shooter, visionPhotonSubsystem));
@@ -245,8 +255,11 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("IntakeStage", new IntakeStage(shooter, intake));
 
-                NamedCommands.registerCommand("AutonomousIntake", new AutonomousNoteIntake(visionPhotonSubsystem,
-                                intake, drivetrain, shooterRotationSubsystem, shooter));
+                /*
+                 * NamedCommands.registerCommand("AutonomousIntake", new
+                 * AutonomousNoteIntake(visionPhotonSubsystem,
+                 * intake, drivetrain, shooterRotationSubsystem, shooter));
+                 */
 
                 NamedCommands.registerCommand("AutonomousIntake",
                                 new SequentialCommandGroup(

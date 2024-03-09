@@ -20,7 +20,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoNoteIntake"
+            "name": "AutonomousIntake"
           }
         },
         {
@@ -31,6 +31,80 @@
                 "type": "path",
                 "data": {
                   "pathName": "Amp side shot location"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoSpool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerline note 2 auto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutonomousIntake"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp side shot location"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoSpool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerline note 3 auto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutonomousIntake"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Copy of Amp side shot location"
                 }
               },
               {

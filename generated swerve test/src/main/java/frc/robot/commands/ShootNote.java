@@ -16,11 +16,14 @@ public class ShootNote extends Command {
   VisionPhotonSubsystem photon;
 
   double targetRPM;
+  double targetAngle;
 
-  public ShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem, VisionPhotonSubsystem photon) {
+  public ShootNote(Shooter shooter, ShooterRotationSubsystem shooterRotationSubsystem, VisionPhotonSubsystem photon,
+      double targetAngle) {
     this.shooter = shooter;
     this.shooterRotationSubsystem = shooterRotationSubsystem;
     this.photon = photon;
+    this.targetAngle = targetAngle;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter, shooterRotationSubsystem);
@@ -29,14 +32,15 @@ public class ShootNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRotationSubsystem.setSpeakerTracking(); // sets the shooter to track the speaker
+    shooterRotationSubsystem.setManualShoot(); // sets the shooter to track the speaker
+    shooterRotationSubsystem.setShooterAngle(targetAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    targetRPM = 1950; // sets the shooter to a desired rpm
+    targetRPM = 1975; // sets the shooter to a desired rpm
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle()); // sets
     // the angle that the shooter needs to
     // target

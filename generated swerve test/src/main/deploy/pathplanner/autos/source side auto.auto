@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4106867853375344,
-      "y": 5.57
+      "x": 1.3829526758152613,
+      "y": 4.594617477523244
     },
     "rotation": 180.0
   },
@@ -16,22 +16,9 @@
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Middle Start to center node"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "middle to amp note auto"
-                      }
-                    }
-                  ]
+                  "pathName": "source side start"
                 }
               },
               {
@@ -46,25 +33,19 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoNoteIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "AutoAimShot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "centerline note 1 auto"
+            "pathName": "source side to centerline"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AutoNoteIntake"
+            "name": "AutonomousIntake"
           }
         },
         {
@@ -74,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Amp side shot location"
+                  "pathName": "source side shoot location"
                 }
               },
               {
@@ -95,13 +76,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "centerline note 2 auto"
+            "pathName": "source side note 3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AutoNoteIntake"
+            "name": "AutonomousIntake"
           }
         },
         {
@@ -111,7 +92,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Amp side shot location"
+                  "pathName": "Copy of source side shoot location"
                 }
               },
               {
@@ -132,13 +113,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "centerline note 3 auto"
+            "pathName": "source side note 2"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Copy of source side shoot location"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoSpool"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AutoNoteIntake"
+            "name": "AutoAimShot"
           }
         }
       ]

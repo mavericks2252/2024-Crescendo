@@ -203,9 +203,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     }
 
-    public Command AmpPathfinding() {
+    public Command pathfinding(String pathName) {
 
-        PathPlannerPath path = PathPlannerPath.fromPathFile("Amp Score");
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
                 path,
