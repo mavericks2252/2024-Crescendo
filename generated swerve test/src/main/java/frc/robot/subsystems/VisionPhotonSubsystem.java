@@ -30,8 +30,10 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   /** Creates a new VisionPhotonSubsystem. */
   public final PhotonCamera camera;
   private final PhotonPoseEstimator photonPoseEstimator;
+  private final PhotonPoseEstimator frontRightPoseEstimator;
   double lastEstTimestamp = 0;
   public final PhotonCamera noteCam;
+  public final PhotonCamera rightAprilTagCam;
 
   CommandSwerveDrivetrain drivetrain;
 
@@ -46,11 +48,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     this.drivetrain = drivetrain;
     camera = new PhotonCamera(VisionConstants.kCameraName);
     noteCam = new PhotonCamera(VisionConstants.kNoteCameraName);
+    rightAprilTagCam = new PhotonCamera(VisionConstants.kTagCameraright);
     photonPoseEstimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera,
         VisionConstants.kRobotToCam);
+
+    frontRightPoseEstimator = new PhotonPoseEstimator(
+        VisionConstants.kTagLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        rightAprilTagCam,
+        VisionConstants.kRobotToFrontRightCam);
 
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
@@ -70,7 +79,20 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    var visionEst = getEstimatedGlobePose();
+    addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose");
+    addPhotonVisionMeasurement(rightAprilTagCam, frontRightPoseEstimator, "front right pose");
+
+    SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
+    SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
+    SmartDashboard.putNumber("Target Angle", getTargetAngle());
+    SmartDashboard.putNumber("Amp Distance", getAmpDistance());
+    SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
+    // noteAutoAimRateOutput();
+
+  }
+
+  public void addPhotonVisionMeasurement(PhotonCamera camera, PhotonPoseEstimator poseEstimator, String photonPose) {
+    var visionEst = getEstimatedGlobePose(camera, poseEstimator);
 
     visionEst.ifPresent( // if we have an estimated pose
         est -> {
@@ -85,22 +107,17 @@ public class VisionPhotonSubsystem extends SubsystemBase {
                 est.timestampSeconds);
           }
 
-          SmartDashboard.putString("photon pose", est.estimatedPose.toPose2d().toString());
+          SmartDashboard.putString(photonPose, est.estimatedPose.toPose2d().toString());
         });
-    SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
-    SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
-    SmartDashboard.putNumber("Target Angle", getTargetAngle());
-    SmartDashboard.putNumber("Amp Distance", getAmpDistance());
-    SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
-    // noteAutoAimRateOutput();
-
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedGlobePose() { // will return an estimated pose but only when it has
-                                                                // one
-    var visionEst = photonPoseEstimator.update(); // recieves the newest pose estimation
-    double latestTimestamp = camera.getLatestResult().getTimestampSeconds(); // gets the time that it took the latest
-                                                                             // pose estimation
+  public Optional<EstimatedRobotPose> getEstimatedGlobePose(PhotonCamera photonCamera,
+      PhotonPoseEstimator poseEstimator) { // will return an estimated pose but only when it has
+    // one
+    var visionEst = poseEstimator.update(); // recieves the newest pose estimation
+    double latestTimestamp = photonCamera.getLatestResult().getTimestampSeconds(); // gets the time that it took the
+                                                                                   // latest
+    // pose estimation
 
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5; // sees if the time of this estimation is
                                                                              // too close to the time of the last

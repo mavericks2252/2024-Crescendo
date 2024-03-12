@@ -160,16 +160,23 @@ public final class Constants {
   public final class VisionConstants {
     public static final String kCameraName = "FrontAprilTagCam";
     public static final String kNoteCameraName = "NoteCamera";
+    public static final String kTagCameraright = "FrontRightAprilTagCam";
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
 
     // public static final int kApriltagePipeline = 0;
     // public static final int kNotePipeline = 1;
 
+    public static final Transform3d kRobotToFrontRightCam = new Transform3d(
+        new Translation3d(Units.inchesToMeters(10.5),
+            Units.inchesToMeters(-10.25),
+            Units.inchesToMeters(8.5)),
+        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(-30)));
+
     public static final Transform3d kRobotToCam = new Transform3d(
 
-        new Translation3d(Units.inchesToMeters(15.75),
-            Units.inchesToMeters(-11.75),
-            Units.inchesToMeters(9)),
+        new Translation3d(Units.inchesToMeters(7.75), // 15.75
+            Units.inchesToMeters(-10.375), // -11.75
+            Units.inchesToMeters(15.75)), // 9
 
         new Rotation3d(0, Units.degreesToRadians(-34), 0));
   }

@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -41,6 +43,8 @@ public class IntakeNote extends Command {
   @Override
   public void execute() {
 
+    RobotContainer.m_driver_controler.getHID().setRumble(RumbleType.kBothRumble, 1);
+
     if (shooterRotationSubsystem.isAngleOnTarget()) {
       intake.setIntakeSpeed(); // runs the front intake wheels
       shooter.setAmpWheel(1); // runs the amplifier wheels at 100%
@@ -72,6 +76,7 @@ public class IntakeNote extends Command {
     if (shooter.getMiddleFrontBeambreak() || shooter.getMiddleBackBeambreak()) // if the middle front or middle back
                                                                                // beam brakes
       shooterRotationSubsystem.setSpeakerTracking(); // set the shooter to speaker tracking
+    RobotContainer.m_driver_controler.getHID().setRumble(RumbleType.kBothRumble, 0);
 
   }
 

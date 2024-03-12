@@ -266,7 +266,7 @@ public class RobotContainer {
                                                 new AutonomousNoteIntake(visionPhotonSubsystem, intake, drivetrain,
                                                                 shooterRotationSubsystem, shooter),
                                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
-                                                new IntakeStage(shooter, intake)));
+                                                new IntakeStage(shooter, intake)).withTimeout(2));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

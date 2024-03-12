@@ -7,6 +7,7 @@ package frc.robot.commands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
@@ -66,6 +67,7 @@ public class AutoNoteIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    RobotContainer.m_driver_controler.getHID().setRumble(RumbleType.kBothRumble, 1);
 
     if (photon.noteCam.getLatestResult().hasTargets()) {
       loopsWithoutTarget = 0;
@@ -120,6 +122,7 @@ public class AutoNoteIntake extends Command {
   public void end(boolean interrupted) {
     drivetrain.setControl(new SwerveRequest.SwerveDriveBrake());
     LEDSubsystem.green();
+    RobotContainer.m_driver_controler.getHID().setRumble(RumbleType.kBothRumble, 0);
   }
 
   // Returns true when the command should end.

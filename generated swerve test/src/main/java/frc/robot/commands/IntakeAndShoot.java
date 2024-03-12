@@ -40,7 +40,7 @@ public class IntakeAndShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    targetRPM = 2200;
+    targetRPM = 2000;
     error = targetRPM - shooter.getShooterVelocity();
     shooter.setShooterVelocity(targetRPM);
     if (error < 100)

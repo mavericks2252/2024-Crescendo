@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9268181058884637,
-        "y": 5.2417466997096165
+        "x": 3.0839780598480115,
+        "y": 4.465191633085969
       },
       "isLocked": false,
       "linkedName": null
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.15,
-      "rotationDegrees": 155.26573558017338,
+      "rotationDegrees": 145.78943722798388,
       "rotateFast": false
     }
   ],
@@ -44,8 +44,8 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 143.6955028774248,
+    "velocity": 0.5,
+    "rotation": 134.21399557935774,
     "rotateFast": false
   },
   "reversed": false,
