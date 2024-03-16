@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -50,11 +51,14 @@ public class AutoAimShootNote extends Command {
   public void execute() {
     double error = Math.abs((photon.speakerAutoAimRateOutput()));
     targetRPM = photon.getTargetRPM();
-    shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
+    // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
-    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .75) {
+    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .25) {
       shooter.acceleratorWheelOutput(1);
       shooter.setAmpWheel(1);
+    } else {
+      shooter.acceleratorWheelOutput(0);
+      shooter.setAmpWheel(0);
     }
 
     drivetrain.setControl(autoAimDrive.withVelocityX(-RobotContainer.m_driver_controler.getLeftY() * maxSpeed) // Drive

@@ -39,7 +39,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
     shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
     shooterAngleConfig.Slot2.kP = 30;
-    shooterAngleConfig.Slot2.kI = 15;
+    shooterAngleConfig.Slot2.kI = 0;
     shooterAngleConfig.Slot2.kD = 0;
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -60,7 +60,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     shooterAngleMotor.setInverted(false);
     shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    // SmartDashboard.putNumber("TestShooterAngle", 112.65);
+    // SmartDashboard.putNumber("TestShooterAngle", 0);
 
   }
 
@@ -79,6 +79,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
       setShooterAngle(photon.getTargetAngle()); // sets shooter to track the
       // speaker
+      // setShooterAngle(SmartDashboard.getNumber("TestShooterAngle", 0));
     }
 
     else if (intakeMode) {
@@ -148,8 +149,10 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
   public void setShooterAngle(double targetDegrees) {
     double targetRevs = degreesToMotorRevs(targetDegrees); // sets targetRevs equal to a position we choose
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(targetRevs)); // sets our shooter to the position we
-                                                                                // chose
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(targetRevs).withFeedForward(0.04)); // sets our
+                                                                                                      // shooter to the
+                                                                                                      // position we
+    // chose
   }
 
   public void setSpeakerTracking() { // sets the shooter to our mode that tracks the speaker and turns off all other
@@ -213,7 +216,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   }
 
   public static void setShooterAngleMotorSensorPos() {
-    int loops = 50;
+    int loops = 5;
     double encoderReadings = 0;
     for (int i = 0; i < loops; i++) {
       encoderReadings += getThroughBoreEncoder(); // averages out the reding from our encoder after 50 loops of it
@@ -221,16 +224,19 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     double averageEncoderReadings = encoderReadings / loops; // divides the final number by the number of loops to get
                                                              // the average
 
-    SmartDashboard.putNumber("encoder Readings", averageEncoderReadings);
-    shooterAngleMotor.setPosition(averageEncoderReadings + 0.001214); // adds an offset to the position and makes the
-                                                                      // motor go to it
+    SmartDashboard.putNumber("encoder Readings", averageEncoderReadings * 360);
+    shooterAngleMotor.setPosition(averageEncoderReadings + .0016666667); // adds an offset to the position and makes the
+    // motor go to it + 0.001214
 
   }
 
   public void setRobotEnablePos() {
 
-    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos())); // sets the pose of the shooter
-                                                                                        // when the robot is first
+    shooterAngleMotor.setControl(m_PositionDutyCycle.withPosition(getAngleMotorPos())); // sets the
+                                                                                        // pose of
+                                                                                        // the
+                                                                                        // shooter
+    // when the robot is first
 
     // enabled
   }

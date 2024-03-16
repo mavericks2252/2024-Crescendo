@@ -1,0 +1,105 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3737079726411703,
+      "y": 4.613106883871426
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of source start to centerline 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutonomousIntake"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "source side shoot location"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoSpool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of source side note 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutonomousIntake"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Copy of source side shoot location"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoSpool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAimShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of source side note 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutonomousIntake"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

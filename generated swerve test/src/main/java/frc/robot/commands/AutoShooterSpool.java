@@ -44,6 +44,7 @@ public class AutoShooterSpool extends Command {
       shooter.setShooterVelocity(targetRPM);
     } else
       shooter.stopShooter();
+
   }
 
   // Called once the command ends or is interrupted.

@@ -112,7 +112,7 @@ public final class Constants {
 
     public static final double kBlueSpeakerXPos = 0;
     public static final double kBlueSpeakerYPos = 218.42;
-    public static final double kBlueSpeakerXPosMeters = 0;
+    public static final double kBlueSpeakerXPosMeters = 0.0508;// .1016
     public static final double kBlueSpeakerYPosMeters = 5.547;
     public static final Translation2d kBlueSpeaker = new Translation2d(kBlueSpeakerXPosMeters, kBlueSpeakerYPosMeters);
 
@@ -142,6 +142,9 @@ public final class Constants {
     public static final Pose2d kRedAmp = new Pose2d(kRedAmpXPosMeters, kRedAmpYPosMeters, Rotation2d.fromDegrees(90));
     public static final double kInfrontRedAmpYPos = kRedAmpYPosMeters - .5;
     public static final Pose2d kInfrontRedPos = new Pose2d(kRedAmpXPosMeters, kInfrontRedAmpYPos, new Rotation2d(90));
+
+    public static final Translation2d kAmpCornerBlue = new Translation2d(kBlueAmpXPosMeters, kInfrontBlueAmpYPos);
+    public static final Translation2d kAmpCornerRed = new Translation2d(kRedAmpXPosMeters, kInfrontRedAmpYPos);
   }
 
   public final class DriveTrainConstants {
@@ -167,10 +170,10 @@ public final class Constants {
     // public static final int kNotePipeline = 1;
 
     public static final Transform3d kRobotToFrontRightCam = new Transform3d(
-        new Translation3d(Units.inchesToMeters(10.5),
-            Units.inchesToMeters(-10.25),
+        new Translation3d(Units.inchesToMeters(-10.5),
+            Units.inchesToMeters(10.25),
             Units.inchesToMeters(8.5)),
-        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(-30)));
+        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(135)));
 
     public static final Transform3d kRobotToCam = new Transform3d(
 

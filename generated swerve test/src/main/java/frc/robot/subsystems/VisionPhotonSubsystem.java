@@ -67,7 +67,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(17, 0.25, 0.15, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(10, 0.25, 0.25, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -105,7 +105,9 @@ public class VisionPhotonSubsystem extends SubsystemBase {
             drivetrain.addVisionMeasurement(
                 est.estimatedPose.toPose2d(),
                 est.timestampSeconds);
-          }
+            SmartDashboard.putBoolean("is seeded", true);
+          } else
+            SmartDashboard.putBoolean("is seeded", false);
 
           SmartDashboard.putString(photonPose, est.estimatedPose.toPose2d().toString());
         });
@@ -155,6 +157,45 @@ public class VisionPhotonSubsystem extends SubsystemBase {
                                                                                                      // location and
                                                                                                      // angle of the
                                                                                                      // speaker
+  }
+
+  public Pose2d getCornerTargetRotation2d() {
+    double xRobotPosMeters = getCurrentPose2d().getX(); // gets the x pose of the bot
+    double yRobotPosMeters = getCurrentPose2d().getY(); // gets the y pose of the bot
+    Translation2d cornerPos; // gets the position of the speaker
+
+    if (driverStationAlliance()) {
+      cornerPos = FieldConstants.kAmpCornerRed; // sets the location of the speaker for the red side
+
+    }
+
+    else {
+      cornerPos = FieldConstants.kAmpCornerBlue; // sets the location of the speaker for the blue side
+
+    }
+
+    // return a pose 2d of robot location and target angle of speaker
+    return new Pose2d(xRobotPosMeters, yRobotPosMeters,
+        (new Rotation2d(cornerPos.getX() - xRobotPosMeters, cornerPos.getY() - yRobotPosMeters))); // finds the pose
+                                                                                                   // of the robot
+                                                                                                   // using the
+                                                                                                   // location and
+                                                                                                   // angle of the
+                                                                                                   // speaker
+  }
+
+  public double cornerAutoAimRateOutput() {
+    Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
+    Pose2d targetPos = getCornerTargetRotation2d();
+    // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
+    double correction = Units.degreesToRadians(3);
+    double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
+                                                                            // speaker
+
+    double output = autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
+
+    return output;
+
   }
 
   public boolean driverStationAlliance() {
@@ -215,12 +256,12 @@ public class VisionPhotonSubsystem extends SubsystemBase {
       targetAngle = -2.25 * distance + 124.63; // use this equasion
     }
     // middle shot 5.5 meters to 4 meters
-    else if (distance > 4) { // if the distance is between 4 and 5.5 meters
-      targetAngle = -2.5 * distance + 126; // use this equasion
+    else if (distance > 3.5) { // if the distance is between 4 and 5.5 meters
+      targetAngle = -3.125 * distance + 129.94; // use this equasion
     }
     // close shot less than 4 meters
     else { // if the distance is less than 4 meters
-      targetAngle = -11.097 * distance + 160.39; // use this equasion
+      targetAngle = -10.309 * distance + 155.08; // use this equasion
     }
 
     return targetAngle;
@@ -260,7 +301,15 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
 
-    return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
+    double output = autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
+
+    /*
+     * double sign = Math.signum(output);
+     * double absOutput = Math.abs(output);
+     * if (0.4 > absOutput && absOutput > 0.075)
+     * output = 0.4 * sign;
+     */
+    return output;
 
   }
 
