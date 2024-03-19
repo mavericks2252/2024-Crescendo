@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AmpShootNote;
+import frc.robot.commands.AutoAimCornerShot;
 import frc.robot.commands.AutoAimManualAngle;
 import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
@@ -47,7 +48,7 @@ import frc.robot.subsystems.VisionPhotonSubsystem;
 public class RobotContainer {
 
         // Swerve Stuff
-        public static double MaxSpeed = 2.5; // 6 meters per second desired top speed
+        public static double MaxSpeed = 4.5; // 6 meters per second desired top speed
         public static double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
         /* Setting up bindings for necessary control of the swerve drive platform */
@@ -189,6 +190,8 @@ public class RobotContainer {
                 m_driver_controler.povUp().toggleOnFalse(new SequentialCommandGroup(
                                 new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
                                 drivetrain.pathfinding("AutoClimbBack")));
+                m_driver_controler.a().toggleOnTrue(new AutoAimCornerShot(shooter, shooterRotationSubsystem,
+                                visionPhotonSubsystem, drivetrain));
 
                 // Operator Buttons
                 // manual speaker shot
@@ -270,6 +273,12 @@ public class RobotContainer {
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                NamedCommands.registerCommand("IntakeMode",
+                                new ParallelCommandGroup(
+                                                new InstantCommand(() -> shooterRotationSubsystem.setIntakeMode()),
+                                                new InstantCommand(() -> shooterRotationSubsystem
+                                                                .setShooterIntakeAngle())));
         }
 
         public Command getAutonomousCommand() {

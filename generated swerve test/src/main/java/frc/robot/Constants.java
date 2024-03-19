@@ -148,9 +148,9 @@ public final class Constants {
   }
 
   public final class DriveTrainConstants {
-    public static final double kExponent = 3;
-    public static final double kWeight = 0.75;
-    public static final double kDeadBand = 0.1;
+    public static final double kExponent = 4;
+    public static final double kWeight = 0.85;
+    public static final double kDeadBand = 0.05;
 
     public static final PathConstraints kPathConstraints = new PathConstraints(
         2, // max Velocity 3
@@ -163,17 +163,24 @@ public final class Constants {
   public final class VisionConstants {
     public static final String kCameraName = "FrontAprilTagCam";
     public static final String kNoteCameraName = "NoteCamera";
-    public static final String kTagCameraright = "FrontRightAprilTagCam";
+    public static final String kTagCameraBL = "BackLeftAprilTagCam";
+    public static final String kTagCameraBR = "BackRightAprilTagCam";
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
 
     // public static final int kApriltagePipeline = 0;
     // public static final int kNotePipeline = 1;
 
-    public static final Transform3d kRobotToFrontRightCam = new Transform3d(
+    public static final Transform3d kRobotToBackLeftCam = new Transform3d(
         new Translation3d(Units.inchesToMeters(-10.5),
             Units.inchesToMeters(10.25),
             Units.inchesToMeters(8.5)),
         new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(135)));
+
+    public static final Transform3d kRobotToBackRightCam = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-10.5),
+            Units.inchesToMeters(-10.25),
+            Units.inchesToMeters(8.5)),
+        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-135)));
 
     public static final Transform3d kRobotToCam = new Transform3d(
 

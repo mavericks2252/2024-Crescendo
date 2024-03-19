@@ -70,6 +70,7 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ThroughBoreEncoderDegrees", motorRevsToDegrees(getThroughBoreEncoder()));
     SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
     SmartDashboard.putNumber("photon target angle", photon.getTargetAngle());
+    SmartDashboard.putBoolean("intakeMode", intakeMode);
 
     if (climbMode) {
       setShooterAngle(20);

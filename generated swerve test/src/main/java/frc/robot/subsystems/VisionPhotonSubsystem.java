@@ -30,10 +30,12 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   /** Creates a new VisionPhotonSubsystem. */
   public final PhotonCamera camera;
   private final PhotonPoseEstimator photonPoseEstimator;
-  private final PhotonPoseEstimator frontRightPoseEstimator;
+  private final PhotonPoseEstimator backLeftPoseEstimator;
+  private final PhotonPoseEstimator backRightPoseEstimator;
   double lastEstTimestamp = 0;
   public final PhotonCamera noteCam;
-  public final PhotonCamera rightAprilTagCam;
+  public final PhotonCamera backLeftAprilTagCam;
+  public final PhotonCamera backRightAprilTagCam;
 
   CommandSwerveDrivetrain drivetrain;
 
@@ -48,20 +50,28 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     this.drivetrain = drivetrain;
     camera = new PhotonCamera(VisionConstants.kCameraName);
     noteCam = new PhotonCamera(VisionConstants.kNoteCameraName);
-    rightAprilTagCam = new PhotonCamera(VisionConstants.kTagCameraright);
+    backLeftAprilTagCam = new PhotonCamera(VisionConstants.kTagCameraBL);
+    backRightAprilTagCam = new PhotonCamera(VisionConstants.kTagCameraBR);
     photonPoseEstimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         camera,
         VisionConstants.kRobotToCam);
 
-    frontRightPoseEstimator = new PhotonPoseEstimator(
+    backLeftPoseEstimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        rightAprilTagCam,
-        VisionConstants.kRobotToFrontRightCam);
+        backLeftAprilTagCam,
+        VisionConstants.kRobotToBackLeftCam);
+
+    backRightPoseEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        backRightAprilTagCam,
+        VisionConstants.kRobotToBackRightCam);
 
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    backLeftPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    backRightPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     noteAimPidController = new ProfiledPIDController(3, 0.25, 0, aim_PIDConstraints, .01);
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -80,7 +90,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose");
-    addPhotonVisionMeasurement(rightAprilTagCam, frontRightPoseEstimator, "front right pose");
+    addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "back left pose");
+    addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator, "back right pose");
 
     SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
@@ -188,9 +199,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getCornerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
-    double correction = Units.degreesToRadians(3);
-    double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
-                                                                            // speaker
+    double targetAngle = targetPos.getRotation().getRadians(); // gets the rotation needed to reach the
+                                                               // speaker
 
     double output = autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
 
@@ -297,7 +307,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
-    double correction = Units.degreesToRadians(3);
+    double correction = Units.degreesToRadians(4);
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
 

@@ -14,6 +14,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -38,6 +40,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private double m_lastSimTime;
     Pose2d ampPos = new Pose2d(0, 0, new Rotation2d(0));
     Pose2d infrontAmpPos = new Pose2d(0, 0, new Rotation2d(0));
+    private static final SlewRateLimiter rateLimeter = new SlewRateLimiter(12);
 
     public final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds(); // creates a
                                                                                                         // swerve
@@ -133,6 +136,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         double b = DriveTrainConstants.kWeight * Math.pow(DriveTrainConstants.kDeadBand, DriveTrainConstants.kExponent)
                 + (1 - DriveTrainConstants.kWeight) * DriveTrainConstants.kDeadBand;
         v = (a - 1 * b) / (1 - b);
+
+        rateLimeter.calculate(v);
 
         v *= sign;
 

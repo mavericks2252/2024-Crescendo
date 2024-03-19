@@ -7,6 +7,7 @@ package frc.robot.commands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -34,6 +35,7 @@ public class AutoAimCornerShot extends Command {
     this.drivetrain = drivetrain;
 
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drivetrain, shooterRotationSubsystem, shooter, photon);
   }
 
   // Called when the command is initially scheduled.
@@ -45,12 +47,14 @@ public class AutoAimCornerShot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRotationSubsystem.setShooterAngle(120);
+    shooterRotationSubsystem.setShooterAngle(130);
     double error = Math.abs((photon.cornerAutoAimRateOutput()));
-    targetRPM = 3500;
+    targetRPM = 2500;
+    shooter.setShooterVelocity(targetRPM);
+    SmartDashboard.putNumber("corner shot error", error);
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
-    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .25) {
+    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .75) {
       shooter.acceleratorWheelOutput(1);
       shooter.setAmpWheel(1);
     } else {

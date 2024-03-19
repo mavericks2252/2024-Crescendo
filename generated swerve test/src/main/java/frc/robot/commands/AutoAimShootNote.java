@@ -53,7 +53,7 @@ public class AutoAimShootNote extends Command {
     targetRPM = photon.getTargetRPM();
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
-    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .25) {
+    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .35) {
       shooter.acceleratorWheelOutput(1);
       shooter.setAmpWheel(1);
     } else {
