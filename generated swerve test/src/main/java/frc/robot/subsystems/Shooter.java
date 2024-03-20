@@ -80,7 +80,8 @@ public class Shooter extends SubsystemBase {
     if (getMiddleBackBeambreak() || getMiddleFrontBeambreak())
       LEDSubsystem.green();
 
-    SmartDashboard.putNumber("torqueCurrent", shooterMotorMaster.getTorqueCurrent().getValue());
+    // SmartDashboard.putNumber("torqueCurrent",
+    // shooterMotorMaster.getTorqueCurrent().getValue());
     SmartDashboard.putNumber("accelerator wheel output", acceleratorWheel.get());
 
   }
@@ -151,20 +152,20 @@ public class Shooter extends SubsystemBase {
   }
 
   public void SetIntakeWheelsBack() {
-    amplifierWheel.set(-0.5);
-    acceleratorWheel.set(-0.5);
+    amplifierWheel.set(-0.5); // runs amp wheels backwards
+    acceleratorWheel.set(-0.5); // runs accelerator wheels backwards
   }
 
   public void teleopTorqueCurrent() {
-    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    shooterMotorMaster.getConfigurator().apply(shooterConfig);
-    shooterMotorSlave.getConfigurator().apply(shooterConfig);
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40; // sets a maximum current for motors during teleop
+    shooterMotorMaster.getConfigurator().apply(shooterConfig); // assigns current to motor master
+    shooterMotorSlave.getConfigurator().apply(shooterConfig); // assigns current to motor slave
   }
 
   public void autoTorqueCurrent() {
-    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 65;
-    shooterMotorMaster.getConfigurator().apply(shooterConfig);
-    shooterMotorSlave.getConfigurator().apply(shooterConfig);
+    shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 65; // sets a maximum current for motors during auto
+    shooterMotorMaster.getConfigurator().apply(shooterConfig); // assigns current to motor master
+    shooterMotorSlave.getConfigurator().apply(shooterConfig); // assigns current to motor slave
   }
 
 }

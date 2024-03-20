@@ -148,8 +148,8 @@ public final class Constants {
   }
 
   public final class DriveTrainConstants {
-    public static final double kExponent = 4;
-    public static final double kWeight = 0.85;
+    public static final double kExponent = 2;
+    public static final double kWeight = 0.5;
     public static final double kDeadBand = 0.05;
 
     public static final PathConstraints kPathConstraints = new PathConstraints(
@@ -173,14 +173,14 @@ public final class Constants {
     public static final Transform3d kRobotToBackLeftCam = new Transform3d(
         new Translation3d(Units.inchesToMeters(-10.5),
             Units.inchesToMeters(10.25),
-            Units.inchesToMeters(8.5)),
-        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(135)));
+            Units.inchesToMeters(9.5)),
+        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(135)));
 
     public static final Transform3d kRobotToBackRightCam = new Transform3d(
         new Translation3d(Units.inchesToMeters(-10.5),
             Units.inchesToMeters(-10.25),
-            Units.inchesToMeters(8.5)),
-        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-135)));
+            Units.inchesToMeters(9.5)),
+        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(-135)));
 
     public static final Transform3d kRobotToCam = new Transform3d(
 
@@ -188,11 +188,11 @@ public final class Constants {
             Units.inchesToMeters(-10.375), // -11.75
             Units.inchesToMeters(15.75)), // 9
 
-        new Rotation3d(0, Units.degreesToRadians(-34), 0));
+        new Rotation3d(0, Units.degreesToRadians(-35), 0));
   }
 
   public final class ClimberConstants {
-    public static final double kClimberGearRatio = 7;
+    public static final double kClimberGearRatio = 45.833333;
   }
 
 }

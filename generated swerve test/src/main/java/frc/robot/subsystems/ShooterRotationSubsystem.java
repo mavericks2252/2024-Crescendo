@@ -69,8 +69,8 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("ThroughBoreEncoderDegrees", motorRevsToDegrees(getThroughBoreEncoder()));
     SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
-    SmartDashboard.putNumber("photon target angle", photon.getTargetAngle());
-    SmartDashboard.putBoolean("intakeMode", intakeMode);
+    // SmartDashboard.putNumber("photon target angle", photon.getTargetAngle());
+    // SmartDashboard.putBoolean("intakeMode", intakeMode);
 
     if (climbMode) {
       setShooterAngle(20);
@@ -244,9 +244,9 @@ public class ShooterRotationSubsystem extends SubsystemBase {
 
   public void toggleAmpShot() {
     if (ampShot) {
-      ampShot = false;
+      ampShot = false; // turns amp shot on and next time will turn it off
     } else
-      ampShot = true;
+      ampShot = true; // turns amp shot off and next time will turn it on
   }
 
 }

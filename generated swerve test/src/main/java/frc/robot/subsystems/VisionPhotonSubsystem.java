@@ -93,7 +93,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "back left pose");
     addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator, "back right pose");
 
-    SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
+    // SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
     SmartDashboard.putNumber("Target Angle", getTargetAngle());
     SmartDashboard.putNumber("Amp Distance", getAmpDistance());
@@ -304,14 +304,20 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   }
 
   public double speakerAutoAimRateOutput() {
+    double correctionValue;
+    if (drivetrain.getState().Pose.getY() < 4)
+      correctionValue = 4;
+    else
+      correctionValue = 3;
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();
-    double correction = Units.degreesToRadians(4);
+    double correction = Units.degreesToRadians(correctionValue);
     double targetAngle = targetPos.getRotation().getRadians() - correction; // gets the rotation needed to reach the
                                                                             // speaker
 
     double output = autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetAngle);
+    SmartDashboard.putNumber("correction", correctionValue);
 
     /*
      * double sign = Math.signum(output);
@@ -346,11 +352,11 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   }
 
   public double getNoteTargetArea() {
-    var target = noteCam.getLatestResult();
-    if (target.hasTargets())
-      return noteCam.getCameraTable().getValue("targetArea").getDouble();
+    var target = noteCam.getLatestResult(); // gets information on the latest camera result
+    if (target.hasTargets()) // if the camera had a target
+      return noteCam.getCameraTable().getValue("targetArea").getDouble(); // find the area of the target
     else
-      return 0;
+      return 0; // if not, return nothing
   }
 
 }

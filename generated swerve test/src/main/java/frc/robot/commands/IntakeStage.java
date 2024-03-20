@@ -31,26 +31,26 @@ public class IntakeStage extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooter.getMiddleFrontBeambreak()) {
-      shooter.setAmpWheel(-0.25);
-      shooter.acceleratorWheelOutput(-0.25);
-    } else {
-      shooter.stopAmplifierWheel();
-      shooter.stopAcceleratorWheel();
+    if (shooter.getMiddleFrontBeambreak()) { // if the middle front beambreak is broken
+      shooter.setAmpWheel(-0.25); // set amp wheels backwards
+      shooter.acceleratorWheelOutput(-0.25); // and set accelerator wheels backwards
+    } else { // once middle front is no longer broken
+      shooter.stopAmplifierWheel(); // stop amplifier wheels
+      shooter.stopAcceleratorWheel(); // stop accelerator wheels
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopAmplifierWheel();
-    shooter.stopAcceleratorWheel();
+    shooter.stopAmplifierWheel(); // stop amplfier wheels
+    shooter.stopAcceleratorWheel(); // stop accelerator wheels
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
 
-    return !shooter.getMiddleFrontBeambreak();
+    return !shooter.getMiddleFrontBeambreak(); // stops wel middle front beambreak is broken
   }
 }

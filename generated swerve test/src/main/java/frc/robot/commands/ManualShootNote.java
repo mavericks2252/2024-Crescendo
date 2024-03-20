@@ -33,14 +33,15 @@ public class ManualShootNote extends Command {
   @Override
   public void execute() {
     error = Math.abs((shooterRotationSubsystem.getAngleMotorPos() * 360) - targetAngle);
-    targetRPM = 2000; // sets the shooter to a desired rpm
+    targetRPM = 2500; // sets the shooter to a desired rpm
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle()); // sets
     // the angle that the shooter needs to
     // target
 
-    if (targetRPM - shooter.getShooterVelocity() < 75 && error < 0.5) { // if the shooter is within 75 rpm of the
-                                                                        // desired speed
-      shooter.acceleratorWheelOutput(0.95); // sets the accelerator wheel to full speed
+    if (targetRPM - shooter.getShooterVelocity() < 100 && error < 1) { // if the shooter is within 75 rpm of the
+                                                                       // desired speed
+      shooter.acceleratorWheelOutput(1); // sets the accelerator wheel to full speed
+      shooter.setAmpWheel(1);
     }
 
     shooter.setShooterVelocity(targetRPM); // sets the speed of the shooter when the command starts

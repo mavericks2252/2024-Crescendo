@@ -59,7 +59,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     // if limelight has a target, it prints these numbers
     if (tv) {
-      SmartDashboard.putNumber("New Target angle test", getSpeakerTargetRotation2d().getRotation().getDegrees());
+      // SmartDashboard.putNumber("New Target angle test",
+      // getSpeakerTargetRotation2d().getRotation().getDegrees());
       SmartDashboard.putString("bot Pose", LimelightHelpers.getBotPose2d_wpiBlue(limelight).toString());
     }
 

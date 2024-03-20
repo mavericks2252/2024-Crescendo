@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.RobotContainer;
@@ -42,14 +41,15 @@ public class AutoAimSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("auto aim speaker output", speakerAutoAimRateOutput());
+    // SmartDashboard.putNumber("auto aim speaker output",
+    // speakerAutoAimRateOutput());
     // SmartDashboard.putNumber("auto aim note output", noteAutoAimRateOutput());
 
   }
 
   public double speakerAutoAimRateOutput() {
-    Pose2d currentPos = photon.getCurrentPose2d();
-    Pose2d targetPos = photon.getSpeakerTargetRotation2d();
+    Pose2d currentPos = photon.getCurrentPose2d(); // gets the current robot position
+    Pose2d targetPos = photon.getSpeakerTargetRotation2d(); // gets the rotation need to aim at the speaker
 
     return autoAimPIDController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians());
     // takes the current pose and its target pose and calculates the rotation to get
@@ -77,7 +77,7 @@ public class AutoAimSubsystem extends SubsystemBase {
       // the driver
       // controller
     }
-    SmartDashboard.putNumber("angle to note", turnRate);
+    // SmartDashboard.putNumber("angle to note", turnRate);
     return turnRate;
 
   }

@@ -50,18 +50,18 @@ public class Intake extends SubsystemBase {
 
   // sets intake motor to a percent speed
   public void setIntakeSpeed() { // sets the speed of our intake
-    intakeMotor.set(IntakeConstants.kIntakeSpeed);
-    centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed);
+    intakeMotor.set(IntakeConstants.kIntakeSpeed); // sets intake to a specified speed
+    centeringWheelMotor.set(IntakeConstants.kCenteringWheelSpeed); // sets centering wheels to a specified speed
   }
 
   public void setIntakeBackwards() {
-    intakeMotor.set(-0.5);
-    centeringWheelMotor.set(-0.5);
+    intakeMotor.set(-0.5); // runs the intake motor backwards
+    centeringWheelMotor.set(-0.5); // runs the centering wheels backwards
   }
 
   public void stopIntake() { // stops the intake motors
-    intakeMotor.stopMotor();
-    centeringWheelMotor.stopMotor();
+    intakeMotor.stopMotor(); // stops intake motor
+    centeringWheelMotor.stopMotor(); // stops centering wheels
   }
 
   public boolean getBeamBreak() {
