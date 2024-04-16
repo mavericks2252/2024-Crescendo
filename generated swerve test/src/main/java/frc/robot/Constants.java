@@ -48,6 +48,7 @@ public final class Constants {
     public static final int kMiddleBackBeamBreak = 3;
     public static final int kMiddleFrontBeamBreak = 4;
     public static final int kThroughBoreEncoder = 5;
+    public static int k_shooter_rotation_cancoder_Port;
 
   }
 

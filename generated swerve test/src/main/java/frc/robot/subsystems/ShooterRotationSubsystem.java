@@ -4,12 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -21,6 +27,7 @@ import frc.robot.generated.TunerConstants;
 
 public class ShooterRotationSubsystem extends SubsystemBase {
   static DutyCycleEncoder throughBoreEncoder;
+  private CANcoder m_cc;
   static TalonFX shooterAngleMotor;
   private final PositionDutyCycle m_PositionDutyCycle = new PositionDutyCycle(0, 0, false, 0.03, 2, false, false,
       false);
@@ -36,6 +43,15 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     // this.vision = vision;
     this.photon = photon;
 
+    m_cc = new CANcoder(PortConstants.k_shooter_rotation_cancoder_Port);
+
+    CANcoderConfiguration m_cc_cfg = new CANcoderConfiguration();
+    m_cc_cfg.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    m_cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    m_cc_cfg.MagnetSensor.MagnetOffset = 0.2301;
+
+    m_cc.getConfigurator().apply(m_cc_cfg);
+
     TalonFXConfiguration shooterAngleConfig = new TalonFXConfiguration();
     shooterAngleConfig.Slot2.GravityType = GravityTypeValue.Arm_Cosine;
     shooterAngleConfig.Slot2.kP = 30;
@@ -49,16 +65,33 @@ public class ShooterRotationSubsystem extends SubsystemBase {
         ShooterConstants.kReverseSoftLimit);
     shooterAngleConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     shooterAngleConfig.CurrentLimits.StatorCurrentLimit = 15;
+
+    // things to try
+    shooterAngleConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    shooterAngleConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     FeedbackConfigs fdb = shooterAngleConfig.Feedback;
-    fdb.SensorToMechanismRatio = ShooterConstants.kShooterGearBoxRatio;
+    fdb.FeedbackRemoteSensorID = m_cc.getDeviceID();
+    fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    // Sensor is 1:1 with the output of rotation
+    fdb.SensorToMechanismRatio = 1;
+    // GearRatio = the ratio between rotar and sensor
+    fdb.RotorToSensorRatio = ShooterConstants.kShooterGearBoxRatio;
+    // Would no longer be necessary with Fused CanCoder
+    fdb.FeedbackRotorOffset = getThroughBoreEncoder();
 
     throughBoreEncoder = new DutyCycleEncoder(PortConstants.kThroughBoreEncoder);
     throughBoreEncoder.setPositionOffset(0.2301);
 
     shooterAngleMotor = new TalonFX(PortConstants.kShooterAngleMotorPort);
     shooterAngleMotor.getConfigurator().apply(shooterAngleConfig);
-    shooterAngleMotor.setInverted(false);
-    shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
+    shooterAngleMotor.getConfigurator().apply(fdb);
+
+    /*
+     * Archieve this stuff if above works
+     * shooterAngleMotor.setInverted(false);
+     * shooterAngleMotor.setNeutralMode(NeutralModeValue.Brake);
+     */
 
     // SmartDashboard.putNumber("TestShooterAngle", 0);
 

@@ -67,7 +67,7 @@ public class RobotContainer {
 
         // Robot Subsystems
         public final static Shooter shooter = new Shooter();
-        public final Intake intake = new Intake();
+        public final static Intake intake = new Intake();
         public final VisionPhotonSubsystem visionPhotonSubsystem = new VisionPhotonSubsystem(drivetrain);
         public final ShooterRotationSubsystem shooterRotationSubsystem = new ShooterRotationSubsystem(
                         visionPhotonSubsystem);

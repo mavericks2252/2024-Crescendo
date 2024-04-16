@@ -151,6 +151,13 @@ public class Shooter extends SubsystemBase {
     return !beamBreakMiddleFront.get();
   }
 
+  public boolean hasAutoNote() {
+    return getAmpBeambreak() ||
+        getMiddleBackBeambreak() ||
+        getMiddleFrontBeambreak() ||
+        getShotBeambreak();
+  }
+
   public void SetIntakeWheelsBack() {
     amplifierWheel.set(-0.5); // runs amp wheels backwards
     acceleratorWheel.set(-0.5); // runs accelerator wheels backwards

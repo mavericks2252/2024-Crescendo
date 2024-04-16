@@ -9,12 +9,14 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,6 +38,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public final PhotonCamera noteCam;
   public final PhotonCamera backLeftAprilTagCam;
   public final PhotonCamera backRightAprilTagCam;
+  public final InterpolatingDoubleTreeMap shooterMap;
 
   CommandSwerveDrivetrain drivetrain;
 
@@ -83,6 +86,9 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // autoAimPIDController.setTolerance(3);
     autoAimPIDController.setIZone(.5);
 
+    shooterMap = new InterpolatingDoubleTreeMap();
+    createShooterMap();
+
   }
 
   @Override
@@ -112,7 +118,10 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
           double targetArea = camera.getCameraTable().getValue("targetArea").getDouble();
           // adds vision measurement to drivetrain
-          if (targetArea > 0.04) {
+          double errorOfEstimatedPose = PhotonUtils.getDistanceToPose(drivetrain.getState().Pose,
+              est.estimatedPose.toPose2d());
+
+          if (targetArea > 0.04 && errorOfEstimatedPose < 1) {
             drivetrain.addVisionMeasurement(
                 est.estimatedPose.toPose2d(),
                 est.timestampSeconds);
@@ -135,7 +144,6 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5; // sees if the time of this estimation is
                                                                              // too close to the time of the last
                                                                              // estimation
-
     if (newResult) // if the time isn't too close
       lastEstTimestamp = latestTimestamp; // sets our current pose to our old pose
     return visionEst; // returns the new pose
@@ -278,6 +286,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // return SmartDashboard.getNumber("TestShooterAngle", 112.65);
   }
 
+  private double getMapTargetAngle() {
+    return shooterMap.get(getSpeakerDistance());
+  }
+
+  private void createShooterMap() {
+    // Create shooter Map
+    // distance angle
+    shooterMap.put(5.5, 109.0);
+    shooterMap.put(4.0, 112.0);
+    shooterMap.put(3.5, 115.0);
+  }
+
   public double getAmpDistance() {
     double ampXPos;
     if (driverStationAlliance()) {
@@ -292,6 +312,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     return Math.hypot(oppositetSide, adjacentSide) - 1; // calculates the distance from amp with an offset to account
                                                         // for robot size and bumpers
+  }
+
+  public double getAmpDistanceEasy() {
+    Pose2d ampPose;
+    if (driverStationAlliance()) {
+      ampPose = FieldConstants.kRedAmp;
+    } else {
+      ampPose = FieldConstants.kBlueAmp;
+    }
+
+    return PhotonUtils.getDistanceToPose(drivetrain.getState().Pose, ampPose);
+
   }
 
   public void seedRobotPoseFromVision() {
@@ -359,4 +391,23 @@ public class VisionPhotonSubsystem extends SubsystemBase {
       return 0; // if not, return nothing
   }
 
+  public Pose2d getCornerTargetRotation2dEasy() {
+    Pose2d cornerPos; // gets the position of the speaker
+
+    if (driverStationAlliance()) {
+      cornerPos = new Pose2d(FieldConstants.kAmpCornerRed, new Rotation2d()); // sets the location of the speaker for
+                                                                              // the red side
+
+    }
+
+    else {
+      cornerPos = new Pose2d(FieldConstants.kAmpCornerBlue, new Rotation2d()); // sets the location of the speaker for
+                                                                               // the blue side
+
+    }
+    Pose2d currenPose2d = getCurrentPose2d();
+    Rotation2d yawToCorner = PhotonUtils.getYawToPose(currenPose2d, cornerPos);
+    return currenPose2d.rotateBy(yawToCorner);
+
+  }
 }
