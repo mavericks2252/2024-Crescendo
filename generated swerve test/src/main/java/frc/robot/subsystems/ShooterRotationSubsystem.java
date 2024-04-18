@@ -164,6 +164,9 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     // within our tolerence
   }
 
+  /**
+   * testing if this works
+   */
   public void setShooterIntakeAngle() {
     double motorTarget = degreesToMotorRevs(ShooterConstants.kIntakeAngle); // sets motorTarget equal to the posision
                                                                             // for intaking
@@ -245,6 +248,12 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     return revs * 360;
   }
 
+  /**
+   * Converts degrees to revolutions of the motor
+   * 
+   * @param degrees target degrees
+   * @return the position of the motor
+   */
   public double degreesToMotorRevs(double degrees) {// converts degrees to motor revolutions
     return degrees / 360;
   }

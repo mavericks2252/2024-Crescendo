@@ -129,10 +129,18 @@ public class VisionPhotonSubsystem extends SubsystemBase {
           } else
             SmartDashboard.putBoolean("is seeded", false);
 
-          SmartDashboard.putString(photonPose, est.estimatedPose.toPose2d().toString());
+          SmartDashboard.putString(photonPose, poseEstimator.toString());
         });
   }
 
+  /**
+   * This is the description of what the method does
+   * 
+   * @param photonCamera  this is what this parameter is that the method is
+   *                      requesting
+   * @param poseEstimator this is what poseEstimator is
+   * @return this is a description of what the method returns
+   */
   public Optional<EstimatedRobotPose> getEstimatedGlobePose(PhotonCamera photonCamera,
       PhotonPoseEstimator poseEstimator) { // will return an estimated pose but only when it has
     // one
@@ -296,6 +304,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     shooterMap.put(5.5, 109.0);
     shooterMap.put(4.0, 112.0);
     shooterMap.put(3.5, 115.0);
+
   }
 
   public double getAmpDistance() {

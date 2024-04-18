@@ -23,6 +23,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -287,6 +289,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             // may need to add a line hear to convert each value to radians of rotoation of
             // the wheel
             // need to check this
+
+            // this may help with the conversion of units not sure if it is right
+            wheelPositionsRads[i] = Units.Radians.convertFrom(wheelPositionsRads[i], Units.Revolutions);
+
         }
 
         return wheelPositionsRads;

@@ -104,10 +104,19 @@ public class Shooter extends SubsystemBase {
     amplifierWheel.set(ShooterConstants.kIntakeSpeed); // sets the amplifier wheels to run at full speed
   }
 
+  /**
+   * sets the amp wheel speed
+   * 
+   * @param ampSpeed speed to set the amp motor to
+   */
   public void setAmpWheel(double ampSpeed) {
     amplifierWheel.set(ampSpeed); // sets the speed of our amplifier wheel to any speed we want
   }
 
+  /**
+   * 
+   * @param targetRPM
+   */
   public void setShooterVelocity(double targetRPM) {
 
     shooterMotorMaster.setControl(shooterTV.withVelocity(targetRPM / 60).withFeedForward(20)); // sets our shooter motor
@@ -155,7 +164,11 @@ public class Shooter extends SubsystemBase {
     return !beamBreakMiddleFront.get();
   }
 
-  // returns true if the TimeOfFlight Sensor sees an object within 100mm
+  /**
+   * Method for getting the status of the front Time of Flight Sensor
+   * 
+   * @return true if there is a note in front of the sensor
+   */
   public boolean getFrontTOFSensor() {
     return frontTOF.getRange() < 100;
   }
