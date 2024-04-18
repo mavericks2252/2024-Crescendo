@@ -259,7 +259,8 @@ public class ShooterRotationSubsystem extends SubsystemBase {
                                                              // the average
 
     SmartDashboard.putNumber("encoder Readings", averageEncoderReadings * 360);
-    shooterAngleMotor.setPosition(averageEncoderReadings + .0016666667); // adds an offset to the position and makes the
+    shooterAngleMotor.setPosition(averageEncoderReadings + .0016666667, 1.0); // adds an offset to the position and
+                                                                              // makes the
     // motor go to it + 0.001214
 
   }

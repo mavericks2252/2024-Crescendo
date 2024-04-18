@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -31,6 +32,7 @@ public class Shooter extends SubsystemBase {
   DigitalInput beamBreakMiddleFront;
   DigitalInput beamBreakMiddleBack;
   TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+  TimeOfFlight frontTOF;
 
   private final VelocityTorqueCurrentFOC shooterTV = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
 
@@ -66,6 +68,8 @@ public class Shooter extends SubsystemBase {
     beamBreakAmp = new DigitalInput(PortConstants.kAmpBeamBreak);
     beamBreakMiddleBack = new DigitalInput(PortConstants.kMiddleBackBeamBreak);
     beamBreakMiddleFront = new DigitalInput(PortConstants.kMiddleFrontBeamBreak);
+
+    frontTOF = new TimeOfFlight(25);
 
   }
 
@@ -149,6 +153,11 @@ public class Shooter extends SubsystemBase {
 
   public boolean getMiddleFrontBeambreak() { // returns true when the middle front beam break is broken
     return !beamBreakMiddleFront.get();
+  }
+
+  // returns true if the TimeOfFlight Sensor sees an object within 100mm
+  public boolean getFrontTOFSensor() {
+    return frontTOF.getRange() < 100;
   }
 
   public boolean hasAutoNote() {

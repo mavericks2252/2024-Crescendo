@@ -94,12 +94,18 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    public HolonomicPathFollowerConfig getHolonomicPathFollowerConfig() {
+    // method for getting the drivebase radius
+    public double getDriveBaseRadius() {
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
             // finds the radius by taking the larger of the locations
         }
+        return driveBaseRadius;
+    }
+
+    public HolonomicPathFollowerConfig getHolonomicPathFollowerConfig() {
+        double driveBaseRadius = getDriveBaseRadius();
 
         return new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0), // constants for the translation controller
                 new PIDConstants(10, 0, 0), // constants for the rotation controller
@@ -269,5 +275,20 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return applyRequest(() -> driveAngle.withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
                 .withTargetDirection(heading));
+    }
+
+    // return the position of each drive
+    public double[] getWheelPosition() {
+        double[] wheelPositionsRads = new double[4];
+
+        for (int i = 0; i < 4; i++) {
+            wheelPositionsRads[i] = getModule(i).getDriveMotor().getPosition().getValueAsDouble();
+
+            // may need to add a line hear to convert each value to radians of rotoation of
+            // the wheel
+            // need to check this
+        }
+
+        return wheelPositionsRads;
     }
 }

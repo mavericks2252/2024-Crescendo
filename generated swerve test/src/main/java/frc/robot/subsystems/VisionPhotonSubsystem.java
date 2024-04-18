@@ -395,16 +395,16 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     Pose2d cornerPos; // gets the position of the speaker
 
     if (driverStationAlliance()) {
+
+      // why is this a Translation2d??????
+      // We should always make things a Pose2d in Constants
       cornerPos = new Pose2d(FieldConstants.kAmpCornerRed, new Rotation2d()); // sets the location of the speaker for
                                                                               // the red side
-
-    }
-
-    else {
+    } else {
       cornerPos = new Pose2d(FieldConstants.kAmpCornerBlue, new Rotation2d()); // sets the location of the speaker for
                                                                                // the blue side
-
     }
+
     Pose2d currenPose2d = getCurrentPose2d();
     Rotation2d yawToCorner = PhotonUtils.getYawToPose(currenPose2d, cornerPos);
     return currenPose2d.rotateBy(yawToCorner);

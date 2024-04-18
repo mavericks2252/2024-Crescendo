@@ -28,6 +28,7 @@ import frc.robot.commands.AutoAimShootNote;
 import frc.robot.commands.AutoNoteIntake;
 import frc.robot.commands.AutoShooterSpool;
 import frc.robot.commands.AutonomousNoteIntake;
+import frc.robot.commands.Autos;
 import frc.robot.commands.IntakeAndShoot;
 import frc.robot.commands.IntakeAndShootcopy;
 import frc.robot.commands.IntakeBackwards;
@@ -79,6 +80,8 @@ public class RobotContainer {
                         OIConstants.kOperatorControllerPort);
 
         private final SendableChooser<Command> autoChooser;
+
+        private final SendableChooser<Command> testChooser;
 
         private void configureBindings() {
 
@@ -274,6 +277,9 @@ public class RobotContainer {
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                testChooser = new SendableChooser<>();
+                testChooser.addOption("four note source side", Autos.fourNoteSourceSideAuto(shooter, drivetrain));
 
                 NamedCommands.registerCommand("IntakeMode",
                                 new ParallelCommandGroup(
