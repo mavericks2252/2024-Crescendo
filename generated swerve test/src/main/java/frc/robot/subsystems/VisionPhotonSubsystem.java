@@ -82,6 +82,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     // autoAimPIDController.setTolerance(3);
     autoAimPIDController.setIZone(.5);
+    SmartDashboard.putBoolean("front cam disable", false);
+    SmartDashboard.putBoolean("back cam disable", false);
 
   }
 
@@ -89,11 +91,8 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose", 0.04);
-    // addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "back
-    // left pose", 0.1);
-    // addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator,
-    // "back right pose", 0.1);
+    // addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose",
+    // 0.04);
 
     SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
@@ -101,6 +100,14 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Amp Distance", getAmpDistance());
     SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
     // noteAutoAimRateOutput();
+
+    if (!SmartDashboard.getBoolean("front cam disable", false)) {
+      addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose", 0.04);
+    }
+    if (!SmartDashboard.getBoolean("back cam disable", false)) {
+      addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "backleft pose", 0.04);
+      addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator, "back right pose", 0.04);
+    }
 
   }
 

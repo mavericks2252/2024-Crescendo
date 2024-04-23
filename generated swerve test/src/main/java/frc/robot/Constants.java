@@ -180,7 +180,7 @@ public final class Constants {
         new Translation3d(Units.inchesToMeters(-10.5),
             Units.inchesToMeters(-10.25),
             Units.inchesToMeters(9.5)),
-        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(-135)));
+        new Rotation3d(0, Units.degreesToRadians(-34), Units.degreesToRadians(225)));
 
     public static final Transform3d kRobotToCam = new Transform3d(
 
