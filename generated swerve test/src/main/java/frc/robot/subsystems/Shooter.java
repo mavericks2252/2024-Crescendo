@@ -56,11 +56,13 @@ public class Shooter extends SubsystemBase {
     acceleratorWheel.setInverted(true);
     acceleratorWheel.setIdleMode(IdleMode.kBrake);
     acceleratorWheel.setSmartCurrentLimit(40);
+    acceleratorWheel.burnFlash();
 
     amplifierWheel = new CANSparkMax(PortConstants.kAmplifierWheelPort, MotorType.kBrushless);
     amplifierWheel.setInverted(false);
     amplifierWheel.setIdleMode(IdleMode.kCoast);
     amplifierWheel.setSmartCurrentLimit(40);
+    amplifierWheel.burnFlash();
 
     beamBreakShot = new DigitalInput(PortConstants.kShotBeamBreak);
     beamBreakAmp = new DigitalInput(PortConstants.kAmpBeamBreak);

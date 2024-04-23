@@ -77,7 +77,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     noteAimPidController.enableContinuousInput(-Math.PI, Math.PI);
     noteAimPidController.setTolerance(Units.degreesToRadians(1));
 
-    autoAimPIDController = new ProfiledPIDController(10, 0.25, 0.25, aim_PIDConstraints, .01);
+    autoAimPIDController = new ProfiledPIDController(8, 0.25, 0.25, aim_PIDConstraints, .01);
     autoAimPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     // autoAimPIDController.setTolerance(3);
@@ -89,20 +89,23 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose");
-    addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "back left pose");
-    addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator, "back right pose");
+    addPhotonVisionMeasurement(camera, photonPoseEstimator, "front cam pose", 0.04);
+    // addPhotonVisionMeasurement(backLeftAprilTagCam, backLeftPoseEstimator, "back
+    // left pose", 0.1);
+    // addPhotonVisionMeasurement(backRightAprilTagCam, backRightPoseEstimator,
+    // "back right pose", 0.1);
 
-    // SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
+    SmartDashboard.putNumber("autoSpeakerAimOutput", speakerAutoAimRateOutput());
     SmartDashboard.putNumber("speakerDistance", getSpeakerDistance());
-    SmartDashboard.putNumber("Target Angle", getTargetAngle());
-    SmartDashboard.putNumber("Amp Distance", getAmpDistance());
+    // SmartDashboard.putNumber("Target Angle", getTargetAngle());
+    // SmartDashboard.putNumber("Amp Distance", getAmpDistance());
     SmartDashboard.putString("current Bot pose", getCurrentPose2d().toString());
     // noteAutoAimRateOutput();
 
   }
 
-  public void addPhotonVisionMeasurement(PhotonCamera camera, PhotonPoseEstimator poseEstimator, String photonPose) {
+  public void addPhotonVisionMeasurement(PhotonCamera camera, PhotonPoseEstimator poseEstimator, String photonPose,
+      double area) {
     var visionEst = getEstimatedGlobePose(camera, poseEstimator);
 
     visionEst.ifPresent( // if we have an estimated pose
@@ -112,13 +115,11 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
           double targetArea = camera.getCameraTable().getValue("targetArea").getDouble();
           // adds vision measurement to drivetrain
-          if (targetArea > 0.04) {
+          if (targetArea > area) {
             drivetrain.addVisionMeasurement(
                 est.estimatedPose.toPose2d(),
                 est.timestampSeconds);
-            SmartDashboard.putBoolean("is seeded", true);
-          } else
-            SmartDashboard.putBoolean("is seeded", false);
+          }
 
           SmartDashboard.putString(photonPose, est.estimatedPose.toPose2d().toString());
         });
@@ -263,11 +264,13 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     double distance = getSpeakerDistance();
     // far shot farther than 5.5 meters
     if (distance > 5.5) { // if the distance to the speakeris more than 5.5 meters
-      targetAngle = -2.25 * distance + 124.63; // use this equasion
+      targetAngle = -5.75 * distance + 144.38; // use this equasion
+      if (targetAngle < 100)
+        targetAngle = 100;
     }
     // middle shot 5.5 meters to 4 meters
     else if (distance > 3.5) { // if the distance is between 4 and 5.5 meters
-      targetAngle = -3.125 * distance + 129.94; // use this equasion
+      targetAngle = -4 * distance + 133; // use this equasion
     }
     // close shot less than 4 meters
     else { // if the distance is less than 4 meters
@@ -308,7 +311,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     if (drivetrain.getState().Pose.getY() < 4)
       correctionValue = 4;
     else
-      correctionValue = 3;
+      correctionValue = 2.5;
     Pose2d currentPos = getCurrentPose2d(); // gets the current pose of the bot
     Pose2d targetPos = getSpeakerTargetRotation2d();
     // double moveCorrection = 3 * -RobotContainer.m_driver_controler.getLeftX();

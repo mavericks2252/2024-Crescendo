@@ -38,7 +38,7 @@ public class ClimberSubsystem extends SubsystemBase {
     climberConfig.Slot1.kD = 0;
     climberConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     climberConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    climberConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 31;
+    climberConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 2.979;
     climberConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     climberConfig.CurrentLimits.SupplyCurrentLimit = 40;

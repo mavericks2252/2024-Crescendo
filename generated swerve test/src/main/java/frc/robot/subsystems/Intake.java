@@ -40,6 +40,7 @@ public class Intake extends SubsystemBase {
     centeringWheelMotor.setSmartCurrentLimit(20);
 
     beamBreakSensor = new DigitalInput(IntakeConstants.kBeamBreak);
+    SmartDashboard.putNumber("intake motor speed", intakeMotor.get());
   }
 
   @Override

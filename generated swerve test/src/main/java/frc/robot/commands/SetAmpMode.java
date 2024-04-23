@@ -79,7 +79,7 @@ public class SetAmpMode extends Command {
   @Override
   public boolean isFinished() {
 
-    if (loops < 10) { // and loops is less than 1
+    if (loops < 5) { // and loops is less than 1
       return false; // and dont stop
     } else // if loops is more than 1
       return true; // stop

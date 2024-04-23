@@ -49,12 +49,12 @@ public class AutoAimCornerShot extends Command {
   public void execute() {
     shooterRotationSubsystem.setShooterAngle(130);
     double error = Math.abs((photon.cornerAutoAimRateOutput()));
-    targetRPM = 2500;
+    targetRPM = 2800;
     shooter.setShooterVelocity(targetRPM);
     SmartDashboard.putNumber("corner shot error", error);
     // shooterRotationSubsystem.setShooterAngle(photon.getTargetAngle());
 
-    if (targetRPM - shooter.getShooterVelocity() < 100 && error < .75) {
+    if (targetRPM - shooter.getShooterVelocity() < 200 && error < .75) {
       shooter.acceleratorWheelOutput(1);
       shooter.setAmpWheel(1);
     } else {

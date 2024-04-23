@@ -51,6 +51,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+
+    ShooterRotationSubsystem.setShooterAngleMotorSensorPos();
+
     m_robotContainer.shooterRotationSubsystem.setRobotEnablePos();
   }
 

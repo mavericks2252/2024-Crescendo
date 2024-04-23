@@ -182,15 +182,12 @@ public class RobotContainer {
                                 new AmpShootNote(intake, shooterRotationSubsystem, shooter,
                                                 visionPhotonSubsystem)));
 
-                m_driver_controler.povLeft().toggleOnFalse(new SequentialCommandGroup(
-                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
-                                drivetrain.pathfinding("AutoClimbLeft")));
-                m_driver_controler.povRight().toggleOnFalse(new SequentialCommandGroup(
-                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
-                                drivetrain.pathfinding("AutoClimbRight")));
-                m_driver_controler.povUp().toggleOnFalse(new SequentialCommandGroup(
-                                new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()),
-                                drivetrain.pathfinding("AutoClimbBack")));
+                m_driver_controler.povLeft().toggleOnFalse(
+                                drivetrain.pathfinding("AutoClimbLeft"));
+                m_driver_controler.povRight().toggleOnFalse(
+                                drivetrain.pathfinding("AutoClimbRight"));
+                m_driver_controler.povUp().toggleOnFalse(
+                                drivetrain.pathfinding("AutoClimbBack"));
                 m_driver_controler.a().toggleOnTrue(new AutoAimCornerShot(shooter, shooterRotationSubsystem,
                                 visionPhotonSubsystem, drivetrain));
 
@@ -216,6 +213,9 @@ public class RobotContainer {
                 m_operatorController.leftStick()
                                 .onTrue(new InstantCommand(() -> shooterRotationSubsystem.setClimbMode()));
 
+                m_operatorController.start().onTrue(
+                                new InstantCommand(() -> ShooterRotationSubsystem.setShooterAngleMotorSensorPos()));
+
         }
 
         public RobotContainer() {
@@ -224,7 +224,7 @@ public class RobotContainer {
                 // named commands
                 NamedCommands.registerCommand("IntakeNote",
                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem)
-                                                .withTimeout(3));
+                                                .withTimeout(1.5));
                 NamedCommands.registerCommand("ShootNote",
                                 new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, 134.75));
 
@@ -271,6 +271,9 @@ public class RobotContainer {
                                                                 shooterRotationSubsystem, shooter),
                                                 new IntakeNote(intake, shooterRotationSubsystem, shooter, ledSubsystem),
                                                 new IntakeStage(shooter, intake)).withTimeout(2));
+
+                NamedCommands.registerCommand("RangerShootNote",
+                                new ShootNote(shooter, shooterRotationSubsystem, visionPhotonSubsystem, 132.75));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
