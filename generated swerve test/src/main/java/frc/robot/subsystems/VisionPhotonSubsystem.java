@@ -48,6 +48,11 @@ public class VisionPhotonSubsystem extends SubsystemBase {
   ProfiledPIDController autoAimPIDController;
   ProfiledPIDController noteAimPidController;
 
+  /**
+   * Creates a new instance of Vision Subsystem
+   * 
+   * @param drivetrain drivetrain subsystem used for getting current Pose
+   */
   public VisionPhotonSubsystem(CommandSwerveDrivetrain drivetrain) {
 
     this.drivetrain = drivetrain;
