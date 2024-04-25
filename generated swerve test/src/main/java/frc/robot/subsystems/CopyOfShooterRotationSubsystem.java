@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
-import frc.robot.Constants.ShooterConstants;
+import static frc.robot.Constants.ShooterConstants.*;
 import frc.robot.generated.TunerConstants;
 
 public class CopyOfShooterRotationSubsystem extends SubsystemBase {
@@ -67,7 +67,6 @@ public class CopyOfShooterRotationSubsystem extends SubsystemBase {
           targetAngle = 15; // sets shooter to point for shooting into amp if within 1 meter of it
         else
           targetAngle = 100; // sets shooter to flat if not within 1 meter
-
       }
     },
 
@@ -113,9 +112,9 @@ public class CopyOfShooterRotationSubsystem extends SubsystemBase {
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     shooterAngleConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degreesToMotorRevs(
-        ShooterConstants.kForwardSoftLimit);
+        kForwardSoftLimit);
     shooterAngleConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degreesToMotorRevs(
-        ShooterConstants.kReverseSoftLimit);
+        kReverseSoftLimit);
     shooterAngleConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     shooterAngleConfig.CurrentLimits.StatorCurrentLimit = 15;
 
@@ -129,7 +128,7 @@ public class CopyOfShooterRotationSubsystem extends SubsystemBase {
     // Sensor is 1:1 with the output of rotation
     fdb.SensorToMechanismRatio = 1;
     // GearRatio = the ratio between rotar and sensor
-    fdb.RotorToSensorRatio = ShooterConstants.kShooterGearBoxRatio;
+    fdb.RotorToSensorRatio = kShooterGearBoxRatio;
     // Would no longer be necessary with Fused CanCoder
     fdb.FeedbackRotorOffset = getThroughBoreEncoder();
 

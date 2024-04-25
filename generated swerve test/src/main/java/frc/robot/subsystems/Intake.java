@@ -24,6 +24,13 @@ public class Intake extends SubsystemBase {
   DigitalInput beamBreakSensor;
   CANSparkMax centeringWheelMotor;
 
+  public enum RobotSate {
+    InakeMode,
+    SpeakerTracking,
+    AmpMode,
+    ClimbMode;
+  }
+
   public Intake() {
     TalonFXConfiguration intakeConfiguration = new TalonFXConfiguration();
     intakeMotor = new TalonFX(PortConstants.kIntakeMotorPort);
@@ -65,6 +72,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean getBeamBreak() {
+
     return !beamBreakSensor.get(); // returns true if the beam is broken
 
   }

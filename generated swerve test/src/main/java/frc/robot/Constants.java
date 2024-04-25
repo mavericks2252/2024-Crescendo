@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -69,6 +70,7 @@ public final class Constants {
     public static final double kShooterGearBoxRatio = 270.830864;
     public static final int kForwardSoftLimit = 145;
     public static final int kReverseSoftLimit = -5;
+    public static double kClimbAngle;
   }
 
   public static final class OIConstants {
@@ -194,6 +196,41 @@ public final class Constants {
 
   public final class ClimberConstants {
     public static final double kClimberGearRatio = 45.833333;
+  }
+
+  public enum Targets { // based on blue origin 0,0 (blue driver station, right corner)
+    AMPDUMP(0, 7.7, 11.0, 0),
+    AMP(1.8415, 8.2042, 0.889, -90),
+    SPEAKER(0.13, 5.547868, 2.0697, 180);
+
+    private final double x, y, z, angle;
+
+    Targets(double x, double y, double z, double angle) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.angle = angle;
+    }
+
+    public Rotation2d getAngle() {
+      return new Rotation2d(this.angle);
+    }
+
+    public Rotation2d getMirrorAngle() {
+      return new Rotation2d(this.angle).plus(new Rotation2d(-180));
+    }
+
+    public Pose3d getPose() {
+      return new Pose3d(
+          new Translation3d(this.x, this.y, this.z),
+          new Rotation3d());
+    }
+
+    public Pose3d getMirrorPose() {
+      return new Pose3d(
+          new Translation3d(16 - this.x, this.y, this.z), // field is 16.54175 meters
+          new Rotation3d());
+    }
   }
 
 }

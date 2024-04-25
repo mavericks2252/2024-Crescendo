@@ -14,6 +14,9 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
@@ -88,6 +91,9 @@ public class Shooter extends SubsystemBase {
     // shooterMotorMaster.getTorqueCurrent().getValue());
     SmartDashboard.putNumber("accelerator wheel output", acceleratorWheel.get());
 
+    Shuffleboard.getTab("test").add(beamBreakAmp);
+    Shuffleboard.getTab("test").add(shooterMotorMaster);
+
   }
 
   public void acceleratorWheelOutput(double acceleratorWheelSpeed) {
@@ -126,7 +132,7 @@ public class Shooter extends SubsystemBase {
 
   }
 
-  public Double getShooterVelocity() {
+  public double getShooterVelocity() {
     double shooterVelocity = shooterMotorMaster.getVelocity().getValue() * 60; // finds the velocity our shooter is
                                                                                // currently running at
     return shooterVelocity;
@@ -146,6 +152,11 @@ public class Shooter extends SubsystemBase {
     amplifierWheel.stopMotor();
   }
 
+  /**
+   * Method for getting the status of the Shot Beam Break
+   * 
+   * @return true when a note has broken the beam
+   */
   public boolean getShotBeambreak() { // returns true when the shooter beam break is broken
     return !beamBreakShot.get();
 

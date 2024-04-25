@@ -405,7 +405,13 @@ public class VisionPhotonSubsystem extends SubsystemBase {
       return 0; // if not, return nothing
   }
 
-  public Pose2d getCornerTargetRotation2dEasy() {
+  /**
+   * Method for getting the needed heading of the robot for the corner feeding
+   * shot based on the robots current Pose
+   * 
+   * @return Rotation 2d heading for robot
+   */
+  public Rotation2d getCornerTargetRotation2dEasy() {
     Pose2d cornerPos; // gets the position of the speaker
 
     if (driverStationAlliance()) {
@@ -421,7 +427,9 @@ public class VisionPhotonSubsystem extends SubsystemBase {
 
     Pose2d currenPose2d = getCurrentPose2d();
     Rotation2d yawToCorner = PhotonUtils.getYawToPose(currenPose2d, cornerPos);
-    return currenPose2d.rotateBy(yawToCorner);
+    Pose2d targetPose = currenPose2d.rotateBy(yawToCorner);
+
+    return targetPose.getRotation();
 
   }
 }

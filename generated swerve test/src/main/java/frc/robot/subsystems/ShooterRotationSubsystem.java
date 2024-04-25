@@ -38,6 +38,17 @@ public class ShooterRotationSubsystem extends SubsystemBase {
   TrapezoidProfile.Constraints angle_PIDConstraints = new TrapezoidProfile.Constraints(TunerConstants.kMaxAngularRate,
       TunerConstants.kMaxAngularAcceleration);
 
+  public static enum ShooterRotationState {
+    SpeakerTracking,
+    AmpMode,
+    ClimbMode,
+    Intake,
+    Disable;
+  };
+
+  private static ShooterRotationState currentState = ShooterRotationState.Disable;
+  private double targetAngle;
+
   /** Creates a new ShooterRotationSubsystem. */
   public ShooterRotationSubsystem(VisionPhotonSubsystem photon) {
     // this.vision = vision;
@@ -104,6 +115,38 @@ public class ShooterRotationSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Angle Motor Position Degrees", getAngleMotorPos() * 360);
     // SmartDashboard.putNumber("photon target angle", photon.getTargetAngle());
     // SmartDashboard.putBoolean("intakeMode", intakeMode);
+
+    // switch statement which sets the target angle based upon the state stored in
+    // the current state variable
+    switch (currentState) {
+      case SpeakerTracking:
+        targetAngle = photon.getTargetAngle();
+        break;
+
+      case AmpMode:
+        if (photon.getAmpDistance() < 2)
+          targetAngle = ShooterConstants.kAmpAngle; // sets shooter to point for shooting into amp if within 1 meter of
+                                                    // it
+        else
+          targetAngle = 100; // sets shooter to flat if not within 1 meter
+        break;
+
+      case ClimbMode:
+        targetAngle = ShooterConstants.kClimbAngle;
+        break;
+
+      case Intake:
+        targetAngle = ShooterConstants.kIntakeAngle;
+
+      case Disable:
+        targetAngle = motorRevsToDegrees(getAngleMotorPos());
+
+      default:
+        System.out.println("default state reached ShooterRotation Subsystem");
+        break;
+    }
+
+    setShooterAngle(targetAngle);
 
     if (climbMode) {
       setShooterAngle(20);
@@ -290,6 +333,15 @@ public class ShooterRotationSubsystem extends SubsystemBase {
       ampShot = false; // turns amp shot on and next time will turn it off
     } else
       ampShot = true; // turns amp shot off and next time will turn it on
+  }
+
+  /**
+   * Method for changing the current state of the ShooterRotation Subsystem
+   * 
+   * @param state desired state of subsystem
+   */
+  public static void setShooterRotationState(ShooterRotationState state) {
+    currentState = state;
   }
 
 }
