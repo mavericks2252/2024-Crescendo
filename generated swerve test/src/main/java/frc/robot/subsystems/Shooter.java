@@ -15,7 +15,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,7 +25,6 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   TalonFX shooterMotorMaster;
   TalonFX shooterMotorSlave;
-  double targetRPM;
   CANSparkMax acceleratorWheel;
   CANSparkMax acceleratorWheelSlave;
   CANSparkMax amplifierWheel;
@@ -36,6 +34,8 @@ public class Shooter extends SubsystemBase {
   DigitalInput beamBreakMiddleBack;
   TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
   TimeOfFlight frontTOF;
+  ShuffleboardTab shooterTab = Shuffleboard.getTab("shooter");
+  double test = 0;
 
   private final VelocityTorqueCurrentFOC shooterTV = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
 
@@ -91,8 +91,10 @@ public class Shooter extends SubsystemBase {
     // shooterMotorMaster.getTorqueCurrent().getValue());
     SmartDashboard.putNumber("accelerator wheel output", acceleratorWheel.get());
 
-    Shuffleboard.getTab("test").add(beamBreakAmp);
-    Shuffleboard.getTab("test").add(shooterMotorMaster);
+    shooterTab.add(beamBreakAmp);
+    shooterTab.addNumber("test", () -> test);
+    shooterTab.addBoolean("test 2", () -> getAmpBeambreak());
+    shooterTab.add(shooterMotorMaster);
 
   }
 

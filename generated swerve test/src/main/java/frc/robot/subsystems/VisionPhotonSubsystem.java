@@ -299,7 +299,7 @@ public class VisionPhotonSubsystem extends SubsystemBase {
     // return SmartDashboard.getNumber("TestShooterAngle", 112.65);
   }
 
-  private double getMapTargetAngle() {
+  public double getMapTargetAngle() {
     return shooterMap.get(getSpeakerDistance());
   }
 
